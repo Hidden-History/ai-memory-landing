@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Space_Grotesk, DM_Sans, JetBrains_Mono, Geist } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import { Navbar } from "@/components/sections/navbar";
+import { Footer } from "@/components/sections/footer";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
@@ -24,13 +26,13 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AI Memory — Persistent Memory for AI Agents",
+  title: "AI Memory — Qdrant-Backed Vector Memory for AI Agents",
   description:
-    "Give your AI agents persistent memory across sessions. Automatic recall, cross-session context, and structured memory types for Claude Code and beyond.",
+    "Cure AI amnesia with a Qdrant-backed vector database. 5 specialized collections, semantic decay, 3-layer security, dual embedding routing, and GitHub/Jira sync for Claude Code.",
   openGraph: {
-    title: "AI Memory — Persistent Memory for AI Agents",
+    title: "AI Memory — Qdrant-Backed Vector Memory for AI Agents",
     description:
-      "Give your AI agents persistent memory across sessions. Automatic recall, cross-session context, and structured memory types.",
+      "Cure AI amnesia with a Qdrant-backed vector database. 5 specialized collections, semantic decay, 3-layer security, and GitHub/Jira sync.",
     type: "website",
   },
 };
@@ -45,7 +47,9 @@ export default function RootLayout({
       <body
         className={`${spaceGrotesk.variable} ${dmSans.variable} ${jetbrainsMono.variable} antialiased`}
       >
+        <Navbar />
         {children}
+        <Footer />
       </body>
     </html>
   );
