@@ -1,19 +1,28 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Zap, Layers, Globe, Bot, Code, DollarSign, Github, Sparkles } from "lucide-react";
 import { Hero } from "@/components/sections/hero";
-import { Differentiators } from "@/components/sections/differentiators";
-import { Features } from "@/components/sections/features";
-import { Architecture } from "@/components/sections/architecture";
-import { HowItWorks } from "@/components/sections/how-it-works";
-import { Integrations } from "@/components/sections/integrations";
+import { Capabilities } from "@/components/sections/capabilities";
+import { SystemOverview } from "@/components/sections/system-overview";
+import { IntegrationsBelt } from "@/components/sections/integrations-belt";
 import { Parzival } from "@/components/sections/parzival";
-import { CodeExample } from "@/components/sections/code-example";
-import { QuickStart } from "@/components/sections/quick-start";
-import { MemoryTypes } from "@/components/sections/memory-types";
-import { Integration } from "@/components/sections/integration";
+import { DeveloperExperience } from "@/components/sections/developer-experience";
 import { Pricing } from "@/components/sections/pricing";
 import { GitHubCTA } from "@/components/sections/github-cta";
+import { SectionNav } from "@/components/shared/section-nav";
+
+/* ── Section nav items ───────────────────────────────────────────── */
+const HOME_SECTIONS = [
+  { id: "hero", label: "Home", icon: Sparkles },
+  { id: "capabilities", label: "Capabilities", icon: Zap },
+  { id: "architecture", label: "Architecture", icon: Layers },
+  { id: "integrations", label: "Integrations", icon: Globe },
+  { id: "parzival-teaser", label: "Parzival", icon: Bot },
+  { id: "developer-experience", label: "Developer", icon: Code },
+  { id: "pricing", label: "Pricing", icon: DollarSign },
+  { id: "cta", label: "GitHub", icon: Github },
+];
 
 /* ── Floating particles (client-only to avoid hydration mismatch) ── */
 function Particles() {
@@ -132,32 +141,34 @@ export default function Home() {
       <GeometricAccents />
       <Particles />
 
+      {/* Right-side section nav */}
+      <SectionNav sections={HOME_SECTIONS} />
+
       <main className="relative z-10">
-        <Hero />
-        <div className="section-divider" />
-        <Differentiators />
-        <div className="section-divider" />
-        <Features />
-        <div className="section-divider" />
-        <Architecture />
-        <div className="section-divider" />
-        <HowItWorks />
-        <div className="section-divider" />
-        <Integrations />
-        <div className="section-divider" />
-        <Parzival />
-        <div className="section-divider" />
-        <CodeExample />
-        <div className="section-divider" />
-        <QuickStart />
-        <div className="section-divider" />
-        <MemoryTypes />
-        <div className="section-divider" />
-        <Integration />
-        <div className="section-divider" />
-        <Pricing />
-        <div className="section-divider" />
-        <GitHubCTA />
+        <div id="hero">
+          <Hero />
+        </div>
+        <div id="capabilities">
+          <Capabilities />
+        </div>
+        <div id="architecture">
+          <SystemOverview />
+        </div>
+        <div id="integrations">
+          <IntegrationsBelt />
+        </div>
+        <div id="parzival-teaser">
+          <Parzival />
+        </div>
+        <div id="developer-experience">
+          <DeveloperExperience />
+        </div>
+        <div id="pricing">
+          <Pricing />
+        </div>
+        <div id="cta">
+          <GitHubCTA />
+        </div>
       </main>
 
       <style>{`

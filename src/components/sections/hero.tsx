@@ -76,7 +76,7 @@ export function Hero() {
           frameBorder="0"
           width="100%"
           height="100%"
-          className="absolute inset-0 w-full h-full scale-125 opacity-30"
+          className="absolute inset-0 w-full h-full scale-125 opacity-55"
           title="AI Memory 3D Scene"
           loading="lazy"
         />
@@ -85,7 +85,7 @@ export function Hero() {
           className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(135deg, rgba(10,13,26,0.7) 0%, rgba(10,13,26,0.3) 50%, rgba(10,13,26,0.6) 100%)",
+              "linear-gradient(135deg, rgba(10,13,26,0.6) 0%, rgba(10,13,26,0.15) 50%, rgba(10,13,26,0.5) 100%)",
           }}
         />
       </div>
@@ -296,7 +296,7 @@ export function Hero() {
               }}
             >
               <img
-                src="/ai-memory-4.png"
+                src="/ai-memory-3.png"
                 alt="AI Memory System"
                 className="w-full h-auto object-cover"
                 style={{ display: "block" }}

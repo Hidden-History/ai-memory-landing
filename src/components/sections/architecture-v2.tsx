@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Cpu, Database, Brain, Shield, Zap, GitBranch, ChevronRight, ExternalLink, Layers, Activity, Target, Infinity, Lock, Eye } from "lucide-react";
+import { SectionNav } from "@/components/shared/section-nav";
 
 // ─── Design System ──────────────────────────────────────────────────────────────
 
@@ -82,83 +83,6 @@ const SECTIONS = [
   { id: "fusion", label: "Triple Fusion", icon: Infinity },
   { id: "reference", label: "Reference", icon: ExternalLink },
 ];
-
-function SectionNav() {
-  const [active, setActive] = useState("overview");
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActive(entry.target.id);
-          }
-        });
-      },
-      { threshold: 0.3 }
-    );
-
-    SECTIONS.forEach(({ id }) => {
-      const el = document.getElementById(id);
-      if (el) observer.observe(el);
-    });
-
-    return () => observer.disconnect();
-  }, []);
-
-  const scrollTo = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  return (
-    <nav className="fixed right-6 top-1/2 -translate-y-1/2 z-50 hidden xl:flex flex-col gap-1">
-      {SECTIONS.map(({ id, label, icon: Icon }) => {
-        const isActive = active === id;
-        return (
-          <button
-            key={id}
-            onClick={() => scrollTo(id)}
-            className="group relative flex items-center justify-end"
-          >
-            <AnimatePresence>
-              {isActive && (
-                <motion.div
-                  initial={{ opacity: 0, x: 10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 10 }}
-                  className="absolute right-full mr-2 px-2 py-1 rounded text-[10px] font-mono whitespace-nowrap"
-                  style={{
-                    background: "rgba(0,245,255,0.1)",
-                    border: `1px solid ${CYAN}30`,
-                    color: CYAN,
-                  }}
-                >
-                  {label}
-                </motion.div>
-              )}
-            </AnimatePresence>
-            <div
-              className="relative w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300"
-              style={{
-                background: isActive ? `${CYAN}15` : "transparent",
-                border: `1px solid ${isActive ? CYAN + "60" : CYAN + "20"}`,
-                boxShadow: isActive ? `0 0 20px ${CYAN}30` : "none",
-              }}
-            >
-              <Icon className="w-3.5 h-3.5" style={{ color: isActive ? CYAN : TEXT_DIM }} />
-              {isActive && (
-                <div
-                  className="absolute inset-0 rounded-full animate-ping"
-                  style={{ background: `${CYAN}10`, animationDuration: "2s" }}
-                />
-              )}
-            </div>
-          </button>
-        );
-      })}
-    </nav>
-  );
-}
 
 // ─── Particle Mesh Canvas ───────────────────────────────────────────────────
 
@@ -286,7 +210,7 @@ function HeroSection() {
       <div
         className="absolute inset-0"
         style={{
-          backgroundImage: "url('/ai-memory-3.png')",
+          backgroundImage: "url('/ai-memory-4.png')",
           backgroundSize: "100% auto",
           backgroundPosition: "center calc(100% - 10px)",
           backgroundRepeat: "no-repeat",
@@ -2024,7 +1948,7 @@ export function ArchitecturePage() {
   return (
     <main className="min-h-screen relative" style={{ background: BG_DEEP }}>
       {/* Fixed elements */}
-      <SectionNav />
+      <SectionNav sections={SECTIONS} />
 
       {/* Sections */}
       <HeroSection />
