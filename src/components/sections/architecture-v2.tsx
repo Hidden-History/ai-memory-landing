@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, RefObject } from "react";
 import { motion } from "framer-motion";
 import { Cpu, Database, Brain, Shield, Zap, GitBranch } from "lucide-react";
 
@@ -124,8 +124,76 @@ function ParticleMesh({ className }: { className?: string }) {
     <canvas
       ref={canvasRef}
       className={className}
-      style={{ width: "100%", height: "100%" }}
+      style={{ width: "100%", height: "100%", display: "block" }}
     />
+  );
+}
+
+// ─── Circuit Topography Background ─────────────────────────────────────────────
+// SVG circuit trace pattern — dark copper on near-black
+
+function CircuitBackground({ opacity = 0.07 }: { opacity?: number }) {
+  return (
+    <div
+      className="absolute inset-0 pointer-events-none overflow-hidden"
+      aria-hidden="true"
+    >
+      <svg
+        width="100%"
+        height="100%"
+        xmlns="http://www.w3.org/2000/svg"
+        style={{ position: "absolute", inset: 0 }}
+      >
+        <defs>
+          <pattern
+            id="circuit-traces"
+            x="0"
+            y="0"
+            width="120"
+            height="120"
+            patternUnits="userSpaceOnUse"
+          >
+            {/* Horizontal traces */}
+            <path d="M0 20 H40 L50 30 H80 L90 20 H120" stroke={`rgba(0,245,255,${opacity})`} strokeWidth="0.5" fill="none" />
+            <path d="M0 60 H30 L40 50 H70 L80 60 H120" stroke={`rgba(139,92,246,${opacity * 0.8})`} strokeWidth="0.5" fill="none" />
+            <path d="M0 100 H50 L60 90 H90 L100 100 H120" stroke={`rgba(0,245,255,${opacity * 0.6})`} strokeWidth="0.5" fill="none" />
+            {/* Vertical traces */}
+            <path d="M20 0 V30 L30 40 V70 L20 80 V120" stroke={`rgba(139,92,246,${opacity})`} strokeWidth="0.5" fill="none" />
+            <path d="M60 0 V20 L70 30 V60 L60 70 V120" stroke={`rgba(0,245,255,${opacity * 0.7})`} strokeWidth="0.5" fill="none" />
+            <path d="M100 0 V40 L90 50 V80 L100 90 V120" stroke={`rgba(255,45,106,${opacity * 0.5})`} strokeWidth="0.5" fill="none" />
+            {/* Nodes */}
+            <circle cx="50" cy="30" r="2" fill={`rgba(0,245,255,${opacity * 1.5})`} />
+            <circle cx="80" cy="60" r="2" fill={`rgba(139,92,246,${opacity * 1.5})`} />
+            <circle cx="40" cy="50" r="1.5" fill={`rgba(0,245,255,${opacity})`} />
+            <circle cx="90" cy="90" r="1.5" fill={`rgba(255,45,106,${opacity * 1.2})`} />
+            <circle cx="60" cy="70" r="2" fill={`rgba(139,92,246,${opacity})`} />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#circuit-traces)" />
+      </svg>
+    </div>
+  );
+}
+
+// ─── Glow Pulse Keyframe (extra for globals) ────────────────────────────────
+// This component injects animation keyframes for dash-flow
+
+function AnimationStyles() {
+  return (
+    <style>{`
+      @keyframes dash-flow {
+        from { stroke-dashoffset: 20; }
+        to { stroke-dashoffset: 0; }
+      }
+      @keyframes orbit {
+        from { transform: rotate(0deg) translateX(36px) rotate(0deg); }
+        to { transform: rotate(360deg) translateX(36px) rotate(-360deg); }
+      }
+      @keyframes orbit-reverse {
+        from { transform: rotate(0deg) translateX(36px) rotate(0deg); }
+        to { transform: rotate(-360deg) translateX(36px) rotate(360deg); }
+      }
+    `}</style>
   );
 }
 
@@ -133,99 +201,193 @@ function ParticleMesh({ className }: { className?: string }) {
 
 export function ArchitectureHero() {
   return (
-    <section className="relative w-full h-screen min-h-[700px] overflow-hidden">
-      {/* Banner image */}
+    <section className="relative w-full min-h-screen overflow-hidden">
+
+      {/* Layer 1: Banner image — contained */}
       <div
-        className="absolute inset-0 bg-cover bg-center"
+        className="absolute inset-0"
         style={{
           backgroundImage: "url('/ai-memory-3.png')",
-          filter: "brightness(0.35) saturate(0.7)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          filter: "brightness(0.25) saturate(0.8) contrast(1.1)",
         }}
       />
 
-      {/* Deep gradient overlay */}
+      {/* Layer 2: Deep multi-stop gradient overlay */}
       <div
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(180deg, rgba(3,3,8,0.6) 0%, rgba(3,3,8,0.1) 30%, rgba(3,3,8,0.1) 60%, rgba(3,3,8,0.95) 100%)",
+            "linear-gradient(135deg, rgba(3,3,8,0.85) 0%, rgba(3,3,8,0.4) 30%, rgba(3,3,8,0.2) 50%, rgba(3,3,8,0.5) 75%, rgba(3,3,8,0.95) 100%)",
         }}
       />
 
-      {/* Particle mesh layered on top */}
-      <div className="absolute inset-0 z-10">
-        <ParticleMesh className="opacity-60" />
-      </div>
-
-      {/* Neural grid overlay */}
+      {/* Layer 3: Radial color halos — vivid */}
       <div
-        className="absolute inset-0 z-20 pointer-events-none"
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(ellipse 80% 60% at 20% 30%, rgba(0,245,255,0.12) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 20%, rgba(139,92,246,0.1) 0%, transparent 55%), radial-gradient(ellipse 50% 40% at 50% 80%, rgba(255,45,106,0.08) 0%, transparent 50%)",
+        }}
+      />
+
+      {/* Layer 4: Circuit topography */}
+      <CircuitBackground opacity={0.05} />
+
+      {/* Layer 5: Neural grid */}
+      <div
+        className="absolute inset-0 pointer-events-none"
         style={{
           backgroundImage:
-            "linear-gradient(rgba(0,245,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,245,255,0.03) 1px, transparent 1px)",
-          backgroundSize: "64px 64px",
+            "linear-gradient(rgba(0,245,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(0,245,255,0.04) 1px, transparent 1px)",
+          backgroundSize: "48px 48px",
         }}
       />
 
-      {/* Content */}
-      <div className="relative z-30 flex flex-col items-center justify-center h-full px-6 text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
-        >
-          {/* Label */}
-          <div
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-8"
-            style={{
-              background: "rgba(0,245,255,0.06)",
-              border: "1px solid rgba(0,245,255,0.2)",
-              boxShadow: "0 0 30px rgba(0,245,255,0.08) inset",
-            }}
-          >
-            <Cpu className="w-3.5 h-3.5" style={{ color: CYAN }} />
-            <span
-              className="text-[10px] font-bold uppercase tracking-[0.2em]"
-              style={{
-                fontFamily: "var(--font-mono)",
-                color: CYAN,
-                letterSpacing: "0.2em",
-              }}
-            >
-              Core Architecture Principle V3.5
-            </span>
-          </div>
-        </motion.div>
+      {/* Layer 6: Particle mesh */}
+      <div className="absolute inset-0 z-10">
+        <ParticleMesh className="opacity-75" />
+      </div>
 
-        <motion.h1
-          initial={{ opacity: 0, y: 30, filter: "blur(8px)" }}
-          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          transition={{ duration: 1, delay: 0.15, ease: [0.25, 0.46, 0.45, 0.94] }}
-          className="max-w-4xl mb-6 leading-[1.05]"
+      {/* Floating geometric accents */}
+      <div className="absolute inset-0 z-20 pointer-events-none overflow-hidden">
+        {/* Large slow-rotating hexagon */}
+        <div
+          className="absolute animate-spin-slow"
           style={{
-            fontFamily: "var(--font-heading)",
-            fontSize: "clamp(2.5rem, 7vw, 5.5rem)",
-            fontWeight: 700,
-            letterSpacing: "-0.01em",
-            background: `linear-gradient(135deg, #E8EAF0 0%, ${CYAN} 50%, ${VIOLET} 100%)`,
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            backgroundClip: "text",
+            top: "8%",
+            right: "5%",
+            width: "160px",
+            height: "160px",
+            clipPath: "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)",
+            background: "linear-gradient(135deg, rgba(0,245,255,0.08) 0%, rgba(139,92,246,0.04) 100%)",
+            border: "1px solid rgba(0,245,255,0.15)",
+            animationDuration: "60s",
+            opacity: 0.6,
+          }}
+        />
+        {/* Small floating triangle top-left */}
+        <div
+          className="absolute animate-float-delayed"
+          style={{
+            top: "20%",
+            left: "6%",
+            width: 0,
+            height: 0,
+            borderLeft: "30px solid transparent",
+            borderRight: "30px solid transparent",
+            borderBottom: "52px solid rgba(139,92,246,0.1)",
+            opacity: 0.5,
+            animationDuration: "12s",
+          }}
+        />
+        {/* Floating orb bottom-left */}
+        <div
+          className="absolute animate-float-slow"
+          style={{
+            bottom: "20%",
+            left: "8%",
+            width: "80px",
+            height: "80px",
+            borderRadius: "50%",
+            background: "radial-gradient(circle, rgba(255,45,106,0.12) 0%, transparent 70%)",
+            border: "1px solid rgba(255,45,106,0.2)",
+            animationDuration: "14s",
+            boxShadow: "0 0 60px rgba(255,45,106,0.1) inset",
+          }}
+        />
+        {/* Small cyan dot grid bottom-right */}
+        <div
+          className="absolute animate-ping-slow"
+          style={{
+            bottom: "30%",
+            right: "12%",
+            width: "6px",
+            height: "6px",
+            borderRadius: "50%",
+            background: CYAN,
+            boxShadow: `0 0 12px ${CYAN}, 0 0 24px ${CYAN}`,
+            animationDuration: "4s",
+          }}
+        />
+      </div>
+
+      {/* Content */}
+      <div className="relative z-30 flex flex-col items-center justify-center min-h-screen px-6 pt-24 pb-16 text-center">
+
+        {/* Label badge */}
+        <motion.div
+          initial={{ opacity: 0, y: 20, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
+          className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full mb-10"
+          style={{
+            background: "rgba(0,245,255,0.08)",
+            border: "1px solid rgba(0,245,255,0.3)",
+            boxShadow: `0 0 40px rgba(0,245,255,0.12) inset, 0 0 20px rgba(0,245,255,0.08)`,
           }}
         >
-          Right Information
+          <div
+            className="w-2 h-2 rounded-full animate-pulse"
+            style={{ background: CYAN, boxShadow: `0 0 8px ${CYAN}` }}
+          />
+          <Cpu className="w-4 h-4" style={{ color: CYAN }} />
+          <span
+            className="text-[11px] font-bold uppercase tracking-[0.2em]"
+            style={{
+              fontFamily: "var(--font-mono)",
+              color: CYAN,
+            }}
+          >
+            Core Architecture Principle — V3.5
+          </span>
+        </motion.div>
+
+        {/* Main title */}
+        <motion.h1
+          initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
+          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          transition={{ duration: 1.1, delay: 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
+          className="max-w-5xl mb-8 leading-[1.0]"
+          style={{
+            fontFamily: "var(--font-heading)",
+            fontSize: "clamp(2.8rem, 7vw, 5rem)",
+            fontWeight: 800,
+            letterSpacing: "-0.02em",
+          }}
+        >
+          <span
+            style={{
+              background: `linear-gradient(135deg, #E8EAF0 0%, ${CYAN} 60%, ${VIOLET} 100%)`,
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+              filter: "drop-shadow(0 0 30px rgba(0,245,255,0.25))",
+            }}
+          >
+            Right Information
+          </span>
           <br />
-          <span style={{ color: CYAN }}>at the Right Time</span>
+          <span
+            style={{
+              color: CYAN,
+              textShadow: `0 0 40px rgba(0,245,255,0.5), 0 0 80px rgba(0,245,255,0.2)`,
+            }}
+          >
+            at the Right Time
+          </span>
         </motion.h1>
 
+        {/* Subtitle */}
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
-          className="max-w-2xl text-base sm:text-lg leading-relaxed mb-12"
+          transition={{ duration: 0.8, delay: 0.3 }}
+          className="max-w-2xl text-base sm:text-lg leading-relaxed mb-14"
           style={{
             fontFamily: "var(--font-body)",
-            color: "rgba(232,234,240,0.55)",
+            color: "rgba(232,234,240,0.6)",
           }}
         >
           A signal-triggered retrieval system — not random memory injection.
@@ -233,11 +395,11 @@ export function ArchitectureHero() {
           Built on Qdrant with temporal decay, dual embeddings, and GitHub/Jira sync.
         </motion.p>
 
-        {/* Stat pills */}
+        {/* Stat pills — magnetic hover */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.5 }}
+          transition={{ duration: 0.7, delay: 0.45 }}
           className="flex flex-wrap justify-center gap-4"
         >
           {[
@@ -246,36 +408,7 @@ export function ArchitectureHero() {
             { value: "9", label: "Pipeline Steps", color: GREEN },
             { value: "v3.5", label: "Architecture", color: MAGENTA },
           ].map((stat) => (
-            <div
-              key={stat.label}
-              className="flex items-center gap-3 px-5 py-3 rounded-2xl"
-              style={{
-                background: "rgba(10,13,30,0.7)",
-                border: `1px solid ${stat.color}25`,
-                backdropFilter: "blur(16px)",
-                boxShadow: `0 0 30px ${stat.color}08 inset`,
-              }}
-            >
-              <span
-                className="text-2xl font-bold"
-                style={{
-                  fontFamily: "var(--font-heading)",
-                  color: stat.color,
-                }}
-              >
-                {stat.value}
-              </span>
-              <span
-                className="text-xs font-medium"
-                style={{
-                  fontFamily: "var(--font-mono)",
-                  color: "rgba(232,234,240,0.5)",
-                  letterSpacing: "0.05em",
-                }}
-              >
-                {stat.label}
-              </span>
-            </div>
+            <MagneticCard key={stat.label} color={stat.color} value={stat.value} label={stat.label} />
           ))}
         </motion.div>
       </div>
@@ -289,20 +422,74 @@ export function ArchitectureHero() {
       >
         <span
           className="text-[9px] uppercase tracking-[0.3em]"
-          style={{ fontFamily: "var(--font-mono)", color: "rgba(0,245,255,0.35)" }}
+          style={{ fontFamily: "var(--font-mono)", color: "rgba(0,245,255,0.4)" }}
         >
           Scroll
         </span>
         <div
-          className="w-px h-8 rounded-full"
+          className="w-px h-10 rounded-full"
           style={{
-            background: `linear-gradient(180deg, rgba(0,245,255,0.5), transparent)`,
-            boxShadow: "0 0 8px rgba(0,245,255,0.3)",
-            animation: "pulse-glow 2s ease-in-out infinite",
+            background: `linear-gradient(180deg, rgba(0,245,255,0.7), rgba(0,245,255,0.1), transparent)`,
+            boxShadow: `0 0 12px rgba(0,245,255,0.4)`,
           }}
         />
       </motion.div>
     </section>
+  );
+}
+
+// Magnetic hover card for stat pills
+
+function MagneticCard({ color, value, label }: { color: string; value: string; label: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  return (
+    <motion.div
+      ref={ref}
+      className="relative px-5 py-3 rounded-2xl cursor-default"
+      style={{
+        background: `linear-gradient(135deg, rgba(10,13,30,0.9) 0%, rgba(15,20,50,0.8) 100%)`,
+        border: `1px solid ${color}30`,
+        boxShadow: `0 0 0 1px ${color}08 inset, 0 0 40px ${color}08 inset`,
+        transition: "border-color 0.3s, box-shadow 0.3s",
+      }}
+      whileHover={{
+        borderColor: `${color}60`,
+        boxShadow: `0 0 0 1px ${color}15 inset, 0 0 60px ${color}15 inset, 0 0 30px ${color}10`,
+        scale: 1.04,
+      }}
+      whileTap={{ scale: 0.97 }}
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+    >
+      {/* Top glow line */}
+      <div
+        className="absolute top-0 left-4 right-4 h-px rounded-full"
+        style={{
+          background: `linear-gradient(90deg, transparent, ${color}60, transparent)`,
+          boxShadow: `0 0 8px ${color}40`,
+        }}
+      />
+      <span
+        className="text-3xl font-bold block"
+        style={{
+          fontFamily: "var(--font-heading)",
+          color: color,
+          textShadow: `0 0 20px ${color}60`,
+        }}
+      >
+        {value}
+      </span>
+      <span
+        className="text-[11px] font-medium block mt-0.5"
+        style={{
+          fontFamily: "var(--font-mono)",
+          color: "rgba(232,234,240,0.45)",
+          letterSpacing: "0.05em",
+        }}
+      >
+        {label}
+      </span>
+    </motion.div>
   );
 }
 

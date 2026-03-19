@@ -13,6 +13,22 @@ import { ArchitectureCTA } from "@/components/sections/architecture-v2";
 export default function ArchitecturePage() {
   return (
     <main className="min-h-screen">
+      {/* Global animation keyframes */}
+      <style>{`
+        @keyframes dash-flow {
+          from { stroke-dashoffset: 20; }
+          to { stroke-dashoffset: 0; }
+        }
+        @keyframes orbit {
+          from { transform: rotate(0deg) translateX(36px) rotate(0deg); }
+          to { transform: rotate(360deg) translateX(36px) rotate(-360deg); }
+        }
+        @keyframes orbit-reverse {
+          from { transform: rotate(0deg) translateX(36px) rotate(0deg); }
+          to { transform: rotate(-360deg) translateX(36px) rotate(360deg); }
+        }
+      `}</style>
+
       <div id="hero"><ArchitectureHero /></div>
       <div className="section-divider" />
       <div id="principle"><ArchitecturePrinciple /></div>
