@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Code2, BookOpen, MessageCircle, Github, Ticket } from "lucide-react";
+import { Code2, BookOpen, MessageCircle, Github, Ticket, Database } from "lucide-react";
 import { AnimatedSection, fadeUp, stagger } from "@/components/shared/animated-section";
 
 const collections = [
@@ -11,10 +11,9 @@ const collections = [
     tag: "HOW",
     description: "Implementation patterns, architecture decisions, and code idioms",
     example: "React context + reducer for complex form state",
-    color: "text-blue",
-    bg: "bg-blue/10",
-    borderColor: "border-blue/15",
-    accentDot: "bg-blue",
+    color: "#00F5FF",
+    bg: "rgba(0, 245, 255, 0.04)",
+    border: "rgba(0, 245, 255, 0.12)",
   },
   {
     icon: BookOpen,
@@ -22,10 +21,9 @@ const collections = [
     tag: "WHAT",
     description: "Team standards, naming rules, and style preferences",
     example: "Always use named exports, no default exports",
-    color: "text-primary-light",
-    bg: "bg-primary/10",
-    borderColor: "border-primary/15",
-    accentDot: "bg-primary",
+    color: "#8B5CF6",
+    bg: "rgba(139, 92, 246, 0.04)",
+    border: "rgba(139, 92, 246, 0.12)",
   },
   {
     icon: MessageCircle,
@@ -33,10 +31,9 @@ const collections = [
     tag: "WHY",
     description: "Decision rationale, architectural reasoning, and tradeoffs",
     example: "Chose Qdrant over Pinecone — self-hosted, no vendor lock-in",
-    color: "text-accent",
-    bg: "bg-accent/10",
-    borderColor: "border-accent/15",
-    accentDot: "bg-accent",
+    color: "#FF2D6A",
+    bg: "rgba(255, 45, 106, 0.04)",
+    border: "rgba(255, 45, 106, 0.12)",
   },
   {
     icon: Github,
@@ -44,10 +41,9 @@ const collections = [
     tag: "WHEN",
     description: "Commit history, PR discussions, and repo activity searchable by meaning",
     example: "Auth refactor PR #247 — compliance-driven rewrite",
-    color: "text-cyan",
-    bg: "bg-cyan/10",
-    borderColor: "border-cyan/15",
-    accentDot: "bg-cyan",
+    color: "#22D3EE",
+    bg: "rgba(34, 211, 238, 0.04)",
+    border: "rgba(34, 211, 238, 0.12)",
   },
   {
     icon: Ticket,
@@ -55,31 +51,47 @@ const collections = [
     tag: "JIRA",
     description: "Issue tracking data, sprint context, and project planning",
     example: "INGEST-142: Pipeline timeout on large payloads",
-    color: "text-green-400",
-    bg: "bg-green-500/10",
-    borderColor: "border-green-500/15",
-    accentDot: "bg-green-500",
+    color: "#FFB800",
+    bg: "rgba(255, 184, 0, 0.04)",
+    border: "rgba(255, 184, 0, 0.12)",
   },
 ];
 
 export function MemoryTypes() {
   return (
-    <section className="relative py-32 px-6">
-      <div className="max-w-5xl mx-auto">
-        <AnimatedSection className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/8 border border-primary/15 text-primary-light text-xs font-[family-name:var(--font-mono)] uppercase tracking-widest mb-6">
+    <section className="relative py-40 px-6 overflow-hidden">
+      {/* Background */}
+      <div className="absolute inset-0 neural-grid opacity-20" />
+      <div className="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] rounded-full pointer-events-none"
+        style={{
+          background: "radial-gradient(circle, rgba(255,45,106,0.03) 0%, transparent 70%)",
+          filter: "blur(100px)"
+        }}
+      />
+
+      <div className="max-w-5xl mx-auto relative">
+        <AnimatedSection className="text-center mb-20">
+          <div className="section-label mb-8">
+            <Database className="w-3.5 h-3.5" />
             Collections
           </div>
-          <h2 className="font-[family-name:var(--font-heading)] text-4xl sm:text-5xl lg:text-6xl font-bold mb-5 tracking-tight">
+          <h2
+            className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 tracking-tight"
+            style={{ fontFamily: "var(--font-heading)" }}
+          >
             5 Qdrant Collections,{" "}
-            <span className="gradient-text">One System</span>
+            <span className="gradient-text-animated">One System</span>
           </h2>
-          <p className="text-muted text-lg max-w-2xl mx-auto leading-relaxed">
+          <p
+            className="text-lg max-w-2xl mx-auto leading-relaxed"
+            style={{ color: "#8892A8", fontFamily: "var(--font-body)" }}
+          >
             Each collection is domain-optimized with its own embedding model,
             decay rules, and search configuration.
           </p>
         </AnimatedSection>
 
+        {/* Collection cards */}
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -92,37 +104,78 @@ export function MemoryTypes() {
               key={col.name}
               variants={fadeUp}
               transition={{ duration: 0.5, delay: i * 0.08 }}
-              className={`gradient-border p-6 group cursor-pointer transition-all duration-350 hover:translate-y-[-2px] ${
-                i >= 3 ? "sm:col-span-1" : ""
-              }`}
+              className="relative p-6 rounded-2xl cursor-default transition-all duration-350 group"
+              style={{
+                background: col.bg,
+                border: `1px solid ${col.border}`,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = `${col.color}35`;
+                e.currentTarget.style.transform = "translateY(-3px)";
+                e.currentTarget.style.boxShadow = `0 0 40px ${col.color}10`;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = col.border;
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.boxShadow = "none";
+              }}
             >
-              <div className="flex items-start gap-4">
-                <div
-                  className={`w-11 h-11 rounded-xl ${col.bg} border ${col.borderColor} flex items-center justify-center flex-shrink-0`}
+              {/* Icon */}
+              <div
+                className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 mb-4"
+                style={{
+                  background: `${col.color}12`,
+                  border: `1px solid ${col.color}25`
+                }}
+              >
+                <col.icon className="w-5 h-5" style={{ color: col.color }} />
+              </div>
+
+              {/* Name + tag */}
+              <div className="flex items-center gap-2.5 mb-2">
+                <h3
+                  className="font-semibold text-lg"
+                  style={{ fontFamily: "var(--font-heading)", color: "#E8EAF0" }}
                 >
-                  <col.icon className={`w-5 h-5 ${col.color}`} />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2.5 mb-1.5">
-                    <h3 className="font-[family-name:var(--font-heading)] font-semibold text-lg">
-                      {col.name}
-                    </h3>
-                    <span className="px-2 py-0.5 rounded-md bg-surface text-[10px] font-[family-name:var(--font-mono)] text-muted-darker border border-border">
-                      {col.tag}
-                    </span>
-                  </div>
-                  <p className="text-muted text-sm mb-3 leading-relaxed">
-                    {col.description}
-                  </p>
-                  <div className="flex items-center gap-2 text-xs font-[family-name:var(--font-mono)] text-muted-darker">
-                    <div
-                      className={`w-1.5 h-1.5 rounded-full ${col.accentDot}`}
-                    />
-                    <span className="italic truncate">
-                      &quot;{col.example}&quot;
-                    </span>
-                  </div>
-                </div>
+                  {col.name}
+                </h3>
+                <span
+                  className="px-2 py-0.5 rounded-md text-[10px] font-semibold uppercase tracking-wider"
+                  style={{
+                    background: `${col.color}12`,
+                    border: `1px solid ${col.color}25`,
+                    color: col.color,
+                    fontFamily: "var(--font-mono)"
+                  }}
+                >
+                  {col.tag}
+                </span>
+              </div>
+
+              {/* Description */}
+              <p
+                className="text-sm mb-4 leading-relaxed"
+                style={{ color: "#8892A8", fontFamily: "var(--font-body)" }}
+              >
+                {col.description}
+              </p>
+
+              {/* Example */}
+              <div
+                className="flex items-center gap-2 text-xs rounded-lg px-3 py-2"
+                style={{
+                  background: `${col.color}08`,
+                  border: `1px solid ${col.color}15`,
+                  fontFamily: "var(--font-mono)"
+                }}
+              >
+                <div
+                  className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                  style={{ backgroundColor: col.color }}
+                />
+                <span className="italic truncate" style={{ color: col.color, opacity: 0.8 }}>
+                  &quot;{col.example}&quot;
+                </span>
               </div>
             </motion.div>
           ))}

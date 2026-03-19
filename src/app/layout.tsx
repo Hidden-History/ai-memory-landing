@@ -1,22 +1,22 @@
 import type { Metadata } from "next";
-import { Space_Grotesk, DM_Sans, JetBrains_Mono, Geist } from "next/font/google";
+import { Orbitron, Exo_2, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Navbar } from "@/components/sections/navbar";
 import { Footer } from "@/components/sections/footer";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
-
-const spaceGrotesk = Space_Grotesk({
+const orbitron = Orbitron({
   variable: "--font-heading",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "500", "600", "700", "800", "900"],
+  display: "swap",
 });
 
-const dmSans = DM_Sans({
+const exo2 = Exo_2({
   variable: "--font-body",
   subsets: ["latin"],
-  weight: ["400", "500", "700"],
+  weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
 });
 
 const jetbrainsMono = JetBrains_Mono({
@@ -26,13 +26,13 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AI Memory — Qdrant-Backed Vector Memory for AI Agents",
+  title: "AI Memory — Neural Memory for AI Agents",
   description:
-    "Cure AI amnesia with a Qdrant-backed vector database. 5 specialized collections, semantic decay, 3-layer security, dual embedding routing, and GitHub/Jira sync for Claude Code.",
+    "Cure AI amnesia. Qdrant-backed vector memory with semantic decay, 3-layer security, dual embedding routing, and GitHub/Jira sync. Your AI never forgets.",
   openGraph: {
-    title: "AI Memory — Qdrant-Backed Vector Memory for AI Agents",
+    title: "AI Memory — Neural Memory for AI Agents",
     description:
-      "Cure AI amnesia with a Qdrant-backed vector database. 5 specialized collections, semantic decay, 3-layer security, and GitHub/Jira sync.",
+      "Cure AI amnesia with a Qdrant-backed vector database. 5 specialized collections, semantic decay, and dual-embedding routing.",
     type: "website",
   },
 };
@@ -43,9 +43,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={cn("dark", "font-sans", geist.variable)}>
+    <html lang="en" className="dark">
       <body
-        className={`${spaceGrotesk.variable} ${dmSans.variable} ${jetbrainsMono.variable} antialiased`}
+        className={cn(
+          orbitron.variable,
+          exo2.variable,
+          jetbrainsMono.variable,
+          "antialiased"
+        )}
       >
         <Navbar />
         {children}

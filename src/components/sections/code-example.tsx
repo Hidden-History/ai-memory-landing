@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { FolderOpen, Copy, Check } from "lucide-react";
 import { AnimatedSection } from "@/components/shared/animated-section";
+import { Cpu } from "lucide-react";
 
 const codeFiles = {
   "code-patterns": {
@@ -62,6 +63,14 @@ const codeFiles = {
   },
 };
 
+const typeColor: Record<string, string> = {
+  delimiter: "#4A5068",
+  key: "#00F5FF",
+  content: "#E8EAF0",
+  highlight: "#8B5CF6",
+  blank: "#4A5068",
+};
+
 type TabKey = keyof typeof codeFiles;
 
 export function CodeExample() {
@@ -77,43 +86,65 @@ export function CodeExample() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const typeColor: Record<string, string> = {
-    delimiter: "text-muted-darker/60",
-    key: "text-primary-light",
-    content: "text-foreground/75",
-    highlight: "text-accent",
-    blank: "",
-  };
-
   return (
-    <section className="relative py-32 px-6">
-      <div className="max-w-4xl mx-auto">
-        <AnimatedSection className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/8 border border-primary/15 text-primary-light text-xs font-[family-name:var(--font-mono)] uppercase tracking-widest mb-6">
+    <section className="relative py-40 px-6 overflow-hidden">
+      {/* Background */}
+      <div className="absolute inset-0 neural-grid opacity-20" />
+      <div className="absolute top-[30%] right-[10%] w-[500px] h-[500px] rounded-full pointer-events-none"
+        style={{
+          background: "radial-gradient(circle, rgba(139,92,246,0.04) 0%, transparent 70%)",
+          filter: "blur(100px)"
+        }}
+      />
+
+      <div className="max-w-4xl mx-auto relative">
+        <AnimatedSection className="text-center mb-20">
+          <div className="section-label mb-8">
+            <Cpu className="w-3.5 h-3.5" />
             Collection Format
           </div>
-          <h2 className="font-[family-name:var(--font-heading)] text-4xl sm:text-5xl lg:text-6xl font-bold mb-5 tracking-tight">
-            Qdrant <span className="gradient-text">Vector Storage</span>
+          <h2
+            className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 tracking-tight"
+            style={{ fontFamily: "var(--font-heading)" }}
+          >
+            Qdrant <span className="gradient-text-animated">Vector Storage</span>
           </h2>
-          <p className="text-muted text-lg max-w-2xl mx-auto leading-relaxed">
-            Each memory is a vector with rich payload metadata — confidence
-            scores, decay rates, and semantic embeddings for instant retrieval.
+          <p
+            className="text-lg max-w-2xl mx-auto leading-relaxed"
+            style={{ color: "#8892A8", fontFamily: "var(--font-body)" }}
+          >
+            Each memory is a vector with rich payload metadata — confidence scores,
+            decay rates, and semantic embeddings for instant retrieval.
           </p>
         </AnimatedSection>
 
+        {/* Code block */}
         <AnimatedSection delay={0.15}>
-          <div className="gradient-border overflow-hidden glow-primary">
-            <div className="flex items-center justify-between border-b border-border/50 px-1 bg-surface/30">
+          <div
+            className="relative overflow-hidden rounded-2xl"
+            style={{
+              border: "1px solid rgba(0, 245, 255, 0.12)",
+              background: "rgba(5, 5, 26, 0.9)",
+              boxShadow: "0 0 60px rgba(0,245,255,0.06), 0 20px 60px rgba(0,0,0,0.5)"
+            }}
+          >
+            {/* Tabs bar */}
+            <div
+              className="flex items-center justify-between px-4 py-3"
+              style={{ borderBottom: "1px solid rgba(0, 245, 255, 0.08)" }}
+            >
               <div className="flex">
                 {(Object.keys(codeFiles) as TabKey[]).map((tab) => (
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
-                    className={`px-5 py-3.5 text-xs font-[family-name:var(--font-mono)] transition-all duration-200 cursor-pointer border-b-2 ${
-                      activeTab === tab
-                        ? "text-primary-light border-primary bg-primary/5"
-                        : "text-muted-darker hover:text-muted border-transparent"
-                    }`}
+                    className="px-5 py-3 text-xs transition-all duration-200 cursor-pointer border-b-2"
+                    style={{
+                      fontFamily: "var(--font-mono)",
+                      background: activeTab === tab ? "rgba(0, 245, 255, 0.05)" : "transparent",
+                      borderBottomColor: activeTab === tab ? "#00F5FF" : "transparent",
+                      color: activeTab === tab ? "#00F5FF" : "#4A5068"
+                    }}
                   >
                     {codeFiles[tab].filename}
                   </button>
@@ -121,29 +152,36 @@ export function CodeExample() {
               </div>
               <button
                 onClick={handleCopy}
-                className="p-2.5 mr-2 text-muted-darker hover:text-foreground transition-colors cursor-pointer rounded-lg hover:bg-white/5"
+                className="p-2.5 mr-2 rounded-lg transition-all duration-200 cursor-pointer"
+                style={{ color: copied ? "#00FF88" : "#4A5068" }}
                 aria-label="Copy code"
               >
-                {copied ? (
-                  <Check className="w-4 h-4 text-green-400" />
-                ) : (
-                  <Copy className="w-4 h-4" />
-                )}
+                {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
               </button>
             </div>
 
-            <div className="p-6 overflow-x-auto bg-[#06061a]/50">
-              <pre className="font-[family-name:var(--font-mono)] text-[13px] leading-7">
+            {/* Code content */}
+            <div className="p-7 overflow-x-auto" style={{ background: "rgba(3, 3, 8, 0.6)" }}>
+              <pre
+                className="text-[13px] leading-7"
+                style={{ fontFamily: "var(--font-mono)" }}
+              >
                 <code>
                   {file.lines.map((line, i) => (
                     <div
                       key={`${activeTab}-${i}`}
-                      className="flex hover:bg-white/[0.02] rounded"
+                      className="flex rounded"
+                      style={{ background: "transparent" }}
+                      onMouseEnter={(e) => e.currentTarget.style.background = "rgba(0, 245, 255, 0.02)"}
+                      onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
                     >
-                      <span className="select-none text-muted-darker/40 w-8 flex-shrink-0 text-right mr-6 text-xs leading-7">
+                      <span
+                        className="select-none w-8 flex-shrink-0 text-right mr-6 text-xs leading-7"
+                        style={{ color: "#4A5068", opacity: 0.5 }}
+                      >
                         {i + 1}
                       </span>
-                      <span className={typeColor[line.type]}>
+                      <span style={{ color: typeColor[line.type] }}>
                         {line.text || "\u00A0"}
                       </span>
                     </div>
@@ -152,7 +190,16 @@ export function CodeExample() {
               </pre>
             </div>
 
-            <div className="border-t border-border/30 px-5 py-2.5 flex items-center gap-2.5 text-[11px] text-muted-darker font-[family-name:var(--font-mono)] bg-surface/20">
+            {/* File path bar */}
+            <div
+              className="flex items-center gap-2.5 px-5 py-3 text-[11px]"
+              style={{
+                borderTop: "1px solid rgba(0, 245, 255, 0.06)",
+                background: "rgba(0, 245, 255, 0.02)",
+                color: "#4A5068",
+                fontFamily: "var(--font-mono)"
+              }}
+            >
               <FolderOpen className="w-3 h-3" />
               {file.path}
             </div>
