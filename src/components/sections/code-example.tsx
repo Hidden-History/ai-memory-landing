@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { FolderOpen, Copy, Check } from "lucide-react";
+import { FolderOpen, Copy, Check, Terminal } from "lucide-react";
 import { AnimatedSection } from "@/components/shared/animated-section";
 import { Cpu } from "lucide-react";
 
@@ -64,11 +64,10 @@ const codeFiles = {
 };
 
 const typeColor: Record<string, string> = {
-  delimiter: "#4A5068",
+  delimiter: "#3A4560",
   key: "#00F5FF",
-  content: "#E8EAF0",
+  content: "#C8D0E0",
   highlight: "#8B5CF6",
-  blank: "#4A5068",
 };
 
 type TabKey = keyof typeof codeFiles;
@@ -90,78 +89,139 @@ export function CodeExample() {
     <section className="relative py-40 px-6 overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0 neural-grid opacity-20" />
-      <div className="absolute top-[30%] right-[10%] w-[500px] h-[500px] rounded-full pointer-events-none"
+      <div
+        className="absolute top-[30%] right-[10%] w-[500px] h-[500px] rounded-full pointer-events-none"
         style={{
-          background: "radial-gradient(circle, rgba(139,92,246,0.04) 0%, transparent 70%)",
-          filter: "blur(100px)"
+          background: "radial-gradient(circle, rgba(139,92,246,0.05) 0%, transparent 70%)",
+          filter: "blur(100px)",
+        }}
+      />
+      <div
+        className="absolute bottom-[20%] left-[5%] w-[400px] h-[400px] rounded-full pointer-events-none"
+        style={{
+          background: "radial-gradient(circle, rgba(0,245,255,0.04) 0%, transparent 70%)",
+          filter: "blur(80px)",
         }}
       />
 
-      <div className="max-w-4xl mx-auto relative">
+      <div className="max-w-6xl mx-auto relative">
         <AnimatedSection className="text-center mb-20">
           <div className="section-label mb-8">
             <Cpu className="w-3.5 h-3.5" />
             Collection Format
           </div>
           <h2
-            className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 tracking-tight"
+            className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 tracking-tight"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Qdrant <span className="gradient-text-animated">Vector Storage</span>
           </h2>
           <p
             className="text-lg max-w-2xl mx-auto leading-relaxed"
-            style={{ color: "#8892A8", fontFamily: "var(--font-body)" }}
+            style={{ color: "#7A8AAA", fontFamily: "var(--font-body)" }}
           >
             Each memory is a vector with rich payload metadata — confidence scores,
             decay rates, and semantic embeddings for instant retrieval.
           </p>
         </AnimatedSection>
 
-        {/* Code block */}
+        {/* Floating Terminal Window */}
         <AnimatedSection delay={0.15}>
           <div
-            className="relative overflow-hidden rounded-2xl"
+            className="relative rounded-2xl overflow-hidden"
             style={{
-              border: "1px solid rgba(0, 245, 255, 0.12)",
-              background: "rgba(5, 5, 26, 0.9)",
-              boxShadow: "0 0 60px rgba(0,245,255,0.06), 0 20px 60px rgba(0,0,0,0.5)"
+              border: "1px solid rgba(0,245,255,0.15)",
+              background: "linear-gradient(135deg, rgba(8,10,28,0.98) 0%, rgba(5,7,20,0.99) 100%)",
+              boxShadow:
+                "0 0 0 1px rgba(0,245,255,0.04) inset, 0 40px 80px rgba(0,0,0,0.7), 0 0 100px rgba(0,245,255,0.05)",
             }}
           >
-            {/* Tabs bar */}
+            {/* Terminal title bar */}
             <div
-              className="flex items-center justify-between px-4 py-3"
-              style={{ borderBottom: "1px solid rgba(0, 245, 255, 0.08)" }}
+              className="flex items-center justify-between px-5 py-4"
+              style={{
+                borderBottom: "1px solid rgba(0,245,255,0.08)",
+                background: "rgba(0,245,255,0.02)",
+              }}
             >
-              <div className="flex">
-                {(Object.keys(codeFiles) as TabKey[]).map((tab) => (
-                  <button
-                    key={tab}
-                    onClick={() => setActiveTab(tab)}
-                    className="px-5 py-3 text-xs transition-all duration-200 cursor-pointer border-b-2"
-                    style={{
-                      fontFamily: "var(--font-mono)",
-                      background: activeTab === tab ? "rgba(0, 245, 255, 0.05)" : "transparent",
-                      borderBottomColor: activeTab === tab ? "#00F5FF" : "transparent",
-                      color: activeTab === tab ? "#00F5FF" : "#4A5068"
-                    }}
-                  >
-                    {codeFiles[tab].filename}
-                  </button>
-                ))}
+              {/* Traffic lights */}
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full" style={{ background: "#FF5F57" }} />
+                <div className="w-3 h-3 rounded-full" style={{ background: "#FFBD2E" }} />
+                <div className="w-3 h-3 rounded-full" style={{ background: "#28C840" }} />
               </div>
+
+              {/* Terminal icon + title */}
+              <div className="flex items-center gap-2">
+                <Terminal className="w-3.5 h-3.5" style={{ color: "#00F5FF" }} />
+                <span
+                  className="text-xs"
+                  style={{
+                    fontFamily: "var(--font-mono)",
+                    color: "#5A6480",
+                  }}
+                >
+                  qdrant-memory-cli
+                </span>
+              </div>
+
+              {/* Copy button */}
               <button
                 onClick={handleCopy}
-                className="p-2.5 mr-2 rounded-lg transition-all duration-200 cursor-pointer"
-                style={{ color: copied ? "#00FF88" : "#4A5068" }}
-                aria-label="Copy code"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs transition-all duration-200 cursor-pointer"
+                style={{
+                  fontFamily: "var(--font-mono)",
+                  background: copied ? "rgba(0,255,136,0.1)" : "rgba(0,245,255,0.05)",
+                  border: copied ? "1px solid rgba(0,255,136,0.2)" : "1px solid rgba(0,245,255,0.1)",
+                  color: copied ? "#00FF88" : "#7A8AAA",
+                }}
               >
-                {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                {copied ? "Copied!" : "Copy"}
               </button>
             </div>
 
+            {/* Tabs bar */}
+            <div
+              className="flex items-center px-4 py-2 gap-1"
+              style={{ borderBottom: "1px solid rgba(0,245,255,0.06)" }}
+            >
+              {(Object.keys(codeFiles) as TabKey[]).map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className="px-4 py-2 text-xs transition-all duration-200 cursor-pointer rounded-lg"
+                  style={{
+                    fontFamily: "var(--font-mono)",
+                    background: activeTab === tab ? "rgba(0,245,255,0.06)" : "transparent",
+                    color: activeTab === tab ? "#00F5FF" : "#5A6480",
+                    border: activeTab === tab ? "1px solid rgba(0,245,255,0.15)" : "1px solid transparent",
+                  }}
+                >
+                  {codeFiles[tab].filename}
+                </button>
+              ))}
+
+              {/* Blinking cursor */}
+              <div className="ml-2 flex items-center gap-1">
+                <span
+                  className="text-xs"
+                  style={{ fontFamily: "var(--font-mono)", color: "#3A4560" }}
+                >
+                  $
+                </span>
+                <div
+                  className="w-2 h-4 rounded-sm"
+                  style={{ background: "#00F5FF", animation: "blink 1.2s step-end infinite" }}
+                />
+              </div>
+            </div>
+
             {/* Code content */}
-            <div className="p-7 overflow-x-auto" style={{ background: "rgba(3, 3, 8, 0.6)" }}>
+            <div
+              className="p-6 overflow-x-auto"
+              style={{ background: "rgba(3,4,12,0.8)" }}
+            >
               <pre
                 className="text-[13px] leading-7"
                 style={{ fontFamily: "var(--font-mono)" }}
@@ -170,14 +230,13 @@ export function CodeExample() {
                   {file.lines.map((line, i) => (
                     <div
                       key={`${activeTab}-${i}`}
-                      className="flex rounded"
-                      style={{ background: "transparent" }}
-                      onMouseEnter={(e) => e.currentTarget.style.background = "rgba(0, 245, 255, 0.02)"}
-                      onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
+                      className="flex rounded transition-colors duration-150"
+                      onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(0,245,255,0.02)")}
+                      onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
                     >
                       <span
                         className="select-none w-8 flex-shrink-0 text-right mr-6 text-xs leading-7"
-                        style={{ color: "#4A5068", opacity: 0.5 }}
+                        style={{ color: "#3A4560" }}
                       >
                         {i + 1}
                       </span>
@@ -190,22 +249,92 @@ export function CodeExample() {
               </pre>
             </div>
 
-            {/* File path bar */}
+            {/* File path footer */}
             <div
-              className="flex items-center gap-2.5 px-5 py-3 text-[11px]"
+              className="flex items-center gap-2.5 px-5 py-3"
               style={{
-                borderTop: "1px solid rgba(0, 245, 255, 0.06)",
-                background: "rgba(0, 245, 255, 0.02)",
-                color: "#4A5068",
-                fontFamily: "var(--font-mono)"
+                borderTop: "1px solid rgba(0,245,255,0.06)",
+                background: "rgba(0,245,255,0.015)",
               }}
             >
-              <FolderOpen className="w-3 h-3" />
-              {file.path}
+              <FolderOpen className="w-3.5 h-3.5" style={{ color: "#5A6480" }} />
+              <span
+                className="text-[11px]"
+                style={{
+                  fontFamily: "var(--font-mono)",
+                  color: "#5A6480",
+                }}
+              >
+                {file.path}
+              </span>
+              <div className="ml-auto flex items-center gap-2">
+                <span
+                  className="text-[10px] px-2 py-0.5 rounded"
+                  style={{
+                    fontFamily: "var(--font-mono)",
+                    background: "rgba(0,245,255,0.06)",
+                    border: "1px solid rgba(0,245,255,0.12)",
+                    color: "#00F5FF",
+                  }}
+                >
+                  UTF-8
+                </span>
+                <span
+                  className="text-[10px] px-2 py-0.5 rounded"
+                  style={{
+                    fontFamily: "var(--font-mono)",
+                    background: "rgba(139,92,246,0.06)",
+                    border: "1px solid rgba(139,92,246,0.12)",
+                    color: "#8B5CF6",
+                  }}
+                >
+                  JSON
+                </span>
+              </div>
             </div>
           </div>
         </AnimatedSection>
+
+        {/* Key stats below terminal */}
+        <AnimatedSection delay={0.3}>
+          <div className="grid grid-cols-3 gap-4 mt-10">
+            {[
+              { value: "1536", label: "Vector Dimensions", color: "#00F5FF" },
+              { value: "0.94", label: "Avg. Confidence", color: "#8B5CF6" },
+              { value: "<12ms", label: "Query Latency", color: "#00FF88" },
+            ].map((stat) => (
+              <div
+                key={stat.label}
+                className="text-center p-4 rounded-xl"
+                style={{
+                  background: "linear-gradient(135deg, rgba(15,20,50,0.8) 0%, rgba(10,13,35,0.9) 100%)",
+                  border: `1px solid ${stat.color}15`,
+                }}
+              >
+                <div
+                  className="text-2xl font-bold mb-1"
+                  style={{ fontFamily: "var(--font-heading)", color: stat.color }}
+                >
+                  {stat.value}
+                </div>
+                <div
+                  className="text-xs"
+                  style={{ fontFamily: "var(--font-mono)", color: "#5A6480" }}
+                >
+                  {stat.label}
+                </div>
+              </div>
+            ))}
+          </div>
+        </AnimatedSection>
       </div>
+
+      <style>{`
+        @keyframes blink {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0; }
+        }
+      `}</style>
     </section>
   );
 }

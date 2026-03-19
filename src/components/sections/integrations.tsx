@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { AnimatedSection } from "@/components/shared/animated-section";
 
-/* ── Inline SVG logos ──────────────────────────────── */
+/* ── Inline SVG logos ─────────────────────────────── */
 
 const DockerSvg = () => (
   <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style={{ width: 28, height: 28 }}>
@@ -50,86 +50,16 @@ const ClaudeSvg = () => (
 /* ── Integration definitions ────────────────────────── */
 
 const integrations = [
-  {
-    name: "GitHub",
-    logo: null,
-    initial: "GH",
-    color: "#E8EAF0",
-    bg: "rgba(255,255,255,0.04)",
-    border: "rgba(255,255,255,0.12)",
-  },
-  {
-    name: "Jira",
-    logo: null,
-    initial: "Jira",
-    color: "#0052CC",
-    bg: "rgba(0,82,204,0.08)",
-    border: "rgba(0,82,204,0.2)",
-  },
-  {
-    name: "Qdrant",
-    logo: null,
-    initial: "Q",
-    color: "#00F5FF",
-    bg: "rgba(0,245,255,0.06)",
-    border: "rgba(0,245,255,0.15)",
-  },
-  {
-    name: "Langfuse",
-    logo: LangfuseSvg,
-    initial: null,
-    color: "#FF6B35",
-    bg: "rgba(255,107,53,0.06)",
-    border: "rgba(255,107,53,0.15)",
-  },
-  {
-    name: "Prometheus",
-    logo: PrometheusSvg,
-    initial: null,
-    color: "#E6522C",
-    bg: "rgba(230,82,44,0.06)",
-    border: "rgba(230,82,44,0.15)",
-  },
-  {
-    name: "Grafana",
-    logo: GrafanaSvg,
-    initial: null,
-    color: "#F46800",
-    bg: "rgba(244,104,0,0.06)",
-    border: "rgba(244,104,0,0.15)",
-  },
-  {
-    name: "Docker",
-    logo: DockerSvg,
-    initial: null,
-    color: "#2496ED",
-    bg: "rgba(36,150,237,0.06)",
-    border: "rgba(36,150,237,0.15)",
-  },
-  {
-    name: "Python",
-    logo: PythonSvg,
-    initial: null,
-    color: "#3776AB",
-    bg: "rgba(55,118,171,0.06)",
-    border: "rgba(55,118,171,0.15)",
-  },
-  {
-    name: "Claude",
-    logo: ClaudeSvg,
-    initial: null,
-    color: "#00F5FF",
-    bg: "rgba(0,245,255,0.06)",
-    border: "rgba(0,245,255,0.15)",
-  },
-  {
-    name: "Ollama",
-    logo: OllamaSvg,
-    initial: null,
-    color: "#000000",
-    bg: "rgba(0,0,0,0.06)",
-    border: "rgba(0,0,0,0.15)",
-  },
+  { name: "GitHub",  logo: null,       initial: "GH",  color: "#E8EAF0", bg: "rgba(255,255,255,0.04)", border: "rgba(255,255,255,0.12)" },
+  { name: "Jira",    logo: null,       initial: "Jira", color: "#0052CC", bg: "rgba(0,82,204,0.08)", border: "rgba(0,82,204,0.2)" },
+  { name: "Qdrant",  logo: null,       initial: "Q",    color: "#00F5FF", bg: "rgba(0,245,255,0.06)", border: "rgba(0,245,255,0.15)" },
+  { name: "Langfuse",logo: LangfuseSvg, initial: null,  color: "#FF6B35", bg: "rgba(255,107,53,0.06)", border: "rgba(255,107,53,0.15)" },
+  { name: "Prometheus", logo: PrometheusSvg, initial: null, color: "#E6522C", bg: "rgba(230,82,44,0.06)", border: "rgba(230,82,44,0.15)" },
+  { name: "Grafana", logo: GrafanaSvg,  initial: null,   color: "#F46800", bg: "rgba(244,104,0,0.06)", border: "rgba(244,104,0,0.15)" },
+  { name: "Docker",  logo: DockerSvg,   initial: null,   color: "#2496ED", bg: "rgba(36,150,237,0.06)", border: "rgba(36,150,237,0.15)" },
+  { name: "Python",  logo: PythonSvg,    initial: null,   color: "#3776AB", bg: "rgba(55,118,171,0.06)", border: "rgba(55,118,171,0.15)" },
+  { name: "Claude",  logo: ClaudeSvg,   initial: null,   color: "#00F5FF", bg: "rgba(0,245,255,0.06)", border: "rgba(0,245,255,0.15)" },
+  { name: "Ollama",  logo: OllamaSvg,   initial: null,   color: "#000000", bg: "rgba(0,0,0,0.06)", border: "rgba(0,0,0,0.15)" },
 ];
 
 export function Integrations() {
@@ -137,14 +67,15 @@ export function Integrations() {
     <section id="integrations" className="relative py-40 px-6 overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0 neural-grid opacity-20" />
-      <div className="absolute top-[30%] left-[50%] -translate-x-1/2 w-[700px] h-[700px] rounded-full pointer-events-none"
+      <div
+        className="absolute top-[30%] left-[50%] -translate-x-1/2 w-[700px] h-[700px] rounded-full pointer-events-none"
         style={{
-          background: "radial-gradient(circle, rgba(0,245,255,0.03) 0%, transparent 65%)",
-          filter: "blur(100px)"
+          background: "radial-gradient(circle, rgba(0,245,255,0.04) 0%, rgba(139,92,246,0.03) 50%, transparent 65%)",
+          filter: "blur(100px)",
         }}
       />
 
-      <div className="max-w-5xl mx-auto relative">
+      <div className="max-w-6xl mx-auto relative">
         <AnimatedSection className="text-center mb-20">
           <div className="section-label mb-8">
             <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -154,7 +85,7 @@ export function Integrations() {
             Ecosystem
           </div>
           <h2
-            className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 tracking-tight"
+            className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 tracking-tight"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Integrates with{" "}
@@ -162,14 +93,14 @@ export function Integrations() {
           </h2>
           <p
             className="text-lg max-w-2xl mx-auto leading-relaxed"
-            style={{ color: "#8892A8", fontFamily: "var(--font-body)" }}
+            style={{ color: "#7A8AAA", fontFamily: "var(--font-body)" }}
           >
             GitHub, Jira, Langfuse, Qdrant, Prometheus, Grafana — AI Memory plugs
             into your existing infrastructure.
           </p>
         </AnimatedSection>
 
-        {/* Integration grid */}
+        {/* Constellation / Orbit grid */}
         <AnimatedSection delay={0.15}>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
             {integrations.map((item, i) => (
@@ -181,13 +112,13 @@ export function Integrations() {
                 transition={{ delay: i * 0.05, duration: 0.4 }}
                 className="relative p-5 rounded-2xl text-center cursor-default transition-all duration-300 group"
                 style={{
-                  background: item.bg,
+                  background: "linear-gradient(135deg, rgba(15,20,50,0.9) 0%, rgba(10,13,35,0.95) 100%)",
                   border: `1px solid ${item.border}`,
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.borderColor = `${item.color}50`;
-                  e.currentTarget.style.transform = "translateY(-4px)";
-                  e.currentTarget.style.boxShadow = `0 0 30px ${item.color}20`;
+                  e.currentTarget.style.transform = "translateY(-5px)";
+                  e.currentTarget.style.boxShadow = `0 0 40px ${item.color}18, 0 20px 40px rgba(0,0,0,0.4)`;
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.borderColor = item.border;
@@ -195,13 +126,21 @@ export function Integrations() {
                   e.currentTarget.style.boxShadow = "none";
                 }}
               >
-                {/* Logo */}
+                {/* Top glow line */}
+                <div
+                  className="absolute top-0 left-4 right-4 h-px rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  style={{
+                    background: `linear-gradient(90deg, transparent, ${item.color}60, transparent)`,
+                  }}
+                />
+
+                {/* Logo container */}
                 <div
                   className="w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center"
                   style={{
-                    background: `${item.color}15`,
-                    border: `2px solid ${item.color}40`,
-                    boxShadow: `0 0 20px ${item.color}20`,
+                    background: `${item.color}0E`,
+                    border: `1.5px solid ${item.color}35`,
+                    boxShadow: `0 0 25px ${item.color}10 inset, 0 0 20px ${item.color}15`,
                   }}
                 >
                   {item.logo ? (
@@ -209,10 +148,7 @@ export function Integrations() {
                   ) : (
                     <span
                       className="text-sm font-bold"
-                      style={{
-                        color: item.color,
-                        fontFamily: "var(--font-heading)",
-                      }}
+                      style={{ color: item.color, fontFamily: "var(--font-heading)" }}
                     >
                       {item.initial}
                     </span>
@@ -222,19 +158,16 @@ export function Integrations() {
                 {/* Name */}
                 <div
                   className="text-sm font-semibold"
-                  style={{
-                    color: item.color,
-                    fontFamily: "var(--font-body)",
-                  }}
+                  style={{ color: item.color, fontFamily: "var(--font-body)" }}
                 >
                   {item.name}
                 </div>
 
-                {/* Hover glow */}
+                {/* Glow on hover */}
                 <div
-                  className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                  className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-400 pointer-events-none"
                   style={{
-                    background: `radial-gradient(circle at 50% 30%, ${item.color}08 0%, transparent 70%)`,
+                    background: `radial-gradient(circle at 50% 0%, ${item.color}06 0%, transparent 60%)`,
                   }}
                 />
               </motion.div>
@@ -244,8 +177,10 @@ export function Integrations() {
 
         {/* Additional note */}
         <AnimatedSection delay={0.3}>
-          <p className="text-center mt-10 text-sm"
-            style={{ color: "#4A5068", fontFamily: "var(--font-body)" }}>
+          <p
+            className="text-center mt-10 text-sm"
+            style={{ color: "#5A6480", fontFamily: "var(--font-mono)" }}
+          >
             Plus: TypeScript, OpenAI, Anthropic, age encryption, SOPS, and more.
           </p>
         </AnimatedSection>

@@ -30,28 +30,28 @@ export function GitHubCTA() {
         }}
       />
 
-      <div className="max-w-3xl mx-auto relative">
+      <div className="max-w-6xl mx-auto relative">
         <AnimatedSection>
           <div
             className="relative p-14 md:p-20 overflow-hidden rounded-3xl text-center"
             style={{
-              background: "rgba(10, 10, 31, 0.8)",
-              border: "1px solid rgba(0, 245, 255, 0.1)",
-              boxShadow: "0 0 80px rgba(0,245,255,0.05), 0 40px 80px rgba(0,0,0,0.5)"
+              background: "linear-gradient(135deg, rgba(15,20,50,0.95) 0%, rgba(8,10,28,0.98) 100%)",
+              border: "1px solid rgba(0,245,255,0.15)",
+              boxShadow: "0 0 0 1px rgba(0,245,255,0.04) inset, 0 40px 80px rgba(0,0,0,0.6), 0 0 120px rgba(0,245,255,0.06)",
             }}
           >
             {/* Glow overlay */}
             <div
               className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[300px] rounded-full pointer-events-none"
               style={{
-                background: "radial-gradient(circle, rgba(0,245,255,0.06) 0%, transparent 70%)",
+                background: "radial-gradient(circle, rgba(0,245,255,0.08) 0%, transparent 70%)",
                 filter: "blur(60px)"
               }}
             />
             <div
               className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full pointer-events-none"
               style={{
-                background: "radial-gradient(circle, rgba(255,45,106,0.04) 0%, transparent 70%)",
+                background: "radial-gradient(circle, rgba(255,45,106,0.06) 0%, transparent 70%)",
                 filter: "blur(80px)"
               }}
             />
@@ -65,8 +65,9 @@ export function GitHubCTA() {
                 viewport={{ once: true }}
                 className="w-16 h-16 mx-auto mb-8 rounded-2xl flex items-center justify-center"
                 style={{
-                  background: "rgba(0, 245, 255, 0.06)",
-                  border: "1px solid rgba(0, 245, 255, 0.15)"
+                  background: "rgba(0,245,255,0.06)",
+                  border: "1px solid rgba(0,245,255,0.2)",
+                  boxShadow: "0 0 30px rgba(0,245,255,0.08) inset",
                 }}
               >
                 <Github className="w-8 h-8" style={{ color: "#E8EAF0" }} />
@@ -74,7 +75,7 @@ export function GitHubCTA() {
 
               {/* Headline */}
               <h2
-                className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 tracking-tight"
+                className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 tracking-tight"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 Open Source &amp;<br />
@@ -83,7 +84,7 @@ export function GitHubCTA() {
 
               <p
                 className="text-lg mb-10 max-w-lg mx-auto leading-relaxed"
-                style={{ color: "#8892A8", fontFamily: "var(--font-body)" }}
+                style={{ color: "#7A8AAA", fontFamily: "var(--font-body)" }}
               >
                 AI Memory is MIT licensed. Star the repo, file issues, submit
                 PRs — help shape how AI agents remember.
@@ -97,8 +98,8 @@ export function GitHubCTA() {
                   viewport={{ once: true }}
                   className="inline-flex items-center gap-3 px-6 py-3 rounded-2xl mb-10"
                   style={{
-                    background: "rgba(255, 184, 0, 0.06)",
-                    border: "1px solid rgba(255, 184, 0, 0.15)"
+                    background: "rgba(255,184,0,0.06)",
+                    border: "1px solid rgba(255,184,0,0.15)",
                   }}
                 >
                   <Star className="w-5 h-5" style={{ color: "#FFB800", fill: "#FFB800" }} />
@@ -117,25 +118,25 @@ export function GitHubCTA() {
                   href="https://github.com/Hidden-History/ai-memory"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group flex items-center gap-3 px-8 py-4 rounded-2xl text-base font-semibold transition-all duration-300"
+                  className="group flex items-center gap-3 px-10 py-5 rounded-2xl text-lg font-semibold transition-all duration-300"
                   style={{
-                    background: "#E8EAF0",
-                    color: "#030308",
+                    background: "linear-gradient(135deg, #00F5FF 0%, #00C4CC 100%)",
+                    color: "#0A0D1A",
                     fontFamily: "var(--font-heading)",
-                    boxShadow: "0 0 40px rgba(0,245,255,0.15)"
+                    boxShadow: "0 0 40px rgba(0,245,255,0.3), 0 8px 24px rgba(0,0,0,0.4)",
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.transform = "translateY(-2px)";
-                    e.currentTarget.style.boxShadow = "0 0 60px rgba(0,245,255,0.25)";
+                    e.currentTarget.style.boxShadow = "0 0 60px rgba(0,245,255,0.4), 0 12px 32px rgba(0,0,0,0.5)";
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.transform = "translateY(0)";
-                    e.currentTarget.style.boxShadow = "0 0 40px rgba(0,245,255,0.15)";
+                    e.currentTarget.style.boxShadow = "0 0 40px rgba(0,245,255,0.3), 0 8px 24px rgba(0,0,0,0.4)";
                   }}
                 >
                   <Star className="w-5 h-5" />
                   Star on GitHub
-                  <ExternalLink className="w-4 h-4 opacity-50" />
+                  <ExternalLink className="w-4 h-4 opacity-60" />
                 </a>
               </div>
             </div>

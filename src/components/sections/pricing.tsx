@@ -15,7 +15,7 @@ export function Pricing() {
         }}
       />
 
-      <div className="max-w-5xl mx-auto relative">
+      <div className="max-w-6xl mx-auto relative">
         <AnimatedSection className="text-center mb-20">
           <div className="section-label mb-8">
             <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -33,7 +33,7 @@ export function Pricing() {
           </h2>
           <p
             className="text-lg max-w-2xl mx-auto leading-relaxed"
-            style={{ color: "#8892A8", fontFamily: "var(--font-body)" }}
+            style={{ color: "#7A8AAA", fontFamily: "var(--font-body)" }}
           >
             Self-host for free with MIT license, or choose cloud for zero-maintenance setup.
           </p>

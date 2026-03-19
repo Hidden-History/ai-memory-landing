@@ -91,7 +91,7 @@ export function Parzival() {
 
           <p
             className="text-lg max-w-2xl mx-auto leading-relaxed"
-            style={{ color: "#8892A8", fontFamily: "var(--font-body)" }}
+            style={{ color: "#7A8AAA", fontFamily: "var(--font-body)" }}
           >
             Your AI project manager that orchestrates agent teams, enforces quality
             gates, and maintains session continuity across your entire workflow.
@@ -149,7 +149,7 @@ export function Parzival() {
               {/* Description */}
               <p
                 className="text-sm leading-relaxed"
-                style={{ color: "#8892A8", fontFamily: "var(--font-body)" }}
+                style={{ color: "#7A8AAA", fontFamily: "var(--font-body)" }}
               >
                 {cap.description}
               </p>

@@ -6,9 +6,9 @@ import { AnimatedSection } from "@/components/shared/animated-section";
 import { Cpu } from "lucide-react";
 
 const terminalLines = [
-  { text: "$ claude", color: "#E8EAF0", delay: 0 },
-  { text: "Connecting to Qdrant... 5 collections loaded", color: "#4A5068", delay: 600 },
-  { text: "Semantic search across 2,847 vectors", color: "#4A5068", delay: 900 },
+  { text: "$ claude", color: "#C8D0E0", delay: 0 },
+  { text: "Connecting to Qdrant... 5 collections loaded", color: "#3A4560", delay: 600 },
+  { text: "Semantic search across 2,847 vectors", color: "#3A4560", delay: 900 },
   { text: "", color: "", delay: 1100 },
   { text: '> "Help me refactor the auth middleware"', color: "#00F5FF", delay: 1400 },
   { text: "", color: "", delay: 1700 },
@@ -46,14 +46,14 @@ export function Integration() {
         }}
       />
 
-      <div className="max-w-4xl mx-auto relative">
+      <div className="max-w-6xl mx-auto relative">
         <AnimatedSection className="text-center mb-20">
           <div className="section-label mb-8">
             <Cpu className="w-3.5 h-3.5" />
             Integration
           </div>
           <h2
-            className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 tracking-tight"
+            className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 tracking-tight"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Works with{" "}
@@ -61,7 +61,7 @@ export function Integration() {
           </h2>
           <p
             className="text-lg max-w-2xl mx-auto leading-relaxed"
-            style={{ color: "#8892A8", fontFamily: "var(--font-body)" }}
+            style={{ color: "#7A8AAA", fontFamily: "var(--font-body)" }}
           >
             Built for Claude Code&apos;s hook system. Start a session and your AI
             searches across all 5 collections to find exactly what it needs.
@@ -74,17 +74,17 @@ export function Integration() {
             ref={ref}
             className="relative overflow-hidden rounded-2xl"
             style={{
-              border: "1px solid rgba(0, 245, 255, 0.12)",
-              background: "rgba(5, 5, 26, 0.9)",
-              boxShadow: "0 0 60px rgba(0,245,255,0.06), 0 20px 60px rgba(0,0,0,0.5)"
+              border: "1px solid rgba(0,245,255,0.12)",
+              background: "linear-gradient(135deg, rgba(5,7,20,0.98) 0%, rgba(8,10,28,0.95) 100%)",
+              boxShadow: "0 0 0 1px rgba(0,245,255,0.04) inset, 0 40px 80px rgba(0,0,0,0.6), 0 0 80px rgba(0,245,255,0.05)",
             }}
           >
             {/* Terminal chrome */}
             <div
               className="flex items-center gap-3 px-5 py-3.5"
               style={{
-                borderBottom: "1px solid rgba(0, 245, 255, 0.08)",
-                background: "rgba(0, 245, 255, 0.02)"
+                borderBottom: "1px solid rgba(0,245,255,0.08)",
+                background: "rgba(0,245,255,0.02)",
               }}
             >
               <div className="flex gap-2">
@@ -95,7 +95,7 @@ export function Integration() {
               <div className="flex-1 text-center">
                 <span
                   className="text-[11px]"
-                  style={{ color: "#4A5068", fontFamily: "var(--font-mono)" }}
+                  style={{ color: "#3A4560", fontFamily: "var(--font-mono)" }}
                 >
                   claude — ai-memory session
                 </span>

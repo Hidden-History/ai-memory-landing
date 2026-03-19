@@ -1,19 +1,27 @@
 import type { Metadata } from "next";
-import { Orbitron, Exo_2, JetBrains_Mono } from "next/font/google";
+import { Orbitron, JetBrains_Mono } from "next/font/google";
+import { Bebas_Neue, Outfit } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Navbar } from "@/components/sections/navbar";
 import { Footer } from "@/components/sections/footer";
 
 const orbitron = Orbitron({
-  variable: "--font-heading",
+  variable: "--font-orbitron",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800", "900"],
   display: "swap",
 });
 
-const exo2 = Exo_2({
-  variable: "--font-body",
+const bebasNeue = Bebas_Neue({
+  variable: "--font-heading",
+  subsets: ["latin"],
+  weight: ["400"],
+  display: "swap",
+});
+
+const outfit = Outfit({
+  variable: "--font-outfit",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
   display: "swap",
@@ -47,7 +55,8 @@ export default function RootLayout({
       <body
         className={cn(
           orbitron.variable,
-          exo2.variable,
+          bebasNeue.variable,
+          outfit.variable,
           jetbrainsMono.variable,
           "antialiased"
         )}

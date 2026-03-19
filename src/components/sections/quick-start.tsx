@@ -6,17 +6,17 @@ import { AnimatedSection } from "@/components/shared/animated-section";
 import { Zap } from "lucide-react";
 
 const terminalLines = [
-  { text: "# 1. Clone the repo", color: "#4A5068", delay: 0 },
-  { text: "$ git clone https://github.com/Hidden-History/ai-memory.git", color: "#E8EAF0", delay: 400 },
-  { text: "$ cd ai-memory", color: "#E8EAF0", delay: 700 },
+  { text: "# 1. Clone the repo", color: "#3A4560", delay: 0 },
+  { text: "$ git clone https://github.com/Hidden-History/ai-memory.git", color: "#C8D0E0", delay: 400 },
+  { text: "$ cd ai-memory", color: "#C8D0E0", delay: 700 },
   { text: "", color: "", delay: 900 },
-  { text: "# 2. Start Docker services", color: "#4A5068", delay: 1100 },
-  { text: "$ docker compose up -d", color: "#E8EAF0", delay: 1500 },
+  { text: "# 2. Start Docker services", color: "#3A4560", delay: 1100 },
+  { text: "$ docker compose up -d", color: "#C8D0E0", delay: 1500 },
   { text: "✓ Qdrant ready on :6333", color: "#00FF88", delay: 2000 },
   { text: "✓ Embedding service on :28080", color: "#00FF88", delay: 2200 },
   { text: "", color: "", delay: 2500 },
-  { text: "# 3. Install to your project", color: "#4A5068", delay: 2700 },
-  { text: "$ ./scripts/install.sh ~/projects/my-app", color: "#E8EAF0", delay: 3100 },
+  { text: "# 3. Install to your project", color: "#3A4560", delay: 2700 },
+  { text: "$ ./scripts/install.sh ~/projects/my-app", color: "#C8D0E0", delay: 3100 },
   { text: "", color: "", delay: 3400 },
   { text: "┌─ AI Memory Installer ─────────────────────────────┐", color: "#8B5CF6", delay: 3700 },
   { text: "│                                                     │", color: "#8B5CF6", delay: 3800 },
@@ -54,14 +54,14 @@ export function QuickStart() {
         }}
       />
 
-      <div className="max-w-4xl mx-auto relative">
+      <div className="max-w-6xl mx-auto relative">
         <AnimatedSection className="text-center mb-20">
           <div className="section-label mb-8">
             <Zap className="w-3.5 h-3.5" />
             Quick Start
           </div>
           <h2
-            className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 tracking-tight"
+            className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 tracking-tight"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Up and Running in{" "}
@@ -69,7 +69,7 @@ export function QuickStart() {
           </h2>
           <p
             className="text-lg max-w-2xl mx-auto leading-relaxed"
-            style={{ color: "#8892A8", fontFamily: "var(--font-body)" }}
+            style={{ color: "#7A8AAA", fontFamily: "var(--font-body)" }}
           >
             Clone the repo, start Docker services, and run the installer.
             That&apos;s it — your AI will remember everything.
@@ -82,17 +82,17 @@ export function QuickStart() {
             ref={ref}
             className="relative overflow-hidden rounded-2xl"
             style={{
-              border: "1px solid rgba(0, 245, 255, 0.12)",
-              background: "rgba(5, 5, 26, 0.9)",
-              boxShadow: "0 0 60px rgba(0,245,255,0.06), 0 20px 60px rgba(0,0,0,0.5)"
+              border: "1px solid rgba(0,245,255,0.12)",
+              background: "linear-gradient(135deg, rgba(5,7,20,0.98) 0%, rgba(8,10,28,0.95) 100%)",
+              boxShadow: "0 0 0 1px rgba(0,245,255,0.04) inset, 0 40px 80px rgba(0,0,0,0.6), 0 0 80px rgba(0,245,255,0.05)",
             }}
           >
             {/* Terminal chrome */}
             <div
               className="flex items-center gap-3 px-5 py-3.5"
               style={{
-                borderBottom: "1px solid rgba(0, 245, 255, 0.08)",
-                background: "rgba(0, 245, 255, 0.02)"
+                borderBottom: "1px solid rgba(0,245,255,0.08)",
+                background: "rgba(0,245,255,0.02)",
               }}
             >
               {/* Traffic lights */}
@@ -104,9 +104,9 @@ export function QuickStart() {
               <div className="flex-1 text-center">
                 <span
                   className="text-[11px]"
-                  style={{ color: "#4A5068", fontFamily: "var(--font-mono)" }}
+                  style={{ color: "#3A4560", fontFamily: "var(--font-mono)" }}
                 >
-                  ai-memory — terminal
+                  ai-memory — bash
                 </span>
               </div>
               <div className="w-16" />
