@@ -1,15 +1,164 @@
 "use client";
 
-import { useEffect, useRef, useState, RefObject } from "react";
-import { motion } from "framer-motion";
-import { Cpu, Database, Brain, Shield, Zap, GitBranch } from "lucide-react";
+import { useEffect, useRef, useState, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Cpu, Database, Brain, Shield, Zap, GitBranch, ChevronRight, ExternalLink, Layers, Activity, Target, Infinity, Lock, Eye } from "lucide-react";
+
+// ─── Design System ──────────────────────────────────────────────────────────────
 
 const CYAN = "#00F5FF";
 const VIOLET = "#8B5CF6";
 const MAGENTA = "#FF2D6A";
 const GREEN = "#00FF88";
 const AMBER = "#F59E0B";
-const DEEP_BG = "#030308";
+const TEXT = "#E8EAF0";
+const TEXT_MUTED = "#7A8AAA";
+const TEXT_DIM = "#4A5568";
+const BG_DEEP = "#030308";
+const BG_SURFACE = "#0A0D1A";
+const BG_CARD = "#0F1428";
+const BG_ELEVATED = "#141932";
+
+// ─── Blueprint Grid Background ───────────────────────────────────────────────────
+
+function BlueprintGrid() {
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+      {/* Primary grid */}
+      <svg
+        className="absolute inset-0 w-full h-full opacity-[0.04]"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <defs>
+          <pattern id="blueprint-grid" width="48" height="48" patternUnits="userSpaceOnUse">
+            <path d="M 48 0 L 0 0 0 48" fill="none" stroke={CYAN} strokeWidth="0.5" />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#blueprint-grid)" />
+      </svg>
+
+      {/* Crosshair markers at corners */}
+      <svg className="absolute top-8 left-8 w-6 h-6 opacity-20" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="8" fill="none" stroke={CYAN} strokeWidth="0.5" />
+        <line x1="12" y1="0" x2="12" y2="6" stroke={CYAN} strokeWidth="0.5" />
+        <line x1="12" y1="18" x2="12" y2="24" stroke={CYAN} strokeWidth="0.5" />
+        <line x1="0" y1="12" x2="6" y2="12" stroke={CYAN} strokeWidth="0.5" />
+        <line x1="18" y1="12" x2="24" y2="12" stroke={CYAN} strokeWidth="0.5" />
+      </svg>
+      <svg className="absolute top-8 right-8 w-6 h-6 opacity-20" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="8" fill="none" stroke={CYAN} strokeWidth="0.5" />
+        <line x1="12" y1="0" x2="12" y2="6" stroke={CYAN} strokeWidth="0.5" />
+        <line x1="12" y1="18" x2="12" y2="24" stroke={CYAN} strokeWidth="0.5" />
+        <line x1="0" y1="12" x2="6" y2="12" stroke={CYAN} strokeWidth="0.5" />
+        <line x1="18" y1="12" x2="24" y2="12" stroke={CYAN} strokeWidth="0.5" />
+      </svg>
+
+      {/* Corner brackets */}
+      <div className="absolute top-6 left-6 w-12 h-12 border-l border-t border-cyan-400/20" />
+      <div className="absolute top-6 right-6 w-12 h-12 border-r border-t border-cyan-400/20" />
+      <div className="absolute bottom-6 left-6 w-12 h-12 border-l border-b border-cyan-400/20" />
+      <div className="absolute bottom-6 right-6 w-12 h-12 border-r border-b border-cyan-400/20" />
+
+      {/* Bottom info bar */}
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-3 text-[9px] font-mono opacity-30" style={{ color: CYAN }}>
+        <span>ARCHITECTURE v3.5</span>
+        <span className="text-gray-600">●</span>
+        <span>QDRANT-BACKED</span>
+        <span className="text-gray-600">●</span>
+        <span>SIGNAL-TRIGGERED</span>
+      </div>
+    </div>
+  );
+}
+
+// ─── Section Navigation ─────────────────────────────────────────────────────────
+
+const SECTIONS = [
+  { id: "overview", label: "Overview", icon: Layers },
+  { id: "collections", label: "Collections", icon: Database },
+  { id: "pipeline", label: "Pipeline", icon: GitBranch },
+  { id: "hooks", label: "Hooks", icon: Zap },
+  { id: "triggers", label: "Triggers", icon: Target },
+  { id: "fusion", label: "Triple Fusion", icon: Infinity },
+  { id: "reference", label: "Reference", icon: ExternalLink },
+];
+
+function SectionNav() {
+  const [active, setActive] = useState("overview");
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActive(entry.target.id);
+          }
+        });
+      },
+      { threshold: 0.3 }
+    );
+
+    SECTIONS.forEach(({ id }) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  const scrollTo = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  return (
+    <nav className="fixed right-6 top-1/2 -translate-y-1/2 z-50 hidden xl:flex flex-col gap-1">
+      {SECTIONS.map(({ id, label, icon: Icon }) => {
+        const isActive = active === id;
+        return (
+          <button
+            key={id}
+            onClick={() => scrollTo(id)}
+            className="group relative flex items-center justify-end"
+          >
+            <AnimatePresence>
+              {isActive && (
+                <motion.div
+                  initial={{ opacity: 0, x: 10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 10 }}
+                  className="absolute right-full mr-2 px-2 py-1 rounded text-[10px] font-mono whitespace-nowrap"
+                  style={{
+                    background: "rgba(0,245,255,0.1)",
+                    border: `1px solid ${CYAN}30`,
+                    color: CYAN,
+                  }}
+                >
+                  {label}
+                </motion.div>
+              )}
+            </AnimatePresence>
+            <div
+              className="relative w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300"
+              style={{
+                background: isActive ? `${CYAN}15` : "transparent",
+                border: `1px solid ${isActive ? CYAN + "60" : CYAN + "20"}`,
+                boxShadow: isActive ? `0 0 20px ${CYAN}30` : "none",
+              }}
+            >
+              <Icon className="w-3.5 h-3.5" style={{ color: isActive ? CYAN : TEXT_DIM }} />
+              {isActive && (
+                <div
+                  className="absolute inset-0 rounded-full animate-ping"
+                  style={{ background: `${CYAN}10`, animationDuration: "2s" }}
+                />
+              )}
+            </div>
+          </button>
+        );
+      })}
+    </nav>
+  );
+}
 
 // ─── Particle Mesh Canvas ───────────────────────────────────────────────────
 
@@ -43,15 +192,15 @@ function ParticleMesh({ className }: { className?: string }) {
     resize();
 
     const colors = [CYAN, VIOLET, MAGENTA];
-    const particles: Particle[] = Array.from({ length: 80 }, (_, i) => ({
+    const particles: Particle[] = Array.from({ length: 60 }, (_, i) => ({
       id: i,
       x: Math.random() * canvas.offsetWidth,
       y: Math.random() * canvas.offsetHeight,
-      vx: (Math.random() - 0.5) * 0.3,
-      vy: (Math.random() - 0.5) * 0.3,
+      vx: (Math.random() - 0.5) * 0.25,
+      vy: (Math.random() - 0.5) * 0.25,
       radius: Math.random() * 1.5 + 0.5,
       color: colors[i % colors.length],
-      opacity: Math.random() * 0.4 + 0.1,
+      opacity: Math.random() * 0.35 + 0.1,
     }));
     particlesRef.current = particles;
 
@@ -62,7 +211,6 @@ function ParticleMesh({ className }: { className?: string }) {
       ctx.clearRect(0, 0, w, h);
       frame++;
 
-      // Move particles
       for (const p of particles) {
         p.x += p.vx;
         p.y += p.vy;
@@ -80,8 +228,8 @@ function ParticleMesh({ className }: { className?: string }) {
           const dx = a.x - b.x;
           const dy = a.y - b.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 120) {
-            const alpha = (1 - dist / 120) * 0.15;
+          if (dist < 100) {
+            const alpha = (1 - dist / 100) * 0.12;
             ctx.beginPath();
             ctx.strokeStyle = `rgba(0, 245, 255, ${alpha})`;
             ctx.lineWidth = 0.5;
@@ -94,8 +242,7 @@ function ParticleMesh({ className }: { className?: string }) {
 
       // Draw particles
       for (const p of particles) {
-        // Pulse
-        const pulse = Math.sin(frame * 0.02 + p.id) * 0.1 + 0.9;
+        const pulse = Math.sin(frame * 0.015 + p.id) * 0.15 + 0.85;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius * pulse, 0, Math.PI * 2);
         ctx.fillStyle = p.color;
@@ -129,216 +276,145 @@ function ParticleMesh({ className }: { className?: string }) {
   );
 }
 
-// ─── Circuit Topography Background ─────────────────────────────────────────────
-// SVG circuit trace pattern — dark copper on near-black
+// ─── Hero Section ──────────────────────────────────────────────────────────────
 
-function CircuitBackground({ opacity = 0.07 }: { opacity?: number }) {
+function HeroSection() {
   return (
-    <div
-      className="absolute inset-0 pointer-events-none overflow-hidden"
-      aria-hidden="true"
-    >
-      <svg
-        width="100%"
-        height="100%"
-        xmlns="http://www.w3.org/2000/svg"
-        style={{ position: "absolute", inset: 0 }}
-      >
-        <defs>
-          <pattern
-            id="circuit-traces"
-            x="0"
-            y="0"
-            width="120"
-            height="120"
-            patternUnits="userSpaceOnUse"
-          >
-            {/* Horizontal traces */}
-            <path d="M0 20 H40 L50 30 H80 L90 20 H120" stroke={`rgba(0,245,255,${opacity})`} strokeWidth="0.5" fill="none" />
-            <path d="M0 60 H30 L40 50 H70 L80 60 H120" stroke={`rgba(139,92,246,${opacity * 0.8})`} strokeWidth="0.5" fill="none" />
-            <path d="M0 100 H50 L60 90 H90 L100 100 H120" stroke={`rgba(0,245,255,${opacity * 0.6})`} strokeWidth="0.5" fill="none" />
-            {/* Vertical traces */}
-            <path d="M20 0 V30 L30 40 V70 L20 80 V120" stroke={`rgba(139,92,246,${opacity})`} strokeWidth="0.5" fill="none" />
-            <path d="M60 0 V20 L70 30 V60 L60 70 V120" stroke={`rgba(0,245,255,${opacity * 0.7})`} strokeWidth="0.5" fill="none" />
-            <path d="M100 0 V40 L90 50 V80 L100 90 V120" stroke={`rgba(255,45,106,${opacity * 0.5})`} strokeWidth="0.5" fill="none" />
-            {/* Nodes */}
-            <circle cx="50" cy="30" r="2" fill={`rgba(0,245,255,${opacity * 1.5})`} />
-            <circle cx="80" cy="60" r="2" fill={`rgba(139,92,246,${opacity * 1.5})`} />
-            <circle cx="40" cy="50" r="1.5" fill={`rgba(0,245,255,${opacity})`} />
-            <circle cx="90" cy="90" r="1.5" fill={`rgba(255,45,106,${opacity * 1.2})`} />
-            <circle cx="60" cy="70" r="2" fill={`rgba(139,92,246,${opacity})`} />
-          </pattern>
-        </defs>
-        <rect width="100%" height="100%" fill="url(#circuit-traces)" />
-      </svg>
-    </div>
-  );
-}
+    <section id="hero" className="relative min-h-screen flex flex-col items-center justify-center px-8 pt-24 pb-16 overflow-x-hidden">
 
-// ─── Glow Pulse Keyframe (extra for globals) ────────────────────────────────
-// This component injects animation keyframes for dash-flow
-
-function AnimationStyles() {
-  return (
-    <style>{`
-      @keyframes dash-flow {
-        from { stroke-dashoffset: 20; }
-        to { stroke-dashoffset: 0; }
-      }
-      @keyframes orbit {
-        from { transform: rotate(0deg) translateX(36px) rotate(0deg); }
-        to { transform: rotate(360deg) translateX(36px) rotate(-360deg); }
-      }
-      @keyframes orbit-reverse {
-        from { transform: rotate(0deg) translateX(36px) rotate(0deg); }
-        to { transform: rotate(-360deg) translateX(36px) rotate(360deg); }
-      }
-    `}</style>
-  );
-}
-
-// ─── Hero Section ─────────────────────────────────────────────────────────
-
-export function ArchitectureHero() {
-  return (
-    <section className="relative w-full min-h-screen overflow-hidden">
-
-      {/* Layer 1: Banner image — contained */}
+      {/* Layer 1: Banner image - contained within viewport */}
       <div
         className="absolute inset-0"
         style={{
           backgroundImage: "url('/ai-memory-3.png')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          filter: "brightness(0.25) saturate(0.8) contrast(1.1)",
+          backgroundSize: "100% auto",
+          backgroundPosition: "center calc(100% - 10px)",
+          backgroundRepeat: "no-repeat",
+          filter: "brightness(0.28) saturate(0.8) contrast(1.1)",
         }}
       />
 
-      {/* Layer 2: Deep multi-stop gradient overlay */}
+      {/* Layer 2: Gradient overlay - semi-transparent to show image */}
       <div
         className="absolute inset-0"
         style={{
-          background:
-            "linear-gradient(135deg, rgba(3,3,8,0.85) 0%, rgba(3,3,8,0.4) 30%, rgba(3,3,8,0.2) 50%, rgba(3,3,8,0.5) 75%, rgba(3,3,8,0.95) 100%)",
+          background: `
+            linear-gradient(135deg, rgba(3,3,8,0.75) 0%, rgba(3,3,8,0.35) 30%, rgba(3,3,8,0.15) 50%, rgba(3,3,8,0.4) 75%, rgba(3,3,8,0.85) 100%)
+          `,
         }}
       />
 
-      {/* Layer 3: Radial color halos — vivid */}
+      {/* Layer 3: Blueprint grid */}
+      <BlueprintGrid />
+
+      {/* Layer 4: Radial color halos */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background:
-            "radial-gradient(ellipse 80% 60% at 20% 30%, rgba(0,245,255,0.12) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 20%, rgba(139,92,246,0.1) 0%, transparent 55%), radial-gradient(ellipse 50% 40% at 50% 80%, rgba(255,45,106,0.08) 0%, transparent 50%)",
+          background: `
+            radial-gradient(ellipse 70% 50% at 20% 30%, rgba(0,245,255,0.08) 0%, transparent 55%),
+            radial-gradient(ellipse 50% 40% at 80% 20%, rgba(139,92,246,0.07) 0%, transparent 50%),
+            radial-gradient(ellipse 40% 35% at 50% 80%, rgba(255,45,106,0.05) 0%, transparent 45%)
+          `,
         }}
       />
 
-      {/* Layer 4: Circuit topography */}
-      <CircuitBackground opacity={0.05} />
-
-      {/* Layer 5: Neural grid */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(0,245,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(0,245,255,0.04) 1px, transparent 1px)",
-          backgroundSize: "48px 48px",
-        }}
-      />
-
-      {/* Layer 6: Particle mesh */}
+      {/* Layer 5: Particle mesh */}
       <div className="absolute inset-0 z-10">
-        <ParticleMesh className="opacity-75" />
+        <ParticleMesh className="opacity-60" />
       </div>
 
-      {/* Floating geometric accents */}
+      {/* Layer 6: Floating geometric accents */}
       <div className="absolute inset-0 z-20 pointer-events-none overflow-hidden">
-        {/* Large slow-rotating hexagon */}
+        {/* Large rotating hexagon */}
         <div
           className="absolute animate-spin-slow"
           style={{
-            top: "8%",
-            right: "5%",
-            width: "160px",
-            height: "160px",
+            top: "10%",
+            right: "8%",
+            width: "140px",
+            height: "140px",
             clipPath: "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)",
-            background: "linear-gradient(135deg, rgba(0,245,255,0.08) 0%, rgba(139,92,246,0.04) 100%)",
-            border: "1px solid rgba(0,245,255,0.15)",
-            animationDuration: "60s",
-            opacity: 0.6,
+            background: `linear-gradient(135deg, ${CYAN}08, ${VIOLET}04)`,
+            border: `1px solid ${CYAN}15`,
+            animationDuration: "80s",
+            opacity: 0.5,
           }}
         />
-        {/* Small floating triangle top-left */}
+        {/* Floating triangle */}
         <div
           className="absolute animate-float-delayed"
           style={{
-            top: "20%",
-            left: "6%",
+            top: "25%",
+            left: "8%",
             width: 0,
             height: 0,
-            borderLeft: "30px solid transparent",
-            borderRight: "30px solid transparent",
-            borderBottom: "52px solid rgba(139,92,246,0.1)",
-            opacity: 0.5,
-            animationDuration: "12s",
+            borderLeft: "25px solid transparent",
+            borderRight: "25px solid transparent",
+            borderBottom: `45px solid ${VIOLET}08`,
+            opacity: 0.4,
+            animationDuration: "14s",
           }}
         />
-        {/* Floating orb bottom-left */}
+        {/* Orb bottom-left */}
         <div
           className="absolute animate-float-slow"
           style={{
             bottom: "20%",
-            left: "8%",
-            width: "80px",
-            height: "80px",
+            left: "10%",
+            width: "70px",
+            height: "70px",
             borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(255,45,106,0.12) 0%, transparent 70%)",
-            border: "1px solid rgba(255,45,106,0.2)",
-            animationDuration: "14s",
-            boxShadow: "0 0 60px rgba(255,45,106,0.1) inset",
+            background: `radial-gradient(circle, ${MAGENTA}10 0%, transparent 70%)`,
+            border: `1px solid ${MAGENTA}20`,
+            animationDuration: "16s",
+            boxShadow: `0 0 50px ${MAGENTA}08 inset`,
           }}
         />
-        {/* Small cyan dot grid bottom-right */}
+        {/* Pulsing dot */}
         <div
           className="absolute animate-ping-slow"
           style={{
-            bottom: "30%",
-            right: "12%",
+            bottom: "35%",
+            right: "15%",
             width: "6px",
             height: "6px",
             borderRadius: "50%",
             background: CYAN,
             boxShadow: `0 0 12px ${CYAN}, 0 0 24px ${CYAN}`,
-            animationDuration: "4s",
+            animationDuration: "3s",
           }}
         />
       </div>
 
       {/* Content */}
-      <div className="relative z-30 flex flex-col items-center justify-center min-h-screen px-6 pt-24 pb-16 text-center">
+      <div className="relative z-10 max-w-5xl mx-auto text-center -mt-10">
 
-        {/* Label badge */}
+        {/* Header badge */}
         <motion.div
-          initial={{ opacity: 0, y: 20, scale: 0.95 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
-          className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full mb-10"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="inline-flex items-center gap-3 px-4 py-2 rounded-full mb-12"
           style={{
-            background: "rgba(0,245,255,0.08)",
-            border: "1px solid rgba(0,245,255,0.3)",
-            boxShadow: `0 0 40px rgba(0,245,255,0.12) inset, 0 0 20px rgba(0,245,255,0.08)`,
+            background: "rgba(0,245,255,0.05)",
+            border: `1px solid ${CYAN}25`,
+            boxShadow: `0 0 40px ${CYAN}08 inset`,
           }}
         >
-          <div
-            className="w-2 h-2 rounded-full animate-pulse"
-            style={{ background: CYAN, boxShadow: `0 0 8px ${CYAN}` }}
-          />
-          <Cpu className="w-4 h-4" style={{ color: CYAN }} />
+          <div className="relative flex items-center gap-2">
+            <div
+              className="w-2 h-2 rounded-full"
+              style={{ background: CYAN, boxShadow: `0 0 8px ${CYAN}` }}
+            />
+            <div
+              className="absolute inset-0 rounded-full animate-ping"
+              style={{ background: CYAN, animationDuration: "2s", opacity: 0.3 }}
+            />
+          </div>
           <span
-            className="text-[11px] font-bold uppercase tracking-[0.2em]"
-            style={{
-              fontFamily: "var(--font-mono)",
-              color: CYAN,
-            }}
+            className="text-[11px] font-mono font-semibold tracking-[0.15em] uppercase"
+            style={{ color: CYAN, fontFamily: "var(--font-mono)" }}
           >
             Core Architecture Principle — V3.5
           </span>
@@ -346,24 +422,23 @@ export function ArchitectureHero() {
 
         {/* Main title */}
         <motion.h1
-          initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
+          initial={{ opacity: 0, y: 24, filter: "blur(8px)" }}
           animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          transition={{ duration: 1.1, delay: 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
-          className="max-w-5xl mb-8 leading-[1.0]"
+          transition={{ duration: 0.8, delay: 0.1 }}
+          className="mb-10 leading-[1.05]"
           style={{
             fontFamily: "var(--font-heading)",
-            fontSize: "clamp(2.8rem, 7vw, 5rem)",
+            fontSize: "clamp(3rem, 8vw, 5.5rem)",
             fontWeight: 800,
             letterSpacing: "-0.02em",
           }}
         >
           <span
             style={{
-              background: `linear-gradient(135deg, #E8EAF0 0%, ${CYAN} 60%, ${VIOLET} 100%)`,
+              background: `linear-gradient(135deg, ${TEXT} 0%, ${CYAN} 50%, ${VIOLET} 100%)`,
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
               backgroundClip: "text",
-              filter: "drop-shadow(0 0 30px rgba(0,245,255,0.25))",
             }}
           >
             Right Information
@@ -371,36 +446,39 @@ export function ArchitectureHero() {
           <br />
           <span
             style={{
-              color: CYAN,
-              textShadow: `0 0 40px rgba(0,245,255,0.5), 0 0 80px rgba(0,245,255,0.2)`,
+              background: `linear-gradient(135deg, ${CYAN}, ${VIOLET})`,
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
             }}
           >
             at the Right Time
           </span>
         </motion.h1>
 
-        {/* Subtitle */}
+        {/* Tagline */}
         <motion.p
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          className="max-w-2xl text-base sm:text-lg leading-relaxed mb-14"
+          transition={{ duration: 0.6, delay: 0.25 }}
+          className="max-w-2xl mx-auto text-lg leading-relaxed mb-16"
           style={{
             fontFamily: "var(--font-body)",
-            color: "rgba(232,234,240,0.6)",
+            color: TEXT_MUTED,
+            fontSize: "1.125rem",
           }}
         >
-          A signal-triggered retrieval system — not random memory injection.
-          5 specialized collections. 6 automatic triggers. 9-step security pipeline.
+          A signal-triggered retrieval system. 5 specialized collections.
+          6 automatic triggers. 9-step security pipeline.
           Built on Qdrant with temporal decay, dual embeddings, and GitHub/Jira sync.
         </motion.p>
 
-        {/* Stat pills — magnetic hover */}
+        {/* Stats grid */}
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.45 }}
-          className="flex flex-wrap justify-center gap-4"
+          transition={{ duration: 0.6, delay: 0.35 }}
+          className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto mt-5"
         >
           {[
             { value: "5", label: "Collections", color: CYAN },
@@ -408,7 +486,41 @@ export function ArchitectureHero() {
             { value: "9", label: "Pipeline Steps", color: GREEN },
             { value: "v3.5", label: "Architecture", color: MAGENTA },
           ].map((stat) => (
-            <MagneticCard key={stat.label} color={stat.color} value={stat.value} label={stat.label} />
+            <div
+              key={stat.label}
+              className="relative px-6 py-5 rounded-2xl text-center"
+              style={{
+                background: `${stat.color}05`,
+                border: `1px solid ${stat.color}20`,
+              }}
+            >
+              <div
+                className="absolute top-0 left-4 right-4 h-px"
+                style={{
+                  background: `linear-gradient(90deg, transparent, ${stat.color}40, transparent)`,
+                }}
+              />
+              <div
+                className="text-4xl font-bold mb-1"
+                style={{
+                  fontFamily: "var(--font-heading)",
+                  color: stat.color,
+                  textShadow: `0 0 30px ${stat.color}40`,
+                }}
+              >
+                {stat.value}
+              </div>
+              <div
+                className="text-xs font-medium"
+                style={{
+                  fontFamily: "var(--font-mono)",
+                  color: TEXT_MUTED,
+                  letterSpacing: "0.05em",
+                }}
+              >
+                {stat.label}
+              </div>
+            </div>
           ))}
         </motion.div>
       </div>
@@ -417,20 +529,17 @@ export function ArchitectureHero() {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.5, duration: 0.8 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center gap-2"
+        transition={{ delay: 1 }}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
       >
-        <span
-          className="text-[9px] uppercase tracking-[0.3em]"
-          style={{ fontFamily: "var(--font-mono)", color: "rgba(0,245,255,0.4)" }}
-        >
-          Scroll
+        <span className="text-[9px] uppercase tracking-[0.3em]" style={{ fontFamily: "var(--font-mono)", color: `${CYAN}50` }}>
+          Scroll to Explore
         </span>
         <div
-          className="w-px h-10 rounded-full"
+          className="w-px h-12 rounded-full"
           style={{
-            background: `linear-gradient(180deg, rgba(0,245,255,0.7), rgba(0,245,255,0.1), transparent)`,
-            boxShadow: `0 0 12px rgba(0,245,255,0.4)`,
+            background: `linear-gradient(180deg, ${CYAN}, transparent)`,
+            boxShadow: `0 0 10px ${CYAN}40`,
           }}
         />
       </motion.div>
@@ -438,398 +547,301 @@ export function ArchitectureHero() {
   );
 }
 
-// Magnetic hover card for stat pills
+// ─── Overview / Principle Section ──────────────────────────────────────────────
 
-function MagneticCard({ color, value, label }: { color: string; value: string; label: string }) {
-  const ref = useRef<HTMLDivElement>(null);
-
+function OverviewSection() {
   return (
-    <motion.div
-      ref={ref}
-      className="relative px-5 py-3 rounded-2xl cursor-default"
-      style={{
-        background: `linear-gradient(135deg, rgba(10,13,30,0.9) 0%, rgba(15,20,50,0.8) 100%)`,
-        border: `1px solid ${color}30`,
-        boxShadow: `0 0 0 1px ${color}08 inset, 0 0 40px ${color}08 inset`,
-        transition: "border-color 0.3s, box-shadow 0.3s",
-      }}
-      whileHover={{
-        borderColor: `${color}60`,
-        boxShadow: `0 0 0 1px ${color}15 inset, 0 0 60px ${color}15 inset, 0 0 30px ${color}10`,
-        scale: 1.04,
-      }}
-      whileTap={{ scale: 0.97 }}
-      transition={{ type: "spring", stiffness: 300, damping: 20 }}
-    >
-      {/* Top glow line */}
-      <div
-        className="absolute top-0 left-4 right-4 h-px rounded-full"
-        style={{
-          background: `linear-gradient(90deg, transparent, ${color}60, transparent)`,
-          boxShadow: `0 0 8px ${color}40`,
-        }}
-      />
-      <span
-        className="text-3xl font-bold block"
-        style={{
-          fontFamily: "var(--font-heading)",
-          color: color,
-          textShadow: `0 0 20px ${color}60`,
-        }}
-      >
-        {value}
-      </span>
-      <span
-        className="text-[11px] font-medium block mt-0.5"
-        style={{
-          fontFamily: "var(--font-mono)",
-          color: "rgba(232,234,240,0.45)",
-          letterSpacing: "0.05em",
-        }}
-      >
-        {label}
-      </span>
-    </motion.div>
-  );
-}
+    <section id="overview" className="relative py-40 px-8">
+      <div className="max-w-5xl mx-auto">
 
-// ─── Principle Section ─────────────────────────────────────────────────────
-
-export function ArchitecturePrinciple() {
-  return (
-    <section className="relative py-40 px-6 overflow-hidden">
-      {/* Background radial */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(ellipse 70% 60% at 50% 50%, rgba(0,245,255,0.03) 0%, transparent 70%)",
-        }}
-      />
-
-      <div className="max-w-5xl mx-auto text-center relative">
-        {/* Section label */}
+        {/* Section header */}
         <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="mb-10"
-        >
-          <div className="section-label">
-            <Zap className="w-3.5 h-3.5" />
-            Foundational Principle
-          </div>
-        </motion.div>
-
-        {/* Large typographic statement */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.9, ease: [0.25, 0.46, 0.45, 0.94] }}
-        >
-          <p
-            className="leading-[1.15] mb-6"
-            style={{
-              fontFamily: "var(--font-heading)",
-              fontSize: "clamp(2rem, 5vw, 4rem)",
-              fontWeight: 600,
-              letterSpacing: "-0.01em",
-              color: "#E8EAF0",
-            }}
-          >
-            Instead of injecting{" "}
-            <span
-              style={{
-                color: MAGENTA,
-                textShadow: "0 0 40px rgba(255,45,106,0.4)",
-              }}
-            >
-              random memories
-            </span>{" "}
-            <br className="hidden sm:block" />
-            at session start,
-          </p>
-          <p
-            className="leading-[1.15]"
-            style={{
-              fontFamily: "var(--font-heading)",
-              fontSize: "clamp(2rem, 5vw, 4rem)",
-              fontWeight: 600,
-              letterSpacing: "-0.01em",
-            }}
-          >
-            it uses{" "}
-            <span
-              style={{
-                background: `linear-gradient(135deg, ${CYAN}, ${VIOLET})`,
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-                filter: "drop-shadow(0 0 20px rgba(0,245,255,0.3))",
-              }}
-            >
-              signal-triggered retrieval
-            </span>
-            <br className="hidden sm:block" />
-            <span style={{ color: "rgba(232,234,240,0.4)" }}>
-              {" "}
-              when specific events occur.
-            </span>
-          </p>
-        </motion.div>
-
-        {/* Sub explanation */}
-        <motion.p
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.7, delay: 0.2 }}
-          className="mt-10 max-w-2xl mx-auto text-sm leading-relaxed"
-          style={{
-            fontFamily: "var(--font-body)",
-            color: "#7A8AAA",
-          }}
+          className="text-center mb-20"
         >
-          High signal-to-noise ratio. The system acts on precise triggers — error patterns,
-          naming conventions, decision keywords, best practice queries. Memory surfaces
-          when it is{" "}
-          <span style={{ color: CYAN, fontWeight: 500 }}>relevant</span>, not when it is{" "}
-          <span style={{ color: MAGENTA, fontWeight: 500 }}>present</span>.
-        </motion.p>
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-6" style={{ background: `${VIOLET}10`, border: `1px solid ${VIOLET}25` }}>
+            <Layers className="w-3.5 h-3.5" style={{ color: VIOLET }} />
+            <span className="text-[10px] font-mono font-semibold tracking-widest uppercase" style={{ color: VIOLET }}>Foundational Principle</span>
+          </div>
+        </motion.div>
 
-        {/* Decorative pulse ring */}
-        <div className="relative mt-16 inline-block">
+        {/* Main statement - centered */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-20"
+        >
+          <p className="text-2xl md:text-4xl leading-relaxed mb-6" style={{ fontFamily: "var(--font-heading)", color: TEXT }}>
+            Instead of{" "}
+            <span style={{ color: MAGENTA }}>random memory injection</span>
+            {" "}at session start,
+          </p>
+          <p className="text-2xl md:text-4xl leading-relaxed" style={{ fontFamily: "var(--font-heading)", color: TEXT }}>
+            it uses{" "}
+            <span style={{ color: CYAN }}>signal-triggered retrieval</span>
+            {" "}when specific events occur.
+          </p>
+        </motion.div>
+
+        {/* Explanation cards - horizontal layout */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="grid md:grid-cols-2 gap-8 mb-20"
+        >
+          {/* Left: Explanation */}
           <div
-            className="w-24 h-24 rounded-full mx-auto flex items-center justify-center"
+            className="p-8 rounded-2xl"
             style={{
-              background: "rgba(0,245,255,0.04)",
-              border: "1px solid rgba(0,245,255,0.15)",
-              boxShadow: "0 0 60px rgba(0,245,255,0.08) inset",
+              background: BG_CARD,
+              border: `1px solid ${CYAN}15`,
             }}
           >
-            <Brain className="w-8 h-8" style={{ color: CYAN }} />
+            <p className="text-base leading-relaxed mb-4" style={{ color: TEXT_MUTED }}>
+              High signal-to-noise ratio. The system acts on precise triggers — error patterns,
+              naming conventions, decision keywords, best practice queries.
+            </p>
+            <p className="text-base leading-relaxed" style={{ color: TEXT_MUTED }}>
+              Memory surfaces when it is{" "}
+              <span style={{ color: CYAN, fontWeight: 600 }}>relevant</span>, not when it is{" "}
+              <span style={{ color: MAGENTA, fontWeight: 600 }}>present</span>.
+            </p>
           </div>
+
+          {/* Right: Visual indicator */}
           <div
-            className="absolute inset-0 rounded-full animate-ping-slow"
+            className="p-8 rounded-2xl flex flex-col justify-center"
             style={{
-              border: "1px solid rgba(0,245,255,0.15)",
-              animationDuration: "4s",
+              background: `${MAGENTA}05`,
+              border: `1px solid ${MAGENTA}15`,
             }}
-          />
-          <div
-            className="absolute inset-[-20px] rounded-full animate-ping-slow"
-            style={{
-              border: "1px solid rgba(0,245,255,0.06)",
-              animationDuration: "5s",
-              animationDelay: "1s",
-            }}
-          />
-        </div>
+          >
+            <div className="flex items-center justify-center gap-8 mb-6">
+              <div className="text-center">
+                <div
+                  className="w-16 h-16 mx-auto rounded-2xl flex items-center justify-center mb-3"
+                  style={{ background: `${MAGENTA}10`, border: `1px solid ${MAGENTA}25` }}
+                >
+                  <span className="text-2xl" style={{ filter: "grayscale(1)", opacity: 0.5 }}>↯</span>
+                </div>
+                <div className="text-xs font-mono" style={{ color: MAGENTA }}>Random</div>
+              </div>
+              <div className="text-2xl" style={{ color: TEXT_DIM }}>→</div>
+              <div className="text-center">
+                <div
+                  className="w-16 h-16 mx-auto rounded-2xl flex items-center justify-center mb-3"
+                  style={{ background: `${CYAN}10`, border: `1px solid ${CYAN}25` }}
+                >
+                  <span className="text-2xl" style={{ color: CYAN }}>◎</span>
+                </div>
+                <div className="text-xs font-mono" style={{ color: CYAN }}>Signal</div>
+              </div>
+            </div>
+            <div className="text-center text-xs font-mono" style={{ color: TEXT_DIM }}>
+              Signal-to-noise ratio: HIGH
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Key stats row */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="grid grid-cols-3 gap-6"
+        >
+          {[
+            { icon: Database, label: "5 Specialized", sub: "Collections", color: CYAN },
+            { icon: Zap, label: "6 Automatic", sub: "Triggers", color: VIOLET },
+            { icon: Shield, label: "3-Layer", sub: "Security Pipeline", color: GREEN },
+          ].map(({ icon: Icon, label, sub, color }) => (
+            <div
+              key={sub}
+              className="flex items-center gap-5 p-6 rounded-2xl"
+              style={{
+                background: `${color}05`,
+                border: `1px solid ${color}15`,
+              }}
+            >
+              <div
+                className="w-12 h-12 rounded-xl flex items-center justify-center"
+                style={{ background: `${color}10`, border: `1px solid ${color}20` }}
+              >
+                <Icon className="w-5 h-5" style={{ color }} />
+              </div>
+              <div>
+                <div className="text-xl font-bold" style={{ fontFamily: "var(--font-heading)", color }}>
+                  {label}
+                </div>
+                <div className="text-sm" style={{ color: TEXT_MUTED }}>
+                  {sub}
+                </div>
+              </div>
+            </div>
+          ))}
+        </motion.div>
       </div>
     </section>
   );
 }
 
-// ─── Collections Diagram ────────────────────────────────────────────────────
+// ─── Collections Section ─────────────────────────────────────────────────────────
 
-const collectionData = {
-  core: [
-    {
-      name: "code-patterns",
-      tag: "HOW",
-      color: CYAN,
-      desc: "Implementation, error_fix, refactor, file_pattern",
-      types: ["implementation", "error_fix", "refactor", "file_pattern"],
-    },
-    {
-      name: "conventions",
-      tag: "WHAT",
-      color: VIOLET,
-      desc: "Rules, guidelines, naming, port, structure",
-      types: ["rule", "guideline", "naming", "port", "structure"],
-    },
-    {
-      name: "discussions",
-      tag: "WHY",
-      color: MAGENTA,
-      desc: "Decisions, sessions, blockers, preferences",
-      types: [
-        "decision",
-        "session",
-        "blocker",
-        "preference",
-        "github_issue",
-        "github_pr",
-        "github_commit",
-        "github_code_blob",
-      ],
-    },
-  ],
-  conditional: [
-    {
-      name: "jira-data",
-      tag: "JIRA",
-      color: AMBER,
-      desc: "Issues + comments, conditional on jira_sync_enabled",
-      types: ["jira_issue", "jira_comment"],
-    },
-  ],
-};
+const COLLECTIONS_DATA = [
+  {
+    id: "code-patterns",
+    tag: "HOW",
+    color: CYAN,
+    desc: "Implementation, error fixes, refactoring patterns, file-specific knowledge",
+    types: [
+      { name: "implementation", desc: "How features were built" },
+      { name: "error_fix", desc: "Errors and their solutions" },
+      { name: "refactor", desc: "Refactoring patterns" },
+      { name: "file_pattern", desc: "File-specific patterns" },
+    ],
+  },
+  {
+    id: "conventions",
+    tag: "WHAT",
+    color: VIOLET,
+    desc: "Rules, guidelines, naming standards, file structure conventions",
+    types: [
+      { name: "rule", desc: "Hard rules (MUST do)" },
+      { name: "guideline", desc: "Soft guidelines (SHOULD do)" },
+      { name: "naming", desc: "Naming conventions" },
+      { name: "structure", desc: "File/folder conventions" },
+    ],
+  },
+  {
+    id: "discussions",
+    tag: "WHY",
+    color: MAGENTA,
+    desc: "Decisions, sessions, blockers, preferences, GitHub data",
+    types: [
+      { name: "decision", desc: "Architectural decisions" },
+      { name: "session", desc: "Session summaries" },
+      { name: "blocker", desc: "Project blockers" },
+      { name: "preference", desc: "User preferences" },
+      { name: "github_*", desc: "9 GitHub document types" },
+    ],
+  },
+  {
+    id: "jira-data",
+    tag: "JIRA",
+    color: AMBER,
+    desc: "Issues + comments (conditional, requires jira_sync_enabled)",
+    types: [
+      { name: "jira_issue", desc: "Issue summary, description, metadata" },
+      { name: "jira_comment", desc: "Issue comments" },
+    ],
+    conditional: true,
+  },
+];
 
-function CollectionNode({
-  name,
-  tag,
-  color,
-  desc,
-  types,
-  delay = 0,
-}: {
-  name: string;
-  tag: string;
-  color: string;
-  desc: string;
-  types: string[];
-  delay?: number;
-}) {
-  const [open, setOpen] = useState(false);
-
+function CollectionCard({ collection, index }: { collection: typeof COLLECTIONS_DATA[0]; index: number }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.5, delay }}
-      className="relative rounded-2xl overflow-hidden"
+      transition={{ duration: 0.4, delay: index * 0.1 }}
+      className="rounded-2xl p-6"
       style={{
-        background: "rgba(10,13,30,0.8)",
-        border: `1px solid ${color}18`,
-        boxShadow: `0 0 0 1px ${color}06 inset`,
+        background: BG_CARD,
+        border: `1px solid ${collection.color}20`,
       }}
     >
-      {/* Top glow line */}
-      <div
-        className="absolute top-0 left-0 right-0 h-px"
-        style={{
-          background: `linear-gradient(90deg, transparent, ${color}40, transparent)`,
-        }}
-      />
-
-      <button
-        onClick={() => setOpen(!open)}
-        className="w-full p-5 text-left hover:bg-white/[0.02] transition-colors"
-      >
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
-              <span
-                className="text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest"
-                style={{
-                  background: `${color}12`,
-                  color: color,
-                  fontFamily: "var(--font-mono)",
-                  border: `1px solid ${color}25`,
-                }}
-              >
-                {tag}
-              </span>
-            </div>
-            <div
-              className="text-sm font-semibold mb-1"
+      {/* Header */}
+      <div className="flex items-start justify-between gap-4 mb-5">
+        <div className="flex-1">
+          {/* Tag + Name */}
+          <div className="flex items-center gap-3 mb-2">
+            <span
+              className="px-3 py-1.5 rounded-lg text-xs font-mono font-bold uppercase tracking-wider"
               style={{
-                fontFamily: "var(--font-heading)",
-                color: "#E8EAF0",
+                background: `${collection.color}15`,
+                color: collection.color,
+                border: `1px solid ${collection.color}30`,
               }}
             >
-              {name}
-            </div>
-            <div className="text-xs leading-relaxed" style={{ color: "#7A8AAA", fontFamily: "var(--font-body)" }}>
-              {desc}
-            </div>
-          </div>
-          <div
-            className="flex-shrink-0 w-5 h-5 rounded flex items-center justify-center transition-transform duration-200 mt-0.5"
-            style={{ color: "#7A8AAA", transform: open ? "rotate(90deg)" : "rotate(0deg)" }}
-          >
-            <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-              <path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </div>
-        </div>
-      </button>
-
-      {/* Expanded types */}
-      {open && (
-        <motion.div
-          initial={{ height: 0, opacity: 0 }}
-          animate={{ height: "auto", opacity: 1 }}
-          exit={{ height: 0, opacity: 0 }}
-          transition={{ duration: 0.25 }}
-          className="overflow-hidden border-t"
-          style={{ borderColor: `${color}10` }}
-        >
-          <div className="p-4 flex flex-wrap gap-2">
-            {types.map((t) => (
+              {collection.tag}
+            </span>
+            {collection.conditional && (
               <span
-                key={t}
-                className="text-[10px] px-2 py-1 rounded-lg font-mono"
-                style={{
-                  background: `${color}08`,
-                  color: color,
-                  border: `1px solid ${color}15`,
-                }}
+                className="px-2 py-1 rounded text-[9px] font-mono"
+                style={{ background: `${AMBER}10`, color: AMBER, border: `1px solid ${AMBER}25` }}
               >
-                {t}
+                CONDITIONAL
               </span>
-            ))}
+            )}
           </div>
-        </motion.div>
-      )}
+
+          <h3
+            className="text-xl font-bold mb-1"
+            style={{ fontFamily: "var(--font-heading)", color: TEXT }}
+          >
+            {collection.id}
+          </h3>
+
+          <p className="text-sm leading-relaxed" style={{ color: TEXT_MUTED }}>
+            {collection.desc}
+          </p>
+        </div>
+      </div>
+
+      {/* Types grid - always visible */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+        {collection.types.map((type) => (
+          <div
+            key={type.name}
+            className="p-3 rounded-xl"
+            style={{ background: `${collection.color}08` }}
+          >
+            <code
+              className="text-xs font-mono font-semibold block mb-1"
+              style={{ color: collection.color }}
+            >
+              {type.name}
+            </code>
+            <p className="text-xs leading-relaxed" style={{ color: TEXT_MUTED }}>
+              {type.desc}
+            </p>
+          </div>
+        ))}
+      </div>
     </motion.div>
   );
 }
 
-export function ArchitectureCollections() {
+function CollectionsSection() {
   return (
-    <section className="relative py-40 px-6 overflow-hidden">
-      {/* Background */}
-      <div className="absolute inset-0 neural-grid opacity-20" />
-      <div
-        className="absolute top-[10%] left-[5%] w-[400px] h-[400px] rounded-full pointer-events-none"
-        style={{
-          background: "radial-gradient(circle, rgba(0,245,255,0.04) 0%, transparent 70%)",
-          filter: "blur(80px)",
-        }}
-      />
-      <div
-        className="absolute bottom-[10%] right-[5%] w-[350px] h-[350px] rounded-full pointer-events-none"
-        style={{
-          background: "radial-gradient(circle, rgba(139,92,246,0.04) 0%, transparent 70%)",
-          filter: "blur(80px)",
-        }}
-      />
+    <section id="collections" className="relative py-40 px-8" style={{ background: BG_SURFACE }}>
+      <div className="absolute inset-0 opacity-[0.03]" style={{
+        backgroundImage: `radial-gradient(${CYAN} 1px, transparent 1px)`,
+        backgroundSize: "32px 32px",
+      }} />
 
       <div className="max-w-5xl mx-auto relative">
+
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <div className="section-label mb-6">
-            <Database className="w-3.5 h-3.5" />
-            Collection Organization
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-6" style={{ background: `${CYAN}10`, border: `1px solid ${CYAN}25` }}>
+            <Database className="w-3.5 h-3.5" style={{ color: CYAN }} />
+            <span className="text-[10px] font-mono font-semibold tracking-widest uppercase" style={{ color: CYAN }}>Collection Organization</span>
           </div>
-          <h2
-            className="text-3xl sm:text-4xl font-bold mb-4 tracking-tight"
-            style={{ fontFamily: "var(--font-heading)", color: "#E8EAF0" }}
-          >
+          <h2 className="text-4xl md:text-5xl font-bold mb-4" style={{ fontFamily: "var(--font-heading)", color: TEXT }}>
             3 Core + 2 Conditional
           </h2>
-          <p className="text-sm max-w-xl mx-auto leading-relaxed" style={{ color: "#7A8AAA" }}>
+          <p className="text-base max-w-xl mx-auto" style={{ color: TEXT_MUTED }}>
             Maps to three fundamental question types:{" "}
             <span style={{ color: CYAN }}>HOW</span> things are built,{" "}
             <span style={{ color: VIOLET }}>WHAT</span> rules to follow,{" "}
@@ -837,92 +849,38 @@ export function ArchitectureCollections() {
           </p>
         </motion.div>
 
-        {/* Core collections */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="mb-3"
-        >
-          <div
-            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest mb-6"
-            style={{
-              fontFamily: "var(--font-mono)",
-              color: "rgba(232,234,240,0.35)",
-              background: "rgba(0,245,255,0.04)",
-              border: "1px solid rgba(0,245,255,0.1)",
-            }}
-          >
-            <span
-              className="w-1.5 h-1.5 rounded-full"
-              style={{ background: CYAN, boxShadow: `0 0 6px ${CYAN}` }}
-            />
-            Core Collections — Always Active
-          </div>
-        </motion.div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
-          {collectionData.core.map((col, i) => (
-            <CollectionNode key={col.name} {...col} delay={i * 0.08} />
+        {/* Collections grid */}
+        <div className="grid md:grid-cols-2 gap-6 mb-12">
+          {COLLECTIONS_DATA.map((col, i) => (
+            <CollectionCard key={col.id} collection={col} index={i} />
           ))}
         </div>
 
-        {/* Conditional collections */}
+        {/* Qdrant config info */}
         <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="mb-6"
-        >
-          <div
-            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest mb-6"
-            style={{
-              fontFamily: "var(--font-mono)",
-              color: "rgba(232,234,240,0.35)",
-              background: "rgba(139,92,246,0.04)",
-              border: "1px solid rgba(139,92,246,0.1)",
-            }}
-          >
-            <span
-              className="w-1.5 h-1.5 rounded-full"
-              style={{ background: AMBER, boxShadow: `0 0 6px ${AMBER}` }}
-            />
-            Conditional — Requires Feature Flag
-          </div>
-        </motion.div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl">
-          {collectionData.conditional.map((col, i) => (
-            <CollectionNode key={col.name} {...col} delay={i * 0.08} />
-          ))}
-        </div>
-
-        {/* Qdrant config note */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="mt-10 p-4 rounded-2xl"
+          className="p-6 rounded-2xl flex items-start gap-5"
           style={{
-            background: "rgba(0,245,255,0.03)",
-            border: "1px solid rgba(0,245,255,0.08)",
+            background: `${GREEN}05`,
+            border: `1px solid ${GREEN}15`,
           }}
         >
-          <div className="flex items-start gap-3">
-            <Shield className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: GREEN }} />
-            <div>
-              <p className="text-xs font-semibold mb-1" style={{ color: GREEN, fontFamily: "var(--font-mono)" }}>
-                HNSW + Scalar Quantization
-              </p>
-              <p className="text-xs leading-relaxed" style={{ color: "#7A8AAA" }}>
-                m=16, ef_construct=100, int8 quantization with 0.99 quantile.
-                4x compression at ~99% accuracy. All vectors{" "}
-                <code style={{ color: CYAN }}>on_disk=True</code>.
-              </p>
-            </div>
+          <div
+            className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+            style={{ background: `${GREEN}10`, border: `1px solid ${GREEN}20` }}
+          >
+            <Shield className="w-5 h-5" style={{ color: GREEN }} />
+          </div>
+          <div>
+            <h4 className="text-sm font-bold mb-1" style={{ fontFamily: "var(--font-mono)", color: GREEN }}>
+              HNSW + Scalar Quantization
+            </h4>
+            <p className="text-sm leading-relaxed" style={{ color: TEXT_MUTED }}>
+              m=16, ef_construct=100, int8 quantization with 0.99 quantile.{" "}
+              <span style={{ color: CYAN }}>4x compression</span> at ~99% accuracy. All vectors <code style={{ color: CYAN }}>on_disk=True</code>.
+            </p>
           </div>
         </motion.div>
       </div>
@@ -930,281 +888,289 @@ export function ArchitectureCollections() {
   );
 }
 
-// ─── Pipeline Flow ─────────────────────────────────────────────────────────
+// ─── Pipeline Section ───────────────────────────────────────────────────────────
 
-const pipelineSteps = [
-  {
-    step: 1,
-    label: "CAPTURE",
-    name: "Hook Event / Sync",
-    desc: "Content arrives via Claude Code hook or sync engine",
-    detail: "Hooks: user_prompt, agent_response, post_tool, error_pattern, pre_compact",
-    color: VIOLET,
-    icon: Brain,
-  },
-  {
-    step: 2,
-    label: "LOG",
-    name: "Activity Log",
-    desc: "Full content → activity log (audit, never modified)",
-    detail: "append-only JSONL. Preserves raw input for forensic replay.",
-    color: CYAN,
-    icon: Database,
-  },
-  {
-    step: 3,
-    label: "DETECT",
-    name: "Content Type",
-    desc: "Content type detection: prose, code, config, etc.",
-    detail: "Determines chunking strategy and embedding model routing",
-    color: AMBER,
-    icon: Cpu,
-  },
-  {
-    step: 4,
-    label: "SCAN",
-    name: "Security Scanner",
-    desc: "3-layer PII/secrets scan",
-    detail: "Regex → detect-secrets entropy → SpaCy NER. PASS / MASK / BLOCK",
-    color: MAGENTA,
-    icon: Shield,
-  },
-  {
-    step: 5,
-    label: "CHUNK",
-    name: "IntelligentChunker",
-    desc: "Content-type-aware chunking with metadata",
-    detail: "Hook provides type. Chunker selects strategy. Produces 1-N chunks.",
-    color: CYAN,
-    icon: GitBranch,
-  },
-  {
-    step: 6,
-    label: "EMBED",
-    name: "Dual Model Embedding",
-    desc: "Jina v2 prose or code model per chunk",
-    detail: "prose → natural language. code model → code-patterns, github_code_blob",
-    color: VIOLET,
-    icon: Zap,
-  },
-  {
-    step: 7,
-    label: "STORE",
-    name: "Qdrant Ingest",
-    desc: "All chunks → Qdrant with full metadata",
-    detail: "group_id, type, timestamp, content_hash, is_current, authority_tier",
-    color: GREEN,
-    icon: Database,
-  },
-  {
-    step: 8,
-    label: "ENQUEUE",
-    name: "Queue Worker",
-    desc: "Chunk point_ids queued for async classification",
-    detail: "Non-blocking. Does not slow down capture.",
-    color: AMBER,
-    icon: Cpu,
-  },
-  {
-    step: 9,
-    label: "CLASSIFY",
-    name: "LLM Classifier",
-    desc: "Rule filter → LLM → refines type on stored chunks",
-    detail: "Refines type AFTER storage. Async via queue worker.",
-    color: VIOLET,
-    icon: Brain,
-  },
+const PIPELINE_STEPS = [
+  { step: 1, label: "CAPTURE", name: "Hook / Sync", desc: "Content arrives via Claude Code hook or sync engine", color: VIOLET },
+  { step: 2, label: "LOG", name: "Activity Log", desc: "Full content → append-only JSONL audit log", color: CYAN },
+  { step: 3, label: "DETECT", name: "Content Type", desc: "Detect prose, code, config for routing", color: AMBER },
+  { step: 4, label: "SCAN", name: "Security", desc: "3-layer PII/secrets: Regex → Entropy → SpaCy", color: MAGENTA },
+  { step: 5, label: "CHUNK", name: "Chunker", desc: "Intelligent content-type-aware chunking", color: CYAN },
+  { step: 6, label: "EMBED", name: "Dual Model", desc: "Jina v2 prose or code model per chunk", color: VIOLET },
+  { step: 7, label: "STORE", name: "Qdrant", desc: "All chunks with full metadata", color: GREEN },
+  { step: 8, label: "ENQUEUE", name: "Queue", desc: "Async classification worker", color: AMBER },
+  { step: 9, label: "CLASSIFY", name: "LLM", desc: "Refine type after storage", color: VIOLET },
 ];
 
-function PipelineStepCard({ step, index }: { step: (typeof pipelineSteps)[0]; index: number }) {
-  const [open, setOpen] = useState(false);
-
+function PipelineFlow() {
   return (
-    <motion.div
-      initial={{ opacity: 0, x: -20 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5, delay: index * 0.07 }}
-      className="relative"
-    >
-      {/* Connector line */}
-      {index < pipelineSteps.length - 1 && (
-        <div
-          className="absolute left-6 top-full w-px z-10"
-          style={{
-            height: "24px",
-            background: `linear-gradient(to bottom, ${step.color}30, ${pipelineSteps[index + 1].color}20)`,
-          }}
-        />
-      )}
-
+    <div className="relative py-8 overflow-x-auto">
+      {/* Connection line */}
       <div
-        className="relative rounded-xl overflow-hidden cursor-pointer group"
+        className="absolute top-[3.25rem] left-0 right-0 h-0.5"
         style={{
-          background: "rgba(10,13,30,0.7)",
-          border: `1px solid ${step.color}15`,
-          transition: "all 0.3s ease",
+          background: `linear-gradient(90deg, ${VIOLET}30, ${CYAN}30, ${AMBER}30, ${MAGENTA}30, ${CYAN}30, ${VIOLET}30, ${GREEN}30, ${AMBER}30, ${VIOLET}30)`,
         }}
-        onClick={() => setOpen(!open)}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.borderColor = `${step.color}35`;
-          e.currentTarget.style.boxShadow = `0 0 40px ${step.color}08`;
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.borderColor = `${step.color}15`;
-          e.currentTarget.style.boxShadow = "none";
-        }}
-      >
-        {/* Left accent bar */}
-        <div
-          className="absolute left-0 top-0 bottom-0 w-0.5 rounded-full"
-          style={{ background: step.color, boxShadow: `0 0 8px ${step.color}60` }}
-        />
+      />
 
-        <div className="flex items-start gap-4 p-4 pl-5">
-          {/* Step number */}
+      {/* Animated particles flowing along the line */}
+      <div className="absolute top-[3.25rem] left-0 right-0 h-1 overflow-hidden">
+        {[...Array(8)].map((_, i) => (
           <div
-            className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5"
+            key={i}
+            className="absolute w-1.5 h-1.5 rounded-full"
             style={{
-              background: `${step.color}12`,
-              border: `1px solid ${step.color}25`,
+              background: i % 2 === 0 ? CYAN : VIOLET,
+              boxShadow: `0 0 12px ${i % 2 === 0 ? CYAN : VIOLET}, 0 0 24px ${i % 2 === 0 ? CYAN : VIOLET}`,
+              animation: `flowParticle ${3 + i * 0.2}s linear infinite`,
+              animationDelay: `${i * 0.25}s`,
+              left: "-6px",
             }}
-          >
-            <span
-              className="text-[10px] font-bold"
-              style={{ color: step.color, fontFamily: "var(--font-mono)" }}
-            >
-              {step.step}
-            </span>
-          </div>
+          />
+        ))}
+      </div>
 
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center justify-between gap-2 mb-1">
-              <div className="flex items-center gap-2">
-                <span
-                  className="text-[9px] font-bold uppercase tracking-widest"
-                  style={{ color: step.color, fontFamily: "var(--font-mono)" }}
-                >
-                  {step.label}
-                </span>
-              </div>
+      {/* Steps */}
+      <div className="relative flex justify-between items-start min-w-[800px] px-4">
+        {PIPELINE_STEPS.map((step, index) => (
+          <motion.div
+            key={step.step}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: index * 0.08 }}
+            className="flex flex-col items-center gap-3"
+          >
+            {/* Step number circle */}
+            <div
+              className="relative w-14 h-14 rounded-2xl flex items-center justify-center"
+              style={{
+                background: `${step.color}12`,
+                border: `2px solid ${step.color}40`,
+                boxShadow: `0 0 30px ${step.color}15`,
+              }}
+            >
               <span
-                className="text-xs font-semibold"
-                style={{ fontFamily: "var(--font-heading)", color: "#E8EAF0" }}
+                className="text-lg font-bold"
+                style={{ fontFamily: "var(--font-heading)", color: step.color }}
+              >
+                {step.step}
+              </span>
+
+              {/* Pulse ring */}
+              <div
+                className="absolute inset-0 rounded-2xl"
+                style={{
+                  border: `1px solid ${step.color}30`,
+                  animation: "pulse-ring 2s ease-out infinite",
+                  animationDelay: `${index * 0.15}s`,
+                }}
+              />
+            </div>
+
+            {/* Label */}
+            <div className="text-center">
+              <div
+                className="text-[10px] font-mono font-bold tracking-wider mb-1"
+                style={{ color: step.color }}
+              >
+                {step.label}
+              </div>
+              <div
+                className="text-xs font-semibold whitespace-nowrap"
+                style={{ fontFamily: "var(--font-heading)", color: TEXT }}
               >
                 {step.name}
-              </span>
+              </div>
             </div>
-            <p className="text-xs leading-relaxed mb-1" style={{ color: "#7A8AAA" }}>
-              {step.desc}
-            </p>
-            {open && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                className="mt-2 pt-2 border-t"
-                style={{ borderColor: `${step.color}10` }}
-              >
-                <p
-                  className="text-[11px] font-mono leading-relaxed"
-                  style={{ color: step.color, opacity: 0.8 }}
-                >
-                  {step.detail}
-                </p>
-              </motion.div>
-            )}
-          </div>
-
-          {/* Expand indicator */}
-          <div
-            className="flex-shrink-0 text-[10px] transition-transform duration-200 mt-1"
-            style={{
-              color: "#7A8AAA",
-              transform: open ? "rotate(180deg)" : "rotate(0deg)",
-            }}
-          >
-            ▼
-          </div>
-        </div>
+          </motion.div>
+        ))}
       </div>
-    </motion.div>
+
+      <style>{`
+        @keyframes flowParticle {
+          0% { transform: translateX(0); opacity: 0; }
+          10% { opacity: 1; }
+          90% { opacity: 1; }
+          100% { transform: translateX(calc(100vw)); opacity: 0; }
+        }
+        @keyframes pulse-ring {
+          0% { transform: scale(1); opacity: 0.5; }
+          100% { transform: scale(1.4); opacity: 0; }
+        }
+        @keyframes pulse-node {
+          0%, 100% { opacity: 0.3; }
+          50% { opacity: 0.6; }
+        }
+      `}</style>
+    </div>
   );
 }
 
-export function ArchitecturePipeline() {
+function PipelineDetails() {
+  const [selected, setSelected] = useState(0);
+
   return (
-    <section className="relative py-40 px-6 overflow-hidden">
+    <div className="mt-12 grid md:grid-cols-2 gap-8">
+      {/* Step selector */}
+      <div>
+        <h4 className="text-sm font-bold mb-4" style={{ fontFamily: "var(--font-mono)", color: TEXT_MUTED }}>
+          PIPELINE STEPS
+        </h4>
+        <div className="space-y-2">
+          {PIPELINE_STEPS.map((step, i) => (
+            <button
+              key={step.step}
+              onClick={() => setSelected(i)}
+              className="w-full flex items-center gap-3 p-3 rounded-xl text-left transition-all"
+              style={{
+                background: selected === i ? `${step.color}10` : "transparent",
+                border: `1px solid ${selected === i ? step.color + "30" : "transparent"}`,
+              }}
+            >
+              <span
+                className="w-6 h-6 rounded-lg flex items-center justify-center text-xs font-mono font-bold"
+                style={{ background: `${step.color}15`, color: step.color }}
+              >
+                {step.step}
+              </span>
+              <span className="text-sm" style={{ color: selected === i ? TEXT : TEXT_MUTED }}>
+                {step.name}
+              </span>
+              <ChevronRight
+                className="w-4 h-4 ml-auto"
+                style={{ color: selected === i ? step.color : TEXT_DIM }}
+              />
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Detail panel */}
+      <motion.div
+        key={selected}
+        initial={{ opacity: 0, x: 16 }}
+        animate={{ opacity: 1, x: 0 }}
+        className="p-6 rounded-2xl"
+        style={{
+          background: BG_CARD,
+          border: `1px solid ${PIPELINE_STEPS[selected].color}20`,
+        }}
+      >
+        <div className="flex items-center gap-3 mb-4">
+          <span
+            className="px-3 py-1 rounded-lg text-xs font-mono font-bold"
+            style={{
+              background: `${PIPELINE_STEPS[selected].color}15`,
+              color: PIPELINE_STEPS[selected].color,
+            }}
+          >
+            {PIPELINE_STEPS[selected].label}
+          </span>
+          <span className="text-lg font-bold" style={{ fontFamily: "var(--font-heading)", color: TEXT }}>
+            {PIPELINE_STEPS[selected].name}
+          </span>
+        </div>
+        <p className="text-sm leading-relaxed mb-4" style={{ color: TEXT_MUTED }}>
+          {PIPELINE_STEPS[selected].desc}
+        </p>
+
+        {/* Example detail based on step */}
+        {selected === 3 && (
+          <div className="mt-4 p-4 rounded-xl font-mono text-xs" style={{ background: `${MAGENTA}08`, border: `1px solid ${MAGENTA}15` }}>
+            <div className="text-[10px] mb-2" style={{ color: MAGENTA }}>LAYER 1-3</div>
+            <div className="space-y-1" style={{ color: TEXT_MUTED }}>
+              <div>1. Regex Pattern (~1ms)</div>
+              <div>2. detect-secrets Entropy (~10ms)</div>
+              <div>3. SpaCy NER (~50-100ms)</div>
+            </div>
+          </div>
+        )}
+        {selected === 5 && (
+          <div className="mt-4 p-4 rounded-xl font-mono text-xs" style={{ background: `${VIOLET}08`, border: `1px solid ${VIOLET}15` }}>
+            <div className="text-[10px] mb-2" style={{ color: VIOLET }}>DUAL MODEL ROUTING</div>
+            <div className="space-y-1" style={{ color: TEXT_MUTED }}>
+              <div>• prose model → natural language</div>
+              <div>• code model → code-patterns, github_code_blob</div>
+            </div>
+          </div>
+        )}
+        {selected === 6 && (
+          <div className="mt-4 p-4 rounded-xl font-mono text-xs" style={{ background: `${GREEN}08`, border: `1px solid ${GREEN}15` }}>
+            <div className="text-[10px] mb-2" style={{ color: GREEN }}>METADATA FIELDS</div>
+            <div className="space-y-1" style={{ color: TEXT_MUTED }}>
+              <div>group_id, type, timestamp</div>
+              <div>content_hash, is_current</div>
+              <div>authority_tier, freshness_status</div>
+            </div>
+          </div>
+        )}
+      </motion.div>
+    </div>
+  );
+}
+
+function PipelineSection() {
+  return (
+    <section id="pipeline" className="relative py-40 px-8 overflow-hidden">
       {/* Background */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background:
-            "radial-gradient(ellipse 60% 50% at 50% 30%, rgba(139,92,246,0.04) 0%, transparent 70%)",
+          background: `radial-gradient(ellipse 60% 40% at 50% 30%, ${VIOLET}06, transparent 70%)`,
         }}
       />
 
-      <div className="max-w-4xl mx-auto relative">
+      <div className="max-w-6xl mx-auto relative">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <div className="section-label mb-6">
-            <GitBranch className="w-3.5 h-3.5" />
-            Memory Processing Pipeline
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-6" style={{ background: `${GREEN}10`, border: `1px solid ${GREEN}25` }}>
+            <GitBranch className="w-3.5 h-3.5" style={{ color: GREEN }} />
+            <span className="text-[10px] font-mono font-semibold tracking-widest uppercase" style={{ color: GREEN }}>Memory Processing Pipeline</span>
           </div>
-          <h2
-            className="text-3xl sm:text-4xl font-bold mb-4 tracking-tight"
-            style={{ fontFamily: "var(--font-heading)", color: "#E8EAF0" }}
-          >
+          <h2 className="text-4xl md:text-5xl font-bold mb-4" style={{ fontFamily: "var(--font-heading)", color: TEXT }}>
             9 Steps from Capture to Searchable
           </h2>
-          <p className="text-sm max-w-xl mx-auto leading-relaxed" style={{ color: "#7A8AAA" }}>
-            Every memory — whether from a Claude Code hook or a sync engine — follows
-            the same immutable pipeline. Store-first architecture ensures no data loss.
+          <p className="text-base max-w-xl mx-auto" style={{ color: TEXT_MUTED }}>
+            Every memory follows the same immutable pipeline. Store-first architecture ensures no data loss.
           </p>
         </motion.div>
 
-        {/* Pipeline steps */}
-        <div className="flex flex-col gap-3">
-          {pipelineSteps.map((step, i) => (
-            <PipelineStepCard key={step.step} step={step} index={i} />
-          ))}
-        </div>
+        {/* Pipeline visualization */}
+        <PipelineFlow />
+        <PipelineDetails />
 
         {/* Key invariants */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-          className="mt-10 p-5 rounded-2xl"
+          className="mt-12 p-6 rounded-2xl"
           style={{
-            background: "rgba(255,45,106,0.04)",
-            border: "1px solid rgba(255,45,106,0.1)",
+            background: `${MAGENTA}05`,
+            border: `1px solid ${MAGENTA}15`,
           }}
         >
-          <div className="flex items-start gap-3">
-            <Shield className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: MAGENTA }} />
-            <div className="flex-1 min-w-0">
-              <p className="text-xs font-semibold mb-2" style={{ color: MAGENTA, fontFamily: "var(--font-mono)" }}>
+          <div className="flex items-start gap-4">
+            <Lock className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: MAGENTA }} />
+            <div>
+              <h4 className="text-sm font-bold mb-3" style={{ fontFamily: "var(--font-mono)", color: MAGENTA }}>
                 Pipeline Invariants
-              </p>
-              <ul className="space-y-1.5">
+              </h4>
+              <ul className="space-y-2">
                 {[
                   "Full content ALWAYS logged (activity log is append-only, never modified)",
-                  "BLOCKED content discarded — not stored, but still logged",
+                  "BLOCKED content discarded — logged but not stored",
                   "Classification runs async — never blocks capture",
                   "Embedding model selected by content type (prose vs code)",
                 ].map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-xs" style={{ color: "#7A8AAA" }}>
-                    <span style={{ color: MAGENTA }} className="flex-shrink-0 mt-0.5">
-                      →
-                    </span>
+                  <li key={i} className="flex items-start gap-3 text-sm" style={{ color: TEXT_MUTED }}>
+                    <span style={{ color: MAGENTA }} className="flex-shrink-0">→</span>
                     {item}
                   </li>
                 ))}
@@ -1217,9 +1183,9 @@ export function ArchitecturePipeline() {
   );
 }
 
-// ─── Hook Classification ───────────────────────────────────────────────────
+// ─── Hooks Section ─────────────────────────────────────────────────────────────
 
-const captureHooks = [
+const CAPTURE_HOOKS = [
   { name: "user_prompt_capture.py", trigger: "UserPromptSubmit", collection: "discussions", type: "user_message" },
   { name: "agent_response_capture.py", trigger: "Stop", collection: "discussions", type: "agent_response" },
   { name: "post_tool_capture.py", trigger: "PostToolUse (Edit|Write)", collection: "code-patterns", type: "implementation" },
@@ -1227,7 +1193,7 @@ const captureHooks = [
   { name: "pre_compact_save.py", trigger: "PreCompact", collection: "discussions", type: "session" },
 ];
 
-const retrievalHooks = [
+const RETRIEVAL_HOOKS = [
   { name: "error_detection.py", trigger: "PostToolUse (Bash)", collection: "code-patterns", type: "error_fix" },
   { name: "new_file_trigger.py", trigger: "PreToolUse (Write)", collection: "conventions", type: "naming, structure" },
   { name: "first_edit_trigger.py", trigger: "PreToolUse (Edit)", collection: "code-patterns", type: "file_pattern" },
@@ -1235,95 +1201,106 @@ const retrievalHooks = [
   { name: "session_start.py", trigger: "SessionStart (resume|compact)", collection: "discussions, conventions", type: "session, guideline, decision" },
 ];
 
-function HookCard({ hook, side, index }: { hook: (typeof captureHooks)[0]; side: "capture" | "retrieval"; index: number }) {
+function HookRow({ hook, side, index }: { hook: typeof CAPTURE_HOOKS[0]; side: "capture" | "retrieval"; index: number }) {
   const color = side === "capture" ? AMBER : CYAN;
+
   return (
     <motion.div
       initial={{ opacity: 0, x: side === "capture" ? -16 : 16 }}
       whileInView={{ opacity: 1, x: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.4, delay: index * 0.07 }}
-      className="p-3.5 rounded-xl"
+      transition={{ delay: index * 0.06 }}
+      className="p-5 rounded-xl"
       style={{
-        background: `${color}04`,
-        border: `1px solid ${color}12`,
+        background: `${color}05`,
+        border: `1px solid ${color}15`,
       }}
     >
-      <div className="text-[10px] font-mono font-semibold mb-1.5 truncate" style={{ color: color }}>
-        {hook.name}
-      </div>
-      <div className="space-y-0.5">
-        <div className="flex items-center gap-1.5">
-          <span className="text-[9px] px-1.5 py-0.5 rounded" style={{ background: `${color}10`, color: `${color}80`, fontFamily: "var(--font-mono)" }}>
-            TRIGGER
-          </span>
-          <span className="text-[10px] truncate" style={{ color: "#7A8AAA" }}>{hook.trigger}</span>
+      <div className="flex flex-col gap-3">
+        <div className="flex items-center justify-between gap-4">
+          <code
+            className="text-sm font-mono font-semibold"
+            style={{ color }}
+          >
+            {hook.name}
+          </code>
+          <div
+            className="px-3 py-1.5 rounded-lg text-xs font-mono flex-shrink-0"
+            style={{ background: `${color}12`, color: `${color}80` }}
+          >
+            {hook.collection}
+          </div>
         </div>
-        <div className="flex items-center gap-1.5">
-          <span className="text-[9px] px-1.5 py-0.5 rounded" style={{ background: `${color}10`, color: `${color}80`, fontFamily: "var(--font-mono)" }}>
-            TYPE
-          </span>
-          <span className="text-[10px] truncate" style={{ color: "#7A8AAA" }}>{hook.type}</span>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="flex items-center gap-2">
+            <span
+              className="text-[10px] px-2 py-1 rounded font-mono"
+              style={{ background: `${color}10`, color: `${color}80` }}
+            >
+              TRIGGER
+            </span>
+            <span className="text-sm" style={{ color: TEXT_MUTED }}>{hook.trigger}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span
+              className="text-[10px] px-2 py-1 rounded font-mono"
+              style={{ background: `${color}10`, color: `${color}80` }}
+            >
+              TYPE
+            </span>
+            <span className="text-sm" style={{ color: TEXT_MUTED }}>{hook.type}</span>
+          </div>
         </div>
       </div>
     </motion.div>
   );
 }
 
-export function ArchitectureHooks() {
+function HooksSection() {
   return (
-    <section className="relative py-40 px-6 overflow-hidden">
-      {/* Divider glow */}
-      <div className="absolute inset-0 pointer-events-none"
-        style={{ background: "linear-gradient(180deg, transparent, rgba(0,245,255,0.02), transparent)" }}
-      />
+    <section id="hooks" className="relative py-40 px-8" style={{ background: BG_SURFACE }}>
+      <div className="absolute inset-0 pointer-events-none" style={{
+        background: `linear-gradient(180deg, transparent, ${CYAN}03, transparent)`,
+      }} />
 
       <div className="max-w-5xl mx-auto relative">
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <div className="section-label mb-6">
-            <Brain className="w-3.5 h-3.5" />
-            Hook Classification
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-6" style={{ background: `${AMBER}10`, border: `1px solid ${AMBER}25` }}>
+            <Brain className="w-3.5 h-3.5" style={{ color: AMBER }} />
+            <span className="text-[10px] font-mono font-semibold tracking-widest uppercase" style={{ color: AMBER }}>Hook Classification</span>
           </div>
-          <h2
-            className="text-3xl sm:text-4xl font-bold mb-4 tracking-tight"
-            style={{ fontFamily: "var(--font-heading)", color: "#E8EAF0" }}
-          >
+          <h2 className="text-4xl md:text-5xl font-bold mb-4" style={{ fontFamily: "var(--font-heading)", color: TEXT }}>
             CAPTURE vs Retrieval
           </h2>
-          <p className="text-sm max-w-xl mx-auto leading-relaxed" style={{ color: "#7A8AAA" }}>
+          <p className="text-base max-w-xl mx-auto" style={{ color: TEXT_MUTED }}>
             Hooks are classified by function: CAPTURE stores to memory, RETRIEVAL queries it.
-            Each runs at precise lifecycle events in Claude Code.
           </p>
         </motion.div>
 
-        {/* Two-column layout */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Two columns */}
+        <div className="grid md:grid-cols-2 gap-8">
           {/* CAPTURE */}
           <div>
             <div
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest mb-5"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl mb-6"
               style={{
-                fontFamily: "var(--font-mono)",
-                color: AMBER,
-                background: "rgba(245,158,11,0.08)",
-                border: "1px solid rgba(245,158,11,0.2)",
+                background: `${AMBER}10`,
+                border: `1px solid ${AMBER}25`,
               }}
             >
-              <span
-                className="w-1.5 h-1.5 rounded-full"
-                style={{ background: AMBER, boxShadow: `0 0 6px ${AMBER}` }}
-              />
-              CAPTURE — Store to Database
+              <div className="w-2 h-2 rounded-full" style={{ background: AMBER, boxShadow: `0 0 8px ${AMBER}` }} />
+              <span className="text-xs font-mono font-bold" style={{ color: AMBER }}>CAPTURE</span>
+              <span className="text-xs" style={{ color: TEXT_DIM }}>— Store to Database</span>
             </div>
-            <div className="flex flex-col gap-2">
-              {captureHooks.map((hook, i) => (
-                <HookCard key={hook.name} hook={hook} side="capture" index={i} />
+            <div className="space-y-3">
+              {CAPTURE_HOOKS.map((hook, i) => (
+                <HookRow key={hook.name} hook={hook} side="capture" index={i} />
               ))}
             </div>
           </div>
@@ -1331,23 +1308,19 @@ export function ArchitectureHooks() {
           {/* RETRIEVAL */}
           <div>
             <div
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest mb-5"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl mb-6"
               style={{
-                fontFamily: "var(--font-mono)",
-                color: CYAN,
-                background: "rgba(0,245,255,0.08)",
-                border: "1px solid rgba(0,245,255,0.2)",
+                background: `${CYAN}10`,
+                border: `1px solid ${CYAN}25`,
               }}
             >
-              <span
-                className="w-1.5 h-1.5 rounded-full"
-                style={{ background: CYAN, boxShadow: `0 0 6px ${CYAN}` }}
-              />
-              RETRIEVAL — Query Database
+              <div className="w-2 h-2 rounded-full" style={{ background: CYAN, boxShadow: `0 0 8px ${CYAN}` }} />
+              <span className="text-xs font-mono font-bold" style={{ color: CYAN }}>RETRIEVAL</span>
+              <span className="text-xs" style={{ color: TEXT_DIM }}>— Query Database</span>
             </div>
-            <div className="flex flex-col gap-2">
-              {retrievalHooks.map((hook, i) => (
-                <HookCard key={hook.name} hook={hook} side="retrieval" index={i} />
+            <div className="space-y-3">
+              {RETRIEVAL_HOOKS.map((hook, i) => (
+                <HookRow key={hook.name} hook={hook} side="retrieval" index={i} />
               ))}
             </div>
           </div>
@@ -1357,235 +1330,206 @@ export function ArchitectureHooks() {
   );
 }
 
-// ─── Triggers Section ─────────────────────────────────────────────────────
+// ─── Triggers Section ──────────────────────────────────────────────────────────
 
-const triggers = [
+const TRIGGERS = [
   {
     num: 1,
     name: "Error Detection",
     hook: "PostToolUse (Bash)",
-    capture: "error_pattern_capture.py",
-    retrieve: "error_detection.py",
     collection: "code-patterns",
     filter: 'type="error_fix"',
-    signal: 'error text, "Exception:", "Traceback", exit != 0',
+    signal: 'Error text, "Exception:", "Traceback", exit != 0',
     color: MAGENTA,
-    waveform: [0.3, 0.6, 0.4, 0.8, 0.2, 0.9, 0.5],
   },
   {
     num: 2,
     name: "New File Creation",
     hook: "PreToolUse (Write)",
-    capture: "—",
-    retrieve: "new_file_trigger.py",
     collection: "conventions",
     filter: 'type IN (naming, structure)',
     signal: "Write tool, file does not exist",
     color: CYAN,
-    waveform: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5],
   },
   {
     num: 3,
     name: "First Edit to File",
     hook: "PreToolUse (Edit)",
-    capture: "post_tool_capture.py",
-    retrieve: "first_edit_trigger.py",
     collection: "code-patterns",
     filter: 'type="file_pattern"',
     signal: "First edit to file in session",
     color: VIOLET,
-    waveform: [0.2, 0.4, 0.6, 0.8, 0.7, 0.5, 0.3],
   },
   {
     num: 4,
     name: "Decision Keywords",
     hook: "UserPromptSubmit",
-    capture: "—",
-    retrieve: "context_injection_tier2.py",
     collection: "discussions",
     filter: 'type="decision"',
     signal: '"why did we", "what was decided", "remember when"',
     color: GREEN,
-    waveform: [0.1, 0.3, 0.5, 0.4, 0.6, 0.3, 0.2],
   },
   {
     num: 5,
     name: "Best Practices Keywords",
     hook: "UserPromptSubmit",
-    capture: "—",
-    retrieve: "context_injection_tier2.py",
     collection: "conventions",
     filter: 'type="guideline"',
     signal: '"best practice", "convention", "how should I"',
     color: AMBER,
-    waveform: [0.4, 0.7, 0.3, 0.9, 0.2, 0.6, 0.4],
   },
   {
     num: 6,
     name: "Session History Keywords",
     hook: "UserPromptSubmit",
-    capture: "pre_compact_save.py",
-    retrieve: "context_injection_tier2.py",
     collection: "discussions",
     filter: 'type="session"',
     signal: '"what have we done", "project status", "what\'s next"',
     color: CYAN,
-    waveform: [0.6, 0.3, 0.8, 0.2, 0.7, 0.4, 0.5],
   },
 ];
 
-function Waveform({ bars, color }: { bars: number[]; color: string }) {
-  return (
-    <div className="flex items-end gap-px h-6">
-      {bars.map((h, i) => (
-        <div
-          key={i}
-          className="w-1 rounded-full animate-pulse"
-          style={{
-            height: `${h * 100}%`,
-            background: color,
-            opacity: 0.4 + h * 0.4,
-            animationDelay: `${i * 0.15}s`,
-            animationDuration: `${1.5 + h}s`,
-          }}
-        />
-      ))}
-    </div>
-  );
-}
-
-function TriggerCard({ trigger, index }: { trigger: (typeof triggers)[0]; index: number }) {
-  const [open, setOpen] = useState(false);
+function TriggerCard({ trigger, index }: { trigger: typeof TRIGGERS[0]; index: number }) {
+  const [expanded, setExpanded] = useState(false);
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.4, delay: index * 0.07 }}
+      transition={{ delay: index * 0.08 }}
       className="rounded-2xl overflow-hidden"
       style={{
-        background: "rgba(10,13,30,0.7)",
-        border: `1px solid ${trigger.color}12`,
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.borderColor = `${trigger.color}30`;
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.borderColor = `${trigger.color}12`;
+        background: BG_CARD,
+        border: `1px solid ${trigger.color}15`,
       }}
     >
       <button
-        onClick={() => setOpen(!open)}
-        className="w-full flex items-start gap-4 p-4 text-left hover:bg-white/[0.02] transition-colors"
+        onClick={() => setExpanded(!expanded)}
+        className="w-full p-5 text-left hover:bg-white/[0.02] transition-colors"
       >
-        {/* Waveform */}
-        <div
-          className="flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center"
-          style={{
-            background: `${trigger.color}10`,
-            border: `1px solid ${trigger.color}20`,
-          }}
-        >
-          <Waveform bars={trigger.waveform} color={trigger.color} />
-        </div>
-
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1">
+        <div className="flex items-center gap-5">
+          {/* Trigger number - more prominent with glow */}
+          <div
+            className="w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 relative"
+            style={{
+              background: `${trigger.color}15`,
+              border: `2px solid ${trigger.color}35`,
+              boxShadow: `0 0 20px ${trigger.color}20`,
+            }}
+          >
             <span
-              className="text-[9px] font-mono font-bold"
-              style={{ color: trigger.color }}
+              className="text-2xl font-bold"
+              style={{ fontFamily: "var(--font-heading)", color: trigger.color }}
             >
-              TRIGGER {trigger.num}
+              {trigger.num}
             </span>
           </div>
-          <div
-            className="text-sm font-semibold mb-0.5"
-            style={{ fontFamily: "var(--font-heading)", color: "#E8EAF0" }}
-          >
-            {trigger.name}
-          </div>
-          <div className="text-[10px] truncate" style={{ color: "#7A8AAA", fontFamily: "var(--font-mono)" }}>
-            {trigger.hook}
-          </div>
-        </div>
 
-        <div
-          className="flex-shrink-0 text-[10px] transition-transform duration-200 mt-1"
-          style={{
-            color: "#7A8AAA",
-            transform: open ? "rotate(180deg)" : "rotate(0deg)",
-          }}
-        >
-          ▼
+          <div className="flex-1 min-w-0">
+            <div
+              className="text-lg font-bold mb-1"
+              style={{ fontFamily: "var(--font-heading)", color: TEXT }}
+            >
+              {trigger.name}
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono" style={{ color: TEXT_MUTED }}>
+                {trigger.hook}
+              </span>
+              <span className="text-xs" style={{ color: TEXT_DIM }}>•</span>
+              <span className="text-xs font-mono" style={{ color: trigger.color }}>
+                {trigger.collection}
+              </span>
+            </div>
+          </div>
+
+          <div
+            className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center transition-transform duration-200"
+            style={{
+              background: `${trigger.color}10`,
+              transform: expanded ? "rotate(180deg)" : "rotate(0deg)",
+            }}
+          >
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+              <path d="M2 3.5L5 6.5L8 3.5" stroke={trigger.color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
         </div>
       </button>
 
-      {open && (
-        <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: "auto" }}
-          className="border-t p-4 grid grid-cols-2 gap-3"
-          style={{ borderColor: `${trigger.color}10` }}
-        >
-          {[
-            { label: "CAPTURE", value: trigger.capture },
-            { label: "RETRIEVE", value: trigger.retrieve },
-            { label: "COLLECTION", value: trigger.collection },
-            { label: "FILTER", value: trigger.filter },
-            { label: "SIGNAL", value: trigger.signal, span: true },
-          ].map((row) => (
-            <div key={row.label} className={row.span ? "col-span-2" : ""}>
-              <div className="text-[9px] font-mono uppercase tracking-widest mb-1" style={{ color: `${trigger.color}60` }}>
-                {row.label}
+      <AnimatePresence>
+        {expanded && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="overflow-hidden"
+          >
+            <div
+              className="p-5 grid grid-cols-1 gap-4"
+              style={{ borderTop: `1px solid ${trigger.color}10` }}
+            >
+              <div>
+                <div className="text-[10px] font-mono uppercase tracking-wider mb-2" style={{ color: `${trigger.color}60` }}>
+                  Signal
+                </div>
+                <code
+                  className="text-sm font-mono block p-3 rounded-lg"
+                  style={{ background: `${trigger.color}08`, color: trigger.color }}
+                >
+                  {trigger.signal}
+                </code>
               </div>
-              <div className="text-[11px] font-mono leading-relaxed" style={{ color: "#7A8AAA" }}>
-                {row.value}
+              <div>
+                <div className="text-[10px] font-mono uppercase tracking-wider mb-2" style={{ color: `${trigger.color}60` }}>
+                  Query Filter
+                </div>
+                <code
+                  className="text-sm font-mono block p-3 rounded-lg"
+                  style={{ background: `${trigger.color}08`, color: trigger.color }}
+                >
+                  {trigger.filter}
+                </code>
               </div>
             </div>
-          ))}
-        </motion.div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }
 
-export function ArchitectureTriggers() {
+function TriggersSection() {
   return (
-    <section className="relative py-40 px-6 overflow-hidden">
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: "radial-gradient(ellipse 60% 40% at 50% 50%, rgba(0,245,255,0.02) 0%, transparent 70%)",
-        }}
-      />
+    <section id="triggers" className="relative py-40 px-8">
+      <div className="absolute inset-0 pointer-events-none" style={{
+        background: `radial-gradient(ellipse 50% 40% at 50% 50%, ${GREEN}04, transparent 70%)`,
+      }} />
 
       <div className="max-w-5xl mx-auto relative">
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <div className="section-label mb-6">
-            <Zap className="w-3.5 h-3.5" />
-            Automatic Triggers
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-6" style={{ background: `${GREEN}10`, border: `1px solid ${GREEN}25` }}>
+            <Target className="w-3.5 h-3.5" style={{ color: GREEN }} />
+            <span className="text-[10px] font-mono font-semibold tracking-widest uppercase" style={{ color: GREEN }}>Automatic Triggers</span>
           </div>
-          <h2
-            className="text-3xl sm:text-4xl font-bold mb-4 tracking-tight"
-            style={{ fontFamily: "var(--font-heading)", color: "#E8EAF0" }}
-          >
+          <h2 className="text-4xl md:text-5xl font-bold mb-4" style={{ fontFamily: "var(--font-heading)", color: TEXT }}>
             6 Signal-Based Triggers
           </h2>
-          <p className="text-sm max-w-xl mx-auto leading-relaxed" style={{ color: "#7A8AAA" }}>
+          <p className="text-base max-w-xl mx-auto" style={{ color: TEXT_MUTED }}>
             The system acts on precise signals — not on every user message or every tool use.
-            High signal-to-noise ratio ensures memory surfaces when relevant.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {triggers.map((trigger, i) => (
+        {/* Triggers grid */}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {TRIGGERS.map((trigger, i) => (
             <TriggerCard key={trigger.num} trigger={trigger} index={i} />
           ))}
         </div>
@@ -1594,322 +1538,323 @@ export function ArchitectureTriggers() {
   );
 }
 
-// ─── Triple Fusion ────────────────────────────────────────────────────────
+// ─── Triple Fusion Section ─────────────────────────────────────────────────────
 
-function FusionNode({
-  label,
-  sub,
-  color,
-  x,
-  y,
-  size = "md",
-}: {
-  label: string;
-  sub: string;
-  color: string;
-  x: number;
-  y: number;
-  size?: "sm" | "md" | "lg";
-}) {
-  const s = size === "lg" ? 52 : size === "sm" ? 36 : 44;
-  const fontSize = size === "lg" ? "text-xs" : size === "sm" ? "text-[9px]" : "text-[10px]";
-
+function TripleFusionSection() {
   return (
-    <div
-      className="absolute flex flex-col items-center justify-center rounded-full"
-      style={{
-        left: `${x}%`,
-        top: `${y}%`,
-        transform: "translate(-50%, -50%)",
-        width: s,
-        height: s,
-        background: `radial-gradient(circle at 35% 35%, ${color}18, rgba(3,3,8,0.9))`,
-        border: `1.5px solid ${color}40`,
-        boxShadow: `0 0 30px ${color}15, 0 0 60px ${color}08 inset`,
-        zIndex: 2,
-      }}
-    >
-      <span className={`font-bold ${fontSize} uppercase tracking-wider`} style={{ color, fontFamily: "var(--font-mono)" }}>
-        {label}
-      </span>
-      {size !== "sm" && (
-        <span className="text-[8px] mt-0.5" style={{ color: `${color}80`, fontFamily: "var(--font-mono)" }}>
-          {sub}
-        </span>
-      )}
-    </div>
-  );
-}
+    <section id="fusion" className="relative py-40 px-8" style={{ background: BG_SURFACE }}>
+      <div className="absolute inset-0 pointer-events-none" style={{
+        background: `radial-gradient(ellipse 50% 50% at 50% 50%, ${VIOLET}06, transparent 70%)`,
+      }} />
 
-function FusionArrow({ from, to, color }: { from: { x: number; y: number }; to: { x: number; y: number }; color: string }) {
-  const dx = to.x - from.x;
-  const dy = to.y - from.y;
-  const mx = (from.x + to.x) / 2;
-  const my = (from.y + to.y) / 2;
-
-  return (
-    <svg
-      className="absolute inset-0 pointer-events-none z-10"
-      style={{ overflow: "visible" }}
-    >
-      <defs>
-        <linearGradient id={`grad-${color.replace("#", "")}`} x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor={color} stopOpacity="0.3" />
-          <stop offset="100%" stopColor={color} stopOpacity="0.8" />
-        </linearGradient>
-      </defs>
-      <line
-        x1={`${from.x}%`} y1={`${from.y}%`}
-        x2={`${to.x}%`} y2={`${to.y}%`}
-        stroke={`url(#grad-${color.replace("#", "")})`}
-        strokeWidth="1.5"
-        strokeDasharray="6 4"
-        style={{
-          filter: `drop-shadow(0 0 4px ${color}40)`,
-          animation: "dash-flow 2s linear infinite",
-        }}
-      />
-    </svg>
-  );
-}
-
-export function ArchitectureTripleFusion() {
-  return (
-    <section className="relative py-40 px-6 overflow-hidden">
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: "radial-gradient(ellipse 50% 50% at 50% 50%, rgba(139,92,246,0.04) 0%, transparent 70%)",
-        }}
-      />
-
-      <div className="max-w-4xl mx-auto relative">
+      <div className="max-w-5xl mx-auto relative">
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <div className="section-label mb-6">
-            <Cpu className="w-3.5 h-3.5" />
-            Triple Fusion Hybrid Search
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-6" style={{ background: `${VIOLET}10`, border: `1px solid ${VIOLET}25` }}>
+            <Infinity className="w-3.5 h-3.5" style={{ color: VIOLET }} />
+            <span className="text-[10px] font-mono font-semibold tracking-widest uppercase" style={{ color: VIOLET }}>Triple Fusion Hybrid Search</span>
           </div>
-          <h2
-            className="text-3xl sm:text-4xl font-bold mb-4 tracking-tight"
-            style={{ fontFamily: "var(--font-heading)", color: "#E8EAF0" }}
-          >
+          <h2 className="text-4xl md:text-5xl font-bold mb-4" style={{ fontFamily: "var(--font-heading)", color: TEXT }}>
             Dense + Sparse + Late Interaction
           </h2>
-          <p className="text-sm max-w-xl mx-auto leading-relaxed" style={{ color: "#7A8AAA" }}>
-            Three complementary search modalities combined via Qdrant&apos;s native
-            Reciprocal Rank Fusion (RRF). v2.2.1 introduced ColBERT opt-in.
+          <p className="text-base max-w-xl mx-auto" style={{ color: TEXT_MUTED }}>
+            Three complementary search modalities combined via Qdrant&apos;s native Reciprocal Rank Fusion (RRF).
           </p>
         </motion.div>
 
         {/* Fusion diagram */}
-        <div
-          className="relative w-full mx-auto mb-12"
-          style={{ height: "320px" }}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          className="relative h-96 mb-12"
         >
-          {/* Arrows */}
-          <FusionArrow from={{ x: 20, y: 25 }} to={{ x: 42, y: 50 }} color={CYAN} />
-          <FusionArrow from={{ x: 50, y: 10 }} to={{ x: 50, y: 38 }} color={VIOLET} />
-          <FusionArrow from={{ x: 80, y: 25 }} to={{ x: 58, y: 50 }} color={GREEN} />
-          <FusionArrow from={{ x: 42, y: 62 }} to={{ x: 50, y: 78 }} color={MAGENTA} />
-          <FusionArrow from={{ x: 58, y: 62 }} to={{ x: 50, y: 78 }} color={MAGENTA} />
+          {/* Connection lines */}
+          <svg className="absolute inset-0 w-full h-full">
+            {/* Dense → RRF */}
+            <motion.line
+              x1="15%" y1="25%" x2="50%" y2="80%"
+              stroke={CYAN}
+              strokeWidth="2"
+              strokeDasharray="8 4"
+              initial={{ pathLength: 0 }}
+              animate={{ pathLength: 1 }}
+              transition={{ duration: 1.5, delay: 0.2 }}
+              style={{ opacity: 0.4 }}
+            />
+            {/* Sparse → RRF */}
+            <motion.line
+              x1="50%" y1="15%" x2="50%" y2="80%"
+              stroke={VIOLET}
+              strokeWidth="2"
+              strokeDasharray="8 4"
+              initial={{ pathLength: 0 }}
+              animate={{ pathLength: 1 }}
+              transition={{ duration: 1.5, delay: 0.4 }}
+              style={{ opacity: 0.4 }}
+            />
+            {/* ColBERT → RRF */}
+            <motion.line
+              x1="85%" y1="25%" x2="50%" y2="80%"
+              stroke={GREEN}
+              strokeWidth="2"
+              strokeDasharray="8 4"
+              initial={{ pathLength: 0 }}
+              animate={{ pathLength: 1 }}
+              transition={{ duration: 1.5, delay: 0.6 }}
+              style={{ opacity: 0.4 }}
+            />
+          </svg>
 
-          {/* Dense node */}
-          <FusionNode label="Dense" sub="Jina v2 EN/Code" color={CYAN} x={20} y={25} />
-          {/* Sparse node */}
-          <FusionNode label="Sparse" sub="BM25 / FastEmbed" color={VIOLET} x={50} y={10} size="lg" />
-          {/* Late Interaction node */}
-          <FusionNode label="Late" sub="ColBERT v2 (opt-in)" color={GREEN} x={80} y={25} />
-          {/* RRF node */}
-          <FusionNode label="RRF" sub="Fused" color={MAGENTA} x={50} y={78} size="lg" />
+          {/* Nodes */}
+          {/* Dense */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.3 }}
+            className="absolute left-[15%] top-[20%] -translate-x-1/2 -translate-y-1/2"
+          >
+            <div
+              className="w-28 h-28 rounded-2xl flex flex-col items-center justify-center relative"
+              style={{
+                background: `${CYAN}10`,
+                border: `2px solid ${CYAN}40`,
+                boxShadow: `0 0 40px ${CYAN}15`,
+              }}
+            >
+              <span className="text-sm font-bold" style={{ fontFamily: "var(--font-heading)", color: CYAN }}>Dense</span>
+              <span className="text-[10px] mt-1" style={{ color: TEXT_MUTED }}>768d vectors</span>
+              <div className="absolute inset-0 rounded-2xl" style={{ boxShadow: `0 0 30px ${CYAN}25 inset`, animation: "pulse-node 3s ease-in-out infinite" }} />
+            </div>
+          </motion.div>
 
-          {/* Labels */}
-          <div className="absolute" style={{ left: "20%", top: "14%", transform: "translate(-50%, -50%)" }}>
-            <span className="text-[9px] font-mono" style={{ color: CYAN, opacity: 0.6 }}>768d vectors</span>
-          </div>
-          <div className="absolute" style={{ left: "50%", top: "2%", transform: "translate(-50%, -50%)" }}>
-            <span className="text-[9px] font-mono" style={{ color: VIOLET, opacity: 0.6 }}>named "bm25"</span>
-          </div>
-          <div className="absolute" style={{ left: "80%", top: "14%", transform: "translate(-50%, -50%)" }}>
-            <span className="text-[9px] font-mono" style={{ color: GREEN, opacity: 0.6 }}>token-level</span>
-          </div>
+          {/* Sparse */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.5 }}
+            className="absolute left-1/2 top-[12%] -translate-x-1/2 -translate-y-1/2"
+          >
+            <div
+              className="w-32 h-32 rounded-2xl flex flex-col items-center justify-center relative"
+              style={{
+                background: `${VIOLET}10`,
+                border: `2px solid ${VIOLET}40`,
+                boxShadow: `0 0 40px ${VIOLET}15`,
+              }}
+            >
+              <span className="text-sm font-bold" style={{ fontFamily: "var(--font-heading)", color: VIOLET }}>Sparse</span>
+              <span className="text-[10px] mt-1" style={{ color: TEXT_MUTED }}>BM25 / FastEmbed</span>
+              <div className="absolute inset-0 rounded-2xl" style={{ boxShadow: `0 0 30px ${VIOLET}25 inset`, animation: "pulse-node 3s ease-in-out infinite 0.5s" }} />
+            </div>
+          </motion.div>
 
-          {/* Layer labels */}
-          <div className="absolute left-0 right-0 flex justify-between px-8" style={{ top: "88%" }}>
-            <span className="text-[9px] font-mono" style={{ color: "#3D4A5C" }}>Dense prefetch → decay → RRF</span>
-            <span className="text-[9px] font-mono" style={{ color: "#3D4A5C" }}>DEC-062: decay BEFORE fusion</span>
-          </div>
-        </div>
+          {/* ColBERT */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.7 }}
+            className="absolute left-[85%] top-[20%] -translate-x-1/2 -translate-y-1/2"
+          >
+            <div
+              className="w-28 h-28 rounded-2xl flex flex-col items-center justify-center relative"
+              style={{
+                background: `${GREEN}10`,
+                border: `2px solid ${GREEN}40`,
+                boxShadow: `0 0 40px ${GREEN}15`,
+              }}
+            >
+              <span className="text-sm font-bold" style={{ fontFamily: "var(--font-heading)", color: GREEN }}>Late</span>
+              <span className="text-[10px] mt-1" style={{ color: TEXT_MUTED }}>ColBERT v2</span>
+              <div className="absolute inset-0 rounded-2xl" style={{ boxShadow: `0 0 30px ${GREEN}25 inset`, animation: "pulse-node 3s ease-in-out infinite 1s" }} />
+            </div>
+          </motion.div>
+
+          {/* RRF (center bottom) */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.9 }}
+            className="absolute left-1/2 top-[82%] -translate-x-1/2 -translate-y-1/2"
+          >
+            <div
+              className="w-36 h-36 rounded-2xl flex flex-col items-center justify-center relative"
+              style={{
+                background: `${MAGENTA}12`,
+                border: `2px solid ${MAGENTA}50`,
+                boxShadow: `0 0 60px ${MAGENTA}20`,
+              }}
+            >
+              <span className="text-lg font-bold" style={{ fontFamily: "var(--font-heading)", color: MAGENTA }}>RRF</span>
+              <span className="text-[10px] mt-1" style={{ color: TEXT_MUTED }}>Reciprocal Rank Fusion</span>
+              <div className="absolute inset-0 rounded-2xl" style={{ boxShadow: `0 0 40px ${MAGENTA}30 inset`, animation: "pulse-node 2s ease-in-out infinite 0.3s" }} />
+            </div>
+          </motion.div>
+        </motion.div>
 
         {/* 4-path composition */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {[
+            { path: "1", label: "Best Quality", desc: "[dense→decay, sparse] → RRF", color: CYAN, badge: "HYBRID+DECAY" },
+            { path: "2", label: "Hybrid Only", desc: "[dense, sparse] → RRF", color: VIOLET, badge: "HYBRID" },
+            { path: "3", label: "Decay Only", desc: "Dense with decay reranking", color: AMBER, badge: "DECAY" },
+            { path: "4", label: "Plain Dense", desc: "Cosine similarity fallback", color: TEXT_DIM, badge: "DENSE" },
+          ].map((p) => (
+            <div
+              key={p.path}
+              className="p-5 rounded-2xl"
+              style={{
+                background: `${p.color}05`,
+                border: `1px solid ${p.color}15`,
+              }}
+            >
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-lg font-bold" style={{ fontFamily: "var(--font-heading)", color: p.color }}>
+                  {p.path}
+                </span>
+                <span
+                  className="px-2 py-0.5 rounded text-[9px] font-mono"
+                  style={{ background: `${p.color}12`, color: p.color }}
+                >
+                  {p.badge}
+                </span>
+              </div>
+              <div className="text-sm font-semibold mb-1" style={{ color: TEXT }}>{p.label}</div>
+              <code className="text-xs font-mono" style={{ color: TEXT_MUTED }}>{p.desc}</code>
+            </div>
+          ))}
+        </div>
+
+        {/* DEC-062 note */}
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
+          initial={{ opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.2 }}
+          className="mt-8 p-4 rounded-xl flex items-start gap-3"
+          style={{ background: `${VIOLET}05`, border: `1px solid ${VIOLET}15` }}
         >
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-            {[
-              { path: "1", label: "Best Quality", desc: "[dense→decay, sparse] → RRF", color: CYAN, badge: "HYBRID+DECAY" },
-              { path: "2", label: "Hybrid Only", desc: "[dense, sparse] → RRF", color: VIOLET, badge: "HYBRID" },
-              { path: "3", label: "Decay Only", desc: "Dense with decay reranking", color: AMBER, badge: "DECAY" },
-              { path: "4", label: "Plain Dense", desc: "Cosine similarity fallback", color: "rgba(232,234,240,0.3)", badge: "DENSE" },
-            ].map((p) => (
-              <div
-                key={p.path}
-                className="p-3 rounded-xl"
-                style={{
-                  background: `${p.color}06`,
-                  border: `1px solid ${p.color}18`,
-                }}
-              >
-                <div className="flex items-center gap-2 mb-2">
-                  <span
-                    className="text-[10px] font-mono font-bold"
-                    style={{ color: p.color }}
-                  >
-                    PATH {p.path}
-                  </span>
-                  <span
-                    className="text-[8px] px-1.5 py-0.5 rounded font-mono"
-                    style={{ background: `${p.color}12`, color: `${p.color}80` }}
-                  >
-                    {p.badge}
-                  </span>
-                </div>
-                <div className="text-xs font-semibold mb-1" style={{ color: "#E8EAF0", fontFamily: "var(--font-heading)" }}>
-                  {p.label}
-                </div>
-                <div className="text-[10px] font-mono leading-relaxed" style={{ color: "#7A8AAA" }}>
-                  {p.desc}
-                </div>
-              </div>
-            ))}
-          </div>
+          <Activity className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: VIOLET }} />
+          <p className="text-xs leading-relaxed" style={{ color: TEXT_MUTED }}>
+            <strong style={{ color: VIOLET }}>DEC-062:</strong> The decay formula MUST be applied BEFORE RRF fusion
+            (to the dense prefetch results), never after. Applying decay to RRF output would zero out semantics.
+          </p>
         </motion.div>
       </div>
     </section>
   );
 }
 
-// ─── Reference Table ───────────────────────────────────────────────────────
+// ─── Reference Section ─────────────────────────────────────────────────────────
 
-const referenceGroups = [
+const REFERENCE_GROUPS = [
   {
     group: "Source of Truth",
+    color: MAGENTA,
     docs: [
       { title: "Chunking-Strategy-V2.md", desc: "AST, semantic, markdown, late chunking, smart truncation" },
       { title: "Memory-System-Components-V1.md", desc: "Access, Processing, Storage layers" },
       { title: "Temporal-Awareness-V1.md", desc: "Decay scoring + freshness detection" },
       { title: "Security-Pipeline-V1.md", desc: "3-layer scanning, graduated trust, SOPS encryption" },
     ],
-    color: MAGENTA,
   },
   {
     group: "Integration",
+    color: CYAN,
     docs: [
       { title: "GitHub-Integration-V1.md", desc: "REST API, 9 document types, AST code chunking" },
       { title: "Embedding-Architecture-V1.md", desc: "Dual model routing: prose + code Jina v2" },
       { title: "LANGFUSE-INTEGRATION-SPEC.md", desc: "V3 SDK only, OTel, dual integration paths" },
     ],
-    color: CYAN,
   },
   {
     group: "Parzival Pipeline",
+    color: VIOLET,
     docs: [
       { title: "Parzival-Pipeline-V2.md", desc: "4-layer bootstrap, PCB architecture, step-file closeout" },
       { title: "Context-Injection-V2.md", desc: "Two-tier progressive context injection, confidence gating" },
       { title: "Intent-Skills-V1.md", desc: "Intent-based routing, skills architecture" },
     ],
-    color: VIOLET,
   },
 ];
 
-export function ArchitectureReference() {
+function ReferenceSection() {
   return (
-    <section className="relative py-40 px-6 overflow-hidden">
-      <div className="absolute inset-0 neural-grid opacity-15" />
+    <section id="reference" className="relative py-40 px-8" style={{ background: BG_SURFACE }}>
+      <div className="absolute inset-0 pointer-events-none opacity-[0.02]" style={{
+        backgroundImage: `radial-gradient(${CYAN} 1px, transparent 1px)`,
+        backgroundSize: "32px 32px",
+      }} />
 
       <div className="max-w-5xl mx-auto relative">
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <div className="section-label mb-6">
-            <Cpu className="w-3.5 h-3.5" />
-            Document References
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-6" style={{ background: `${CYAN}10`, border: `1px solid ${CYAN}25` }}>
+            <ExternalLink className="w-3.5 h-3.5" style={{ color: CYAN }} />
+            <span className="text-[10px] font-mono font-semibold tracking-widest uppercase" style={{ color: CYAN }}>Document References</span>
           </div>
-          <h2
-            className="text-3xl sm:text-4xl font-bold mb-4 tracking-tight"
-            style={{ fontFamily: "var(--font-heading)", color: "#E8EAF0" }}
-          >
+          <h2 className="text-4xl md:text-5xl font-bold mb-4" style={{ fontFamily: "var(--font-heading)", color: TEXT }}>
             Full Specifications
           </h2>
-          <p className="text-sm max-w-xl mx-auto leading-relaxed" style={{ color: "#7A8AAA" }}>
-            Core Architecture Principle is a summary. These are the authoritative sources
-            for each subsystem.
+          <p className="text-base max-w-xl mx-auto" style={{ color: TEXT_MUTED }}>
+            Core Architecture Principle is a summary. These are the authoritative sources for each subsystem.
           </p>
         </motion.div>
 
-        <div className="space-y-10">
-          {referenceGroups.map((group, gi) => (
+        {/* Reference groups */}
+        <div className="space-y-12">
+          {REFERENCE_GROUPS.map((group, gi) => (
             <motion.div
               key={group.group}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: gi * 0.1 }}
+              transition={{ delay: gi * 0.1 }}
             >
-              <div
-                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4"
-                style={{
-                  fontFamily: "var(--font-mono)",
-                  color: group.color,
-                  background: `${group.color}08`,
-                  border: `1px solid ${group.color}20`,
-                }}
-              >
-                <span className="w-1.5 h-1.5 rounded-full" style={{ background: group.color, boxShadow: `0 0 6px ${group.color}` }} />
-                {group.group}
+              {/* Group header */}
+              <div className="flex items-center gap-3 mb-5">
+                <div
+                  className="w-2 h-2 rounded-full"
+                  style={{ background: group.color, boxShadow: `0 0 10px ${group.color}` }}
+                />
+                <h3 className="text-lg font-bold" style={{ fontFamily: "var(--font-heading)", color: group.color }}>
+                  {group.group}
+                </h3>
+                <div className="flex-1 h-px" style={{ background: `${group.color}20` }} />
               </div>
 
-              <div className="space-y-2">
+              {/* Docs - full width single column */}
+              <div className="space-y-3">
                 {group.docs.map((doc) => (
                   <div
                     key={doc.title}
-                    className="flex items-start gap-4 p-4 rounded-xl"
+                    className="p-5 rounded-xl flex items-center gap-4"
                     style={{
-                      background: "rgba(10,13,30,0.6)",
-                      border: `1px solid ${group.color}10`,
+                      background: BG_CARD,
+                      border: `1px solid ${group.color}15`,
                     }}
                   >
                     <div className="flex-1 min-w-0">
-                      <div className="text-sm font-semibold mb-0.5 truncate" style={{ fontFamily: "var(--font-heading)", color: "#E8EAF0" }}>
+                      <h4
+                        className="text-sm font-semibold mb-0.5"
+                        style={{ fontFamily: "var(--font-heading)", color: TEXT }}
+                      >
                         {doc.title}
-                      </div>
-                      <div className="text-xs leading-relaxed" style={{ color: "#7A8AAA" }}>
+                      </h4>
+                      <p className="text-xs" style={{ color: TEXT_MUTED }}>
                         {doc.desc}
-                      </div>
+                      </p>
                     </div>
-                    <div
-                      className="flex-shrink-0 w-5 h-5 rounded flex items-center justify-center mt-0.5"
-                      style={{
-                        background: `${group.color}10`,
-                        border: `1px solid ${group.color}20`,
-                      }}
-                    >
-                      <svg width="8" height="8" viewBox="0 0 8 8" fill="none" className="opacity-50">
-                        <path d="M1.5 6.5L6.5 1.5M6.5 1.5H3M6.5 1.5V5" stroke={group.color} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    </div>
+                    <Eye className="w-4 h-4 flex-shrink-0" style={{ color: `${group.color}50` }} />
                   </div>
                 ))}
               </div>
@@ -1921,157 +1866,177 @@ export function ArchitectureReference() {
   );
 }
 
-// ─── CTA ──────────────────────────────────────────────────────────────────
+// ─── CTA Section ───────────────────────────────────────────────────────────────
 
-export function ArchitectureCTA() {
+function CTASection() {
   return (
-    <section className="relative py-40 px-6 overflow-hidden">
+    <section className="relative py-40 px-8 overflow-hidden">
       {/* Background */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: "radial-gradient(ellipse 60% 60% at 50% 50%, rgba(0,245,255,0.04) 0%, transparent 65%)",
+          background: `radial-gradient(ellipse 60% 60% at 50% 50%, ${CYAN}05, transparent 65%)`,
         }}
       />
 
       <div className="max-w-3xl mx-auto text-center relative">
+        {/* Decorative node */}
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, scale: 0.8 }}
+          whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
+          className="relative w-24 h-24 mx-auto mb-12"
         >
-          {/* Decorative node diagram */}
-          <div className="relative w-24 h-24 mx-auto mb-10">
-            <div
-              className="absolute inset-0 rounded-full"
-              style={{
-                background: "radial-gradient(circle, rgba(0,245,255,0.08) 0%, transparent 70%)",
-                border: "1px solid rgba(0,245,255,0.15)",
-                animation: "pulse-glow 3s ease-in-out infinite",
-              }}
-            />
-            <div
-              className="absolute inset-3 rounded-full"
-              style={{
-                background: "radial-gradient(circle, rgba(139,92,246,0.1) 0%, transparent 70%)",
-                border: "1px solid rgba(139,92,246,0.2)",
-              }}
-            />
-            <div
-              className="absolute inset-6 rounded-full flex items-center justify-center"
-              style={{
-                background: "rgba(0,245,255,0.06)",
-                border: "1px solid rgba(0,245,255,0.3)",
-                boxShadow: "0 0 40px rgba(0,245,255,0.15) inset",
-              }}
-            >
-              <Brain className="w-5 h-5" style={{ color: CYAN }} />
-            </div>
-            {/* Orbiting dots */}
-            {[0, 60, 120, 180, 240, 300].map((deg, i) => (
-              <div
-                key={deg}
-                className="absolute w-1.5 h-1.5 rounded-full"
-                style={{
-                  background: i % 2 === 0 ? CYAN : VIOLET,
-                  left: "50%",
-                  top: "50%",
-                  transform: `rotate(${deg}deg) translateX(36px) translateY(-50%)`,
-                  transformOrigin: "center",
-                  boxShadow: i % 2 === 0 ? `0 0 6px ${CYAN}` : `0 0 6px ${VIOLET}`,
-                  opacity: 0.5,
-                }}
-              />
-            ))}
-          </div>
-
-          <h2
-            className="text-3xl sm:text-4xl font-bold mb-5 tracking-tight leading-tight"
-            style={{ fontFamily: "var(--font-heading)", color: "#E8EAF0" }}
-          >
-            The architecture is the product.
-          </h2>
-          <p
-            className="text-base leading-relaxed mb-10 max-w-xl mx-auto"
-            style={{ color: "#7A8AAA", fontFamily: "var(--font-body)" }}
-          >
-            Every decision — the 3-core collections, signal-triggered retrieval,
-            store-first pipeline, dual embeddings — exists to solve one problem:
-            <span style={{ color: CYAN }}> right information at the right time</span>,
-            without noise, without loss.
-          </p>
-
-          <div className="flex flex-wrap justify-center gap-4">
-            <a
-              href="/docs"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-300"
-              style={{
-                fontFamily: "var(--font-heading)",
-                background: `linear-gradient(135deg, ${CYAN}18, ${VIOLET}18)`,
-                border: `1px solid ${CYAN}30`,
-                color: CYAN,
-                boxShadow: `0 0 30px ${CYAN}10`,
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.boxShadow = `0 0 50px ${CYAN}20`;
-                e.currentTarget.style.transform = "translateY(-2px)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.boxShadow = `0 0 30px ${CYAN}10`;
-                e.currentTarget.style.transform = "translateY(0)";
-              }}
-            >
-              <Cpu className="w-4 h-4" />
-              Read the Docs
-            </a>
-            <a
-              href="https://github.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-300"
-              style={{
-                fontFamily: "var(--font-heading)",
-                background: "rgba(232,234,240,0.04)",
-                border: "1px solid rgba(232,234,240,0.1)",
-                color: "rgba(232,234,240,0.6)",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "rgba(232,234,240,0.2)";
-                e.currentTarget.style.color = "rgba(232,234,240,0.9)";
-                e.currentTarget.style.transform = "translateY(-2px)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = "rgba(232,234,240,0.1)";
-                e.currentTarget.style.color = "rgba(232,234,240,0.6)";
-                e.currentTarget.style.transform = "translateY(0)";
-              }}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
-              </svg>
-              View Source
-            </a>
-          </div>
-
-          {/* Version badge */}
           <div
-            className="mt-12 inline-flex items-center gap-2 px-4 py-2 rounded-full text-[10px] font-mono"
+            className="absolute inset-0 rounded-full"
             style={{
-              color: "rgba(232,234,240,0.3)",
-              background: "rgba(0,245,255,0.03)",
-              border: "1px solid rgba(0,245,255,0.08)",
+              background: `${CYAN}08`,
+              border: `1px solid ${CYAN}20`,
+            }}
+          />
+          <div
+            className="absolute inset-3 rounded-full"
+            style={{
+              background: `${VIOLET}10`,
+              border: `1px solid ${VIOLET}20`,
+            }}
+          />
+          <div
+            className="absolute inset-6 rounded-full flex items-center justify-center"
+            style={{
+              background: `${CYAN}12`,
+              border: `1px solid ${CYAN}30`,
+              boxShadow: `0 0 40px ${CYAN}15 inset`,
             }}
           >
-            <span>v3.5</span>
-            <span style={{ color: "#3D4A5C" }}>·</span>
-            <span>Last updated 2026-03-08</span>
-            <span style={{ color: "#3D4A5C" }}>·</span>
-            <span style={{ color: GREEN }}>●</span>
-            <span>Active Development</span>
+            <Brain className="w-6 h-6" style={{ color: CYAN }} />
           </div>
+          {/* Orbiting dots */}
+          {[0, 60, 120, 180, 240, 300].map((deg, i) => (
+            <div
+              key={deg}
+              className="absolute w-2 h-2 rounded-full"
+              style={{
+                background: i % 2 === 0 ? CYAN : VIOLET,
+                left: "50%",
+                top: "50%",
+                transform: `rotate(${deg}deg) translateX(40px) translateY(-50%)`,
+                transformOrigin: "center",
+                boxShadow: i % 2 === 0 ? `0 0 8px ${CYAN}` : `0 0 8px ${VIOLET}`,
+              }}
+            />
+          ))}
+        </motion.div>
+
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-3xl md:text-4xl font-bold mb-6"
+          style={{ fontFamily: "var(--font-heading)", color: TEXT }}
+        >
+          The architecture is the product.
+        </motion.h2>
+
+        <motion.p
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.1 }}
+          className="text-base leading-relaxed mb-10 max-w-xl mx-auto"
+          style={{ color: TEXT_MUTED }}
+        >
+          Every decision — the 3-core collections, signal-triggered retrieval,
+          store-first pipeline, dual embeddings — exists to solve one problem:{" "}
+          <span style={{ color: CYAN }}>right information at the right time</span>,
+          without noise, without loss.
+        </motion.p>
+
+        {/* CTAs */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.2 }}
+          className="flex flex-wrap justify-center gap-4"
+        >
+          <a
+            href="/docs"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-300"
+            style={{
+              fontFamily: "var(--font-heading)",
+              background: `linear-gradient(135deg, ${CYAN}15, ${VIOLET}15)`,
+              border: `1px solid ${CYAN}30`,
+              color: CYAN,
+            }}
+          >
+            <Cpu className="w-4 h-4" />
+            Read the Docs
+          </a>
+          <a
+            href="https://github.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-300"
+            style={{
+              fontFamily: "var(--font-heading)",
+              background: "rgba(255,255,255,0.03)",
+              border: "1px solid rgba(255,255,255,0.1)",
+              color: TEXT_MUTED,
+            }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+            </svg>
+            View Source
+          </a>
+        </motion.div>
+
+        {/* Version */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.4 }}
+          className="mt-16 inline-flex items-center gap-3 px-4 py-2 rounded-full"
+          style={{
+            background: `${CYAN}05`,
+            border: `1px solid ${CYAN}15`,
+          }}
+        >
+          <span className="text-xs font-mono" style={{ color: TEXT_DIM }}>v3.5</span>
+          <span className="text-gray-600">•</span>
+          <span className="text-xs font-mono" style={{ color: TEXT_DIM }}>2026-03-08</span>
+          <span className="text-gray-600">•</span>
+          <span className="text-xs font-mono flex items-center gap-1.5" style={{ color: GREEN }}>
+            <span className="w-1.5 h-1.5 rounded-full" style={{ background: GREEN, boxShadow: `0 0 6px ${GREEN}` }} />
+            Active Development
+          </span>
         </motion.div>
       </div>
     </section>
   );
 }
+
+// ─── Main Export ───────────────────────────────────────────────────────────────
+
+export function ArchitecturePage() {
+  return (
+    <main className="min-h-screen relative" style={{ background: BG_DEEP }}>
+      {/* Fixed elements */}
+      <SectionNav />
+
+      {/* Sections */}
+      <HeroSection />
+      <OverviewSection />
+      <CollectionsSection />
+      <PipelineSection />
+      <HooksSection />
+      <TriggersSection />
+      <TripleFusionSection />
+      <ReferenceSection />
+      <CTASection />
+    </main>
+  );
+}
+
