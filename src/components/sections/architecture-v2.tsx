@@ -60,6 +60,15 @@ function BlueprintGrid() {
       <div className="absolute bottom-6 left-6 w-12 h-12 border-l border-b border-cyan-400/20" />
       <div className="absolute bottom-6 right-6 w-12 h-12 border-r border-b border-cyan-400/20" />
 
+      {/* Radar sweep */}
+      <div
+        className="absolute left-0 right-0 h-px animate-scan-sweep pointer-events-none"
+        style={{
+          background: `linear-gradient(90deg, transparent, ${CYAN}25, ${CYAN}40, ${CYAN}25, transparent)`,
+          boxShadow: `0 0 20px ${CYAN}15, 0 0 40px ${CYAN}08`,
+        }}
+      />
+
       {/* Bottom info bar */}
       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-3 text-[9px] font-mono opacity-30" style={{ color: CYAN }}>
         <span>ARCHITECTURE v3.5</span>
@@ -311,6 +320,23 @@ function HeroSection() {
         />
       </div>
 
+      {/* Data particles floating upward */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-[15]">
+        {[...Array(6)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute w-1 h-1 rounded-full"
+            style={{
+              background: i % 2 === 0 ? CYAN : VIOLET,
+              left: `${15 + i * 14}%`,
+              bottom: '-5%',
+              opacity: 0.4,
+              animation: `float-up ${8 + i * 2}s linear ${i * 1.2}s infinite`,
+            }}
+          />
+        ))}
+      </div>
+
       {/* Content */}
       <div className="relative z-10 max-w-5xl mx-auto text-center -mt-10">
 
@@ -349,7 +375,7 @@ function HeroSection() {
           initial={{ opacity: 0, y: 24, filter: "blur(8px)" }}
           animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
           transition={{ duration: 0.8, delay: 0.1 }}
-          className="mb-10 leading-[1.05]"
+          className="mb-10 leading-[1.05] animate-holo-flicker"
           style={{
             fontFamily: "var(--font-heading)",
             fontSize: "clamp(3rem, 8vw, 5.5rem)",
@@ -467,6 +493,15 @@ function HeroSection() {
           }}
         />
       </motion.div>
+
+      <style>{`
+        @keyframes float-up {
+          0% { transform: translateY(0); opacity: 0; }
+          10% { opacity: 0.4; }
+          90% { opacity: 0.4; }
+          100% { transform: translateY(-110vh); opacity: 0; }
+        }
+      `}</style>
     </section>
   );
 }
@@ -673,12 +708,26 @@ function CollectionCard({ collection, index }: { collection: typeof COLLECTIONS_
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.4, delay: index * 0.1 }}
-      className="rounded-2xl p-6"
+      className="relative rounded-2xl p-6 group/card transition-all duration-400"
       style={{
         background: BG_CARD,
         border: `1px solid ${collection.color}20`,
+        transform: 'perspective(1200px) rotateY(0.5deg)',
+        boxShadow: `1px 0 0 rgba(0,245,255,0.08), -1px 0 0 rgba(255,45,106,0.05)`,
+      }}
+      whileHover={{
+        rotateY: 0,
+        boxShadow: `2px 0 0 rgba(0,245,255,0.15), -2px 0 0 rgba(255,45,106,0.1), 0 0 30px ${collection.color}10`,
       }}
     >
+      {/* HUD label */}
+      <div
+        className="absolute top-3 right-3 text-[9px] font-mono tracking-wider opacity-40 group-hover/card:opacity-70 transition-opacity"
+        style={{ color: collection.color }}
+      >
+        [COL-{String(index + 1).padStart(2, '0')}]
+      </div>
+
       {/* Header */}
       <div className="flex items-start justify-between gap-4 mb-5">
         <div className="flex-1">
@@ -1491,134 +1540,209 @@ function TripleFusionSection() {
           </p>
         </motion.div>
 
-        {/* Fusion diagram */}
+        {/* Fusion diagram — responsive grid layout */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
-          className="relative h-96 mb-12"
+          className="relative mb-12"
         >
-          {/* Connection lines */}
-          <svg className="absolute inset-0 w-full h-full">
-            {/* Dense → RRF */}
-            <motion.line
-              x1="15%" y1="25%" x2="50%" y2="80%"
-              stroke={CYAN}
-              strokeWidth="2"
-              strokeDasharray="8 4"
-              initial={{ pathLength: 0 }}
-              animate={{ pathLength: 1 }}
-              transition={{ duration: 1.5, delay: 0.2 }}
-              style={{ opacity: 0.4 }}
-            />
-            {/* Sparse → RRF */}
-            <motion.line
-              x1="50%" y1="15%" x2="50%" y2="80%"
-              stroke={VIOLET}
-              strokeWidth="2"
-              strokeDasharray="8 4"
-              initial={{ pathLength: 0 }}
-              animate={{ pathLength: 1 }}
-              transition={{ duration: 1.5, delay: 0.4 }}
-              style={{ opacity: 0.4 }}
-            />
-            {/* ColBERT → RRF */}
-            <motion.line
-              x1="85%" y1="25%" x2="50%" y2="80%"
-              stroke={GREEN}
-              strokeWidth="2"
-              strokeDasharray="8 4"
-              initial={{ pathLength: 0 }}
-              animate={{ pathLength: 1 }}
-              transition={{ duration: 1.5, delay: 0.6 }}
-              style={{ opacity: 0.4 }}
-            />
-          </svg>
+          {/* Desktop layout */}
+          <div className="hidden md:block">
+            {/* Top row: 3 nodes in grid */}
+            <div className="grid grid-cols-3 gap-8 mb-0">
+              {/* Dense */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.3 }}
+                className="flex justify-center"
+              >
+                <div
+                  className="w-28 h-28 rounded-2xl flex flex-col items-center justify-center relative"
+                  style={{
+                    background: `${CYAN}10`,
+                    border: `2px solid ${CYAN}40`,
+                    boxShadow: `0 0 40px ${CYAN}15`,
+                  }}
+                >
+                  <span className="text-sm font-bold" style={{ fontFamily: "var(--font-heading)", color: CYAN }}>Dense</span>
+                  <span className="text-[10px] mt-1" style={{ color: TEXT_MUTED }}>768d vectors</span>
+                  <div className="absolute inset-0 rounded-2xl" style={{ boxShadow: `0 0 30px ${CYAN}25 inset`, animation: "pulse-node 3s ease-in-out infinite" }} />
+                </div>
+              </motion.div>
 
-          {/* Nodes */}
-          {/* Dense */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.3 }}
-            className="absolute left-[15%] top-[20%] -translate-x-1/2 -translate-y-1/2"
-          >
-            <div
-              className="w-28 h-28 rounded-2xl flex flex-col items-center justify-center relative"
-              style={{
-                background: `${CYAN}10`,
-                border: `2px solid ${CYAN}40`,
-                boxShadow: `0 0 40px ${CYAN}15`,
-              }}
-            >
-              <span className="text-sm font-bold" style={{ fontFamily: "var(--font-heading)", color: CYAN }}>Dense</span>
-              <span className="text-[10px] mt-1" style={{ color: TEXT_MUTED }}>768d vectors</span>
-              <div className="absolute inset-0 rounded-2xl" style={{ boxShadow: `0 0 30px ${CYAN}25 inset`, animation: "pulse-node 3s ease-in-out infinite" }} />
-            </div>
-          </motion.div>
+              {/* Sparse */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.5 }}
+                className="flex justify-center"
+              >
+                <div
+                  className="w-32 h-32 rounded-2xl flex flex-col items-center justify-center relative"
+                  style={{
+                    background: `${VIOLET}10`,
+                    border: `2px solid ${VIOLET}40`,
+                    boxShadow: `0 0 40px ${VIOLET}15`,
+                  }}
+                >
+                  <span className="text-sm font-bold" style={{ fontFamily: "var(--font-heading)", color: VIOLET }}>Sparse</span>
+                  <span className="text-[10px] mt-1" style={{ color: TEXT_MUTED }}>BM25 / FastEmbed</span>
+                  <div className="absolute inset-0 rounded-2xl" style={{ boxShadow: `0 0 30px ${VIOLET}25 inset`, animation: "pulse-node 3s ease-in-out infinite 0.5s" }} />
+                </div>
+              </motion.div>
 
-          {/* Sparse */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.5 }}
-            className="absolute left-1/2 top-[12%] -translate-x-1/2 -translate-y-1/2"
-          >
-            <div
-              className="w-32 h-32 rounded-2xl flex flex-col items-center justify-center relative"
-              style={{
-                background: `${VIOLET}10`,
-                border: `2px solid ${VIOLET}40`,
-                boxShadow: `0 0 40px ${VIOLET}15`,
-              }}
-            >
-              <span className="text-sm font-bold" style={{ fontFamily: "var(--font-heading)", color: VIOLET }}>Sparse</span>
-              <span className="text-[10px] mt-1" style={{ color: TEXT_MUTED }}>BM25 / FastEmbed</span>
-              <div className="absolute inset-0 rounded-2xl" style={{ boxShadow: `0 0 30px ${VIOLET}25 inset`, animation: "pulse-node 3s ease-in-out infinite 0.5s" }} />
+              {/* ColBERT */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.7 }}
+                className="flex justify-center"
+              >
+                <div
+                  className="w-28 h-28 rounded-2xl flex flex-col items-center justify-center relative"
+                  style={{
+                    background: `${GREEN}10`,
+                    border: `2px solid ${GREEN}40`,
+                    boxShadow: `0 0 40px ${GREEN}15`,
+                  }}
+                >
+                  <span className="text-sm font-bold" style={{ fontFamily: "var(--font-heading)", color: GREEN }}>Late</span>
+                  <span className="text-[10px] mt-1" style={{ color: TEXT_MUTED }}>ColBERT v2</span>
+                  <div className="absolute inset-0 rounded-2xl" style={{ boxShadow: `0 0 30px ${GREEN}25 inset`, animation: "pulse-node 3s ease-in-out infinite 1s" }} />
+                </div>
+              </motion.div>
             </div>
-          </motion.div>
 
-          {/* ColBERT */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.7 }}
-            className="absolute left-[85%] top-[20%] -translate-x-1/2 -translate-y-1/2"
-          >
-            <div
-              className="w-28 h-28 rounded-2xl flex flex-col items-center justify-center relative"
-              style={{
-                background: `${GREEN}10`,
-                border: `2px solid ${GREEN}40`,
-                boxShadow: `0 0 40px ${GREEN}15`,
-              }}
-            >
-              <span className="text-sm font-bold" style={{ fontFamily: "var(--font-heading)", color: GREEN }}>Late</span>
-              <span className="text-[10px] mt-1" style={{ color: TEXT_MUTED }}>ColBERT v2</span>
-              <div className="absolute inset-0 rounded-2xl" style={{ boxShadow: `0 0 30px ${GREEN}25 inset`, animation: "pulse-node 3s ease-in-out infinite 1s" }} />
+            {/* SVG connector lines overlay */}
+            <div className="relative h-32">
+              <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none">
+                {/* Dense → RRF */}
+                <motion.line
+                  x1="16.66%" y1="0%" x2="50%" y2="100%"
+                  stroke={CYAN}
+                  strokeWidth="2"
+                  strokeDasharray="8 4"
+                  initial={{ pathLength: 0 }}
+                  whileInView={{ pathLength: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 1.5, delay: 0.2 }}
+                  style={{ opacity: 0.4 }}
+                />
+                {/* Sparse → RRF */}
+                <motion.line
+                  x1="50%" y1="0%" x2="50%" y2="100%"
+                  stroke={VIOLET}
+                  strokeWidth="2"
+                  strokeDasharray="8 4"
+                  initial={{ pathLength: 0 }}
+                  whileInView={{ pathLength: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 1.5, delay: 0.4 }}
+                  style={{ opacity: 0.4 }}
+                />
+                {/* ColBERT → RRF */}
+                <motion.line
+                  x1="83.33%" y1="0%" x2="50%" y2="100%"
+                  stroke={GREEN}
+                  strokeWidth="2"
+                  strokeDasharray="8 4"
+                  initial={{ pathLength: 0 }}
+                  whileInView={{ pathLength: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 1.5, delay: 0.6 }}
+                  style={{ opacity: 0.4 }}
+                />
+              </svg>
             </div>
-          </motion.div>
 
-          {/* RRF (center bottom) */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.9 }}
-            className="absolute left-1/2 top-[82%] -translate-x-1/2 -translate-y-1/2"
-          >
-            <div
-              className="w-36 h-36 rounded-2xl flex flex-col items-center justify-center relative"
-              style={{
-                background: `${MAGENTA}12`,
-                border: `2px solid ${MAGENTA}50`,
-                boxShadow: `0 0 60px ${MAGENTA}20`,
-              }}
-            >
-              <span className="text-lg font-bold" style={{ fontFamily: "var(--font-heading)", color: MAGENTA }}>RRF</span>
-              <span className="text-[10px] mt-1" style={{ color: TEXT_MUTED }}>Reciprocal Rank Fusion</span>
-              <div className="absolute inset-0 rounded-2xl" style={{ boxShadow: `0 0 40px ${MAGENTA}30 inset`, animation: "pulse-node 2s ease-in-out infinite 0.3s" }} />
+            {/* RRF node — centered below */}
+            <div className="flex justify-center">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.9 }}
+              >
+                <div
+                  className="w-36 h-36 rounded-2xl flex flex-col items-center justify-center relative"
+                  style={{
+                    background: `${MAGENTA}12`,
+                    border: `2px solid ${MAGENTA}50`,
+                    boxShadow: `0 0 60px ${MAGENTA}20`,
+                  }}
+                >
+                  <span className="text-lg font-bold" style={{ fontFamily: "var(--font-heading)", color: MAGENTA }}>RRF</span>
+                  <span className="text-[10px] mt-1" style={{ color: TEXT_MUTED }}>Reciprocal Rank Fusion</span>
+                  <div className="absolute inset-0 rounded-2xl" style={{ boxShadow: `0 0 40px ${MAGENTA}30 inset`, animation: "pulse-node 2s ease-in-out infinite 0.3s" }} />
+                </div>
+              </motion.div>
             </div>
-          </motion.div>
+          </div>
+
+          {/* Mobile layout: vertical stack */}
+          <div className="md:hidden flex flex-col items-center gap-4">
+            {[
+              { label: "Dense", sub: "768d vectors", color: CYAN, delay: 0.3 },
+              { label: "Sparse", sub: "BM25 / FastEmbed", color: VIOLET, delay: 0.5 },
+              { label: "Late", sub: "ColBERT v2", color: GREEN, delay: 0.7 },
+            ].map((node) => (
+              <div key={node.label}>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: node.delay }}
+                >
+                  <div
+                    className="w-28 h-28 rounded-2xl flex flex-col items-center justify-center relative"
+                    style={{
+                      background: `${node.color}10`,
+                      border: `2px solid ${node.color}40`,
+                      boxShadow: `0 0 40px ${node.color}15`,
+                    }}
+                  >
+                    <span className="text-sm font-bold" style={{ fontFamily: "var(--font-heading)", color: node.color }}>{node.label}</span>
+                    <span className="text-[10px] mt-1" style={{ color: TEXT_MUTED }}>{node.sub}</span>
+                    <div className="absolute inset-0 rounded-2xl" style={{ boxShadow: `0 0 30px ${node.color}25 inset`, animation: "pulse-node 3s ease-in-out infinite" }} />
+                  </div>
+                </motion.div>
+                {/* Vertical connector */}
+                <div className="flex justify-center">
+                  <div
+                    className="w-px h-8"
+                    style={{
+                      background: `linear-gradient(180deg, ${node.color}40, ${MAGENTA}40)`,
+                    }}
+                  />
+                </div>
+              </div>
+            ))}
+            {/* RRF node */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.9 }}
+            >
+              <div
+                className="w-36 h-36 rounded-2xl flex flex-col items-center justify-center relative"
+                style={{
+                  background: `${MAGENTA}12`,
+                  border: `2px solid ${MAGENTA}50`,
+                  boxShadow: `0 0 60px ${MAGENTA}20`,
+                }}
+              >
+                <span className="text-lg font-bold" style={{ fontFamily: "var(--font-heading)", color: MAGENTA }}>RRF</span>
+                <span className="text-[10px] mt-1" style={{ color: TEXT_MUTED }}>Reciprocal Rank Fusion</span>
+                <div className="absolute inset-0 rounded-2xl" style={{ boxShadow: `0 0 40px ${MAGENTA}30 inset`, animation: "pulse-node 2s ease-in-out infinite 0.3s" }} />
+              </div>
+            </motion.div>
+          </div>
         </motion.div>
 
         {/* 4-path composition */}
@@ -1942,6 +2066,41 @@ function CTASection() {
   );
 }
 
+// ─── Data Stream Divider ───────────────────────────────────────────────────────
+
+function DataStreamDivider({ fromColor = CYAN, toColor = VIOLET }: { fromColor?: string; toColor?: string }) {
+  return (
+    <div className="relative h-24 flex items-center justify-center overflow-hidden">
+      {/* Vertical line */}
+      <div
+        className="w-px h-full"
+        style={{
+          background: `linear-gradient(180deg, ${fromColor}30, ${toColor}30)`,
+        }}
+      />
+      {/* Animated traveling dot */}
+      <div
+        className="absolute w-1.5 h-1.5 rounded-full"
+        style={{
+          background: fromColor,
+          boxShadow: `0 0 8px ${fromColor}, 0 0 16px ${fromColor}`,
+          animation: 'data-particle 2s ease-in-out infinite',
+        }}
+      />
+      {/* Junction dot */}
+      <div
+        className="absolute w-2 h-2 rounded-full"
+        style={{
+          background: toColor,
+          boxShadow: `0 0 10px ${toColor}60`,
+          top: '50%',
+          transform: 'translateY(-50%)',
+        }}
+      />
+    </div>
+  );
+}
+
 // ─── Main Export ───────────────────────────────────────────────────────────────
 
 export function ArchitecturePage() {
@@ -1952,13 +2111,21 @@ export function ArchitecturePage() {
 
       {/* Sections */}
       <HeroSection />
+      <DataStreamDivider fromColor={CYAN} toColor={VIOLET} />
       <OverviewSection />
+      <DataStreamDivider fromColor={VIOLET} toColor={CYAN} />
       <CollectionsSection />
+      <DataStreamDivider fromColor={CYAN} toColor={GREEN} />
       <PipelineSection />
+      <DataStreamDivider fromColor={GREEN} toColor={AMBER} />
       <HooksSection />
+      <DataStreamDivider fromColor={AMBER} toColor={GREEN} />
       <TriggersSection />
+      <DataStreamDivider fromColor={GREEN} toColor={VIOLET} />
       <TripleFusionSection />
+      <DataStreamDivider fromColor={VIOLET} toColor={CYAN} />
       <ReferenceSection />
+      <DataStreamDivider fromColor={CYAN} toColor={CYAN} />
       <CTASection />
     </main>
   );
