@@ -63,11 +63,11 @@ const integrations = [
     filter: "none",
   },
   {
-    name: "Ollama",
-    src: "/ollama-logo.svg",
-    color: "#FFFFFF",
-    bg: "rgba(255,255,255,0.06)",
-    border: "rgba(255,255,255,0.15)",
+    name: "Claude",
+    src: "/claude.svg",
+    color: "#00F5FF",
+    bg: "rgba(0,245,255,0.06)",
+    border: "rgba(0,245,255,0.15)",
     filter: "none",
   },
 ];
@@ -112,7 +112,7 @@ export function Integrations() {
             className="text-lg max-w-2xl mx-auto leading-relaxed"
             style={{ color: "#7A8AAA", fontFamily: "var(--font-body)" }}
           >
-            GitHub, Docker, Langfuse, Qdrant, Prometheus, Grafana — AI Memory plugs
+            GitHub, Docker, Langfuse, Qdrant, Claude, Prometheus, Grafana — AI Memory plugs
             into your existing infrastructure.
           </p>
         </AnimatedSection>
