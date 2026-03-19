@@ -6,12 +6,12 @@ import {
   ShieldAlert,
   ShieldCheck,
   MessageSquare,
-  GitBranch,
   Layers,
   Lock,
   AlertTriangle,
-  CheckCircle,
 } from "lucide-react";
+
+/* ─── Colors ─────────────────────────────────────────────────────────── */
 
 const CYAN = "#00F5FF";
 const VIOLET = "#8B5CF6";
@@ -24,33 +24,7 @@ const CRIT = RED;
 const HIGH_COL = AMBER;
 const MED = "#60A5FA";
 
-const severityBadge = (sev: string, id: string) => {
-  const color = sev === "CRITICAL" ? CRIT : sev === "HIGH" ? HIGH_COL : MED;
-  return (
-    <span
-      className="text-[9px] font-mono font-bold px-1 py-0.5 rounded"
-      style={{
-        background: `${color}18`,
-        color: color,
-        border: `1px solid ${color}30`,
-      }}
-    >
-      {sev}
-    </span>
-  );
-};
-
-const severityDot = (sev: string) => {
-  const color = sev === "CRITICAL" ? CRIT : sev === "HIGH" ? HIGH_COL : MED;
-  return (
-    <span
-      className="w-1.5 h-1.5 rounded-full flex-shrink-0 mt-1"
-      style={{ background: color }}
-    />
-  );
-};
-
-// ─── Global Constraints ───────────────────────────────────────────────────
+/* ─── Global Constraints ─────────────────────────────────────────────── */
 
 const globalIdentity = [
   { id: "GC-01", name: "Never Do Implementation Work", sev: "CRITICAL", desc: "Parzival never writes, edits, fixes, refactors, or produces any implementation output directly." },
@@ -81,7 +55,7 @@ const globalComm = [
   { id: "GC-12", name: "Always Loop Dev-Review Until Zero Issues", sev: "CRITICAL", desc: "Dev-review cycle exits only when a review pass returns zero legitimate issues confirmed." },
 ];
 
-// ─── Phase Constraints ───────────────────────────────────────────────────
+/* ─── Phase Constraints ──────────────────────────────────────────────── */
 
 const phaseData = [
   {
@@ -209,98 +183,7 @@ const phaseData = [
   },
 ];
 
-// ─── Constraint Row ───────────────────────────────────────────────────────
-
-const ConstraintRow = ({
-  id,
-  name,
-  sev,
-}: {
-  id: string;
-  name: string;
-  sev: string;
-}) => (
-  <div
-    className="flex items-start gap-2.5 px-3 py-2 rounded-lg hover:bg-white/[0.02] transition-colors"
-    style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}
-  >
-    {severityDot(sev)}
-    <div className="flex items-center gap-2 flex-1 min-w-0 flex-wrap">
-      <span
-        className="text-xs font-mono font-semibold flex-shrink-0"
-        style={{ color: "#00F5FF" }}
-      >
-        {id}
-      </span>
-      <span className="text-xs flex-1" style={{ color: "#B8C4D8" }}>
-        {name}
-      </span>
-    </div>
-    {severityBadge(sev, id)}
-  </div>
-);
-
-// ─── Phase Tab ────────────────────────────────────────────────────────────
-
-const PhaseSection = ({
-  phase,
-  prefix,
-  count,
-  color,
-  constraints,
-}: (typeof phaseData)[0]) => (
-  <div
-    className="rounded-xl overflow-hidden"
-    style={{
-      border: `1px solid ${color}20`,
-    }}
-  >
-    {/* Header */}
-    <div
-      className="px-4 py-3 flex items-center justify-between"
-      style={{
-        background: `${color}08`,
-        borderBottom: `1px solid ${color}20`,
-      }}
-    >
-      <div className="flex items-center gap-2">
-        <span className="text-sm font-semibold" style={{ color }}>
-          {phase}
-        </span>
-        <span
-          className="text-xs font-mono px-1.5 py-0.5 rounded"
-          style={{
-            background: `${color}15`,
-            color: color,
-          }}
-        >
-          {prefix}-01 to {prefix}-{String(count).padStart(2, "0")}
-        </span>
-      </div>
-      <div className="flex items-center gap-1">
-        <span className="text-xs font-mono" style={{ color: "#7A8AAA" }}>
-          {count} constraints
-        </span>
-        {count === 0 && (
-          <span
-            className="text-[10px] font-mono px-1 py-0.5 rounded"
-            style={{ background: "rgba(255,68,68,0.1)", color: RED }}
-          >
-            INCOMPLETE
-          </span>
-        )}
-      </div>
-    </div>
-    {/* Constraints */}
-    <div>
-      {constraints.map((c) => (
-        <ConstraintRow key={c.id} {...c} />
-      ))}
-    </div>
-  </div>
-);
-
-// ─── Main Component ───────────────────────────────────────────────────────
+/* ─── Tabs ───────────────────────────────────────────────────────────── */
 
 const tabs = [
   { id: "global", label: "Global", sub: "20 constraints", color: CYAN },
@@ -308,11 +191,812 @@ const tabs = [
   { id: "lifecycle", label: "Lifecycle", sub: "load / drop", color: GREEN },
 ];
 
+/* ─── Helpers ────────────────────────────────────────────────────────── */
+
+const sevColor = (sev: string) =>
+  sev === "CRITICAL" ? CRIT : sev === "HIGH" ? HIGH_COL : MED;
+
+const sevBorder = (sev: string) =>
+  sev === "CRITICAL" ? 3 : sev === "HIGH" ? 2 : 1;
+
+/* ─── Warning Panel ──────────────────────────────────────────────────── */
+
+interface WarningPanelProps {
+  id: string;
+  name: string;
+  sev: string;
+  desc?: string;
+  index: number;
+}
+
+const WarningPanel = ({ id, name, sev, desc, index }: WarningPanelProps) => {
+  const color = sevColor(sev);
+  const bw = sevBorder(sev);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: -12 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.3, delay: index * 0.04 }}
+      className="relative"
+      style={{
+        background: "rgba(10,13,30,0.92)",
+        borderRadius: 4,
+        border: `1px solid ${color}20`,
+        borderLeft: `${bw}px solid ${color}`,
+        boxShadow: `0 8px 24px rgba(0,0,0,0.3)`,
+      }}
+    >
+      {/* scanline overlay */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          borderRadius: 4,
+          background:
+            "repeating-linear-gradient(0deg,transparent 0px,transparent 3px,rgba(0,0,0,0.02) 3px,rgba(0,0,0,0.02) 6px)",
+          zIndex: 1,
+        }}
+      />
+
+      <div className="relative z-[2] px-4 py-3">
+        {/* Header row */}
+        <div className="flex items-center gap-2 flex-wrap mb-1">
+          {sev === "CRITICAL" && (
+            <AlertTriangle
+              className="w-3.5 h-3.5 flex-shrink-0"
+              style={{
+                color: CRIT,
+                filter: `drop-shadow(0 0 4px ${CRIT})`,
+              }}
+            />
+          )}
+          <span
+            className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded"
+            style={{
+              background: `${color}18`,
+              color,
+              border: `1px solid ${color}30`,
+            }}
+          >
+            {sev}
+          </span>
+          <span
+            className="text-[11px] font-mono font-semibold"
+            style={{ color: CYAN }}
+          >
+            {id}
+          </span>
+          <span
+            className="text-xs font-semibold"
+            style={{ color: "#E8EAF0" }}
+          >
+            {name}
+          </span>
+        </div>
+
+        {/* Body */}
+        {desc && (
+          <p
+            className="text-[11px] leading-relaxed mt-1"
+            style={{ color: "#7A8AAA" }}
+          >
+            {desc}
+          </p>
+        )}
+      </div>
+    </motion.div>
+  );
+};
+
+/* ─── Severity Group Header ──────────────────────────────────────────── */
+
+const SeverityGroupHeader = ({
+  label,
+  color,
+  icon: Icon,
+  count,
+}: {
+  label: string;
+  color: string;
+  icon: typeof AlertTriangle;
+  count: number;
+}) => (
+  <div className="flex items-center gap-2 mb-3 mt-6 first:mt-0">
+    <Icon
+      className="w-4 h-4"
+      style={{ color, filter: `drop-shadow(0 0 3px ${color}40)` }}
+    />
+    <h3
+      className="text-xs font-bold uppercase tracking-widest"
+      style={{ color, fontFamily: "var(--font-mono)" }}
+    >
+      {label}
+    </h3>
+    <span
+      className="text-[10px] font-mono px-1.5 py-0.5 rounded"
+      style={{ background: `${color}12`, color }}
+    >
+      {count}
+    </span>
+  </div>
+);
+
+/* ─── Group constraints by severity ──────────────────────────────────── */
+
+function groupBySeverity(
+  items: Array<{ id: string; name: string; sev: string; desc?: string }>
+) {
+  const critical = items.filter((c) => c.sev === "CRITICAL");
+  const high = items.filter((c) => c.sev === "HIGH");
+  const medium = items.filter((c) => c.sev === "MEDIUM");
+  return { critical, high, medium };
+}
+
+/* ─── Stat Box ───────────────────────────────────────────────────────── */
+
+const StatBox = ({
+  label,
+  count,
+  color,
+}: {
+  label: string;
+  count: number;
+  color: string;
+}) => (
+  <div
+    className="flex items-center gap-3 px-4 py-3"
+    style={{
+      background: "rgba(10,13,30,0.92)",
+      borderRadius: 4,
+      border: `1px solid ${color}20`,
+      borderLeft: `3px solid ${color}`,
+    }}
+  >
+    <div
+      className="w-9 h-9 rounded flex items-center justify-center text-sm font-mono font-bold"
+      style={{
+        background: `${color}12`,
+        border: `1px solid ${color}25`,
+        color,
+      }}
+    >
+      {count}
+    </div>
+    <div>
+      <div
+        className="text-xs font-bold"
+        style={{ color, fontFamily: "var(--font-mono)" }}
+      >
+        {label}
+      </div>
+      <div className="text-[10px]" style={{ color: "#7A8AAA" }}>
+        severity
+      </div>
+    </div>
+  </div>
+);
+
+/* ─── Global Constraints View ────────────────────────────────────────── */
+
+const GlobalConstraintsView = () => {
+  const allGlobal = [...globalIdentity, ...globalQuality, ...globalComm];
+  const { critical, high, medium } = groupBySeverity(allGlobal);
+  let runningIdx = 0;
+
+  return (
+    <div className="space-y-2">
+      {/* Info banner */}
+      <div
+        className="px-4 py-3 flex items-center gap-3 mb-4"
+        style={{
+          background: "rgba(10,13,30,0.92)",
+          borderRadius: 4,
+          border: `1px solid ${CYAN}20`,
+          borderLeft: `3px solid ${CYAN}`,
+        }}
+      >
+        <Lock className="w-4 h-4 flex-shrink-0" style={{ color: CYAN }} />
+        <p
+          className="text-xs leading-relaxed"
+          style={{ color: "#7A8AAA", fontFamily: "var(--font-mono)" }}
+        >
+          Global constraints are loaded at Parzival activation —{" "}
+          <span style={{ color: CYAN }}>never dropped</span> throughout
+          the session. Cannot be overridden by workflow instructions, user
+          requests, or agent output.
+        </p>
+      </div>
+
+      {/* CRITICAL group */}
+      {critical.length > 0 && (
+        <div>
+          <SeverityGroupHeader
+            label="CRITICAL CONSTRAINTS"
+            color={CRIT}
+            icon={AlertTriangle}
+            count={critical.length}
+          />
+          <div
+            className="space-y-2 p-3 rounded"
+            style={{
+              background: `${CRIT}03`,
+              borderRadius: 4,
+            }}
+          >
+            {critical.map((c) => {
+              const idx = runningIdx++;
+              return (
+                <WarningPanel key={c.id} {...c} index={idx} />
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* HIGH group */}
+      {high.length > 0 && (
+        <div>
+          <SeverityGroupHeader
+            label="HIGH PRIORITY"
+            color={HIGH_COL}
+            icon={ShieldAlert}
+            count={high.length}
+          />
+          <div
+            className="space-y-2 p-3 rounded"
+            style={{
+              background: `${HIGH_COL}03`,
+              borderRadius: 4,
+            }}
+          >
+            {high.map((c) => {
+              const idx = runningIdx++;
+              return (
+                <WarningPanel key={c.id} {...c} index={idx} />
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* MEDIUM group */}
+      {medium.length > 0 && (
+        <div>
+          <SeverityGroupHeader
+            label="STANDARD"
+            color={MED}
+            icon={ShieldCheck}
+            count={medium.length}
+          />
+          <div
+            className="space-y-2 p-3 rounded"
+            style={{
+              background: `${MED}03`,
+              borderRadius: 4,
+            }}
+          >
+            {medium.map((c) => {
+              const idx = runningIdx++;
+              return (
+                <WarningPanel key={c.id} {...c} index={idx} />
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+/* ─── Phase Constraints View ─────────────────────────────────────────── */
+
+const PhaseConstraintsView = () => (
+  <div>
+    <div className="space-y-6">
+      {phaseData.map((p) => {
+        const { critical, high, medium } = groupBySeverity(
+          p.constraints.map((c) => ({ ...c, desc: undefined }))
+        );
+        let runningIdx = 0;
+
+        return (
+          <div key={p.phase}>
+            {/* Phase header */}
+            <div
+              className="px-4 py-3 flex items-center justify-between mb-3"
+              style={{
+                background: "rgba(10,13,30,0.92)",
+                borderRadius: 4,
+                border: `1px solid ${p.color}25`,
+                borderLeft: `3px solid ${p.color}`,
+              }}
+            >
+              <div className="flex items-center gap-2">
+                <span
+                  className="text-sm font-semibold"
+                  style={{
+                    color: p.color,
+                    fontFamily: "var(--font-mono)",
+                  }}
+                >
+                  {p.phase}
+                </span>
+                <span
+                  className="text-[10px] font-mono px-1.5 py-0.5 rounded"
+                  style={{ background: `${p.color}12`, color: p.color }}
+                >
+                  {p.prefix}-01 to {p.prefix}-
+                  {String(p.count).padStart(2, "0")}
+                </span>
+              </div>
+              <span
+                className="text-[11px] font-mono"
+                style={{ color: "#7A8AAA" }}
+              >
+                {p.count} constraints
+              </span>
+            </div>
+
+            {/* Grouped constraints */}
+            <div className="space-y-2 ml-2">
+              {critical.length > 0 && (
+                <>
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <AlertTriangle
+                      className="w-3 h-3"
+                      style={{ color: CRIT }}
+                    />
+                    <span
+                      className="text-[10px] font-bold uppercase tracking-wider"
+                      style={{
+                        color: CRIT,
+                        fontFamily: "var(--font-mono)",
+                      }}
+                    >
+                      CRITICAL ({critical.length})
+                    </span>
+                  </div>
+                  {critical.map((c) => {
+                    const idx = runningIdx++;
+                    return (
+                      <WarningPanel
+                        key={c.id}
+                        {...c}
+                        index={idx}
+                      />
+                    );
+                  })}
+                </>
+              )}
+              {high.length > 0 && (
+                <>
+                  <div className="flex items-center gap-1.5 mb-1 mt-2">
+                    <ShieldAlert
+                      className="w-3 h-3"
+                      style={{ color: HIGH_COL }}
+                    />
+                    <span
+                      className="text-[10px] font-bold uppercase tracking-wider"
+                      style={{
+                        color: HIGH_COL,
+                        fontFamily: "var(--font-mono)",
+                      }}
+                    >
+                      HIGH ({high.length})
+                    </span>
+                  </div>
+                  {high.map((c) => {
+                    const idx = runningIdx++;
+                    return (
+                      <WarningPanel
+                        key={c.id}
+                        {...c}
+                        index={idx}
+                      />
+                    );
+                  })}
+                </>
+              )}
+              {medium.length > 0 && (
+                <>
+                  <div className="flex items-center gap-1.5 mb-1 mt-2">
+                    <ShieldCheck
+                      className="w-3 h-3"
+                      style={{ color: MED }}
+                    />
+                    <span
+                      className="text-[10px] font-bold uppercase tracking-wider"
+                      style={{
+                        color: MED,
+                        fontFamily: "var(--font-mono)",
+                      }}
+                    >
+                      STANDARD ({medium.length})
+                    </span>
+                  </div>
+                  {medium.map((c) => {
+                    const idx = runningIdx++;
+                    return (
+                      <WarningPanel
+                        key={c.id}
+                        {...c}
+                        index={idx}
+                      />
+                    );
+                  })}
+                </>
+              )}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+
+    {/* Footer note */}
+    <div
+      className="mt-5 px-4 py-3 flex items-center gap-2"
+      style={{
+        background: "rgba(10,13,30,0.92)",
+        borderRadius: 4,
+        border: `1px solid ${VIOLET}20`,
+        borderLeft: `2px solid ${VIOLET}`,
+      }}
+    >
+      <AlertTriangle
+        className="w-3.5 h-3.5 flex-shrink-0"
+        style={{ color: VIOLET }}
+      />
+      <p
+        className="text-xs leading-relaxed"
+        style={{ color: "#7A8AAA", fontFamily: "var(--font-mono)" }}
+      >
+        Total: 59 phase constraints across 8 phases. Each phase
+        constraint is additive to global constraints — both layers are
+        active simultaneously during a phase.
+      </p>
+    </div>
+  </div>
+);
+
+/* ─── Lifecycle View ─────────────────────────────────────────────────── */
+
+const LifecycleView = () => {
+  const lifecycleSteps = [
+    {
+      step: "01",
+      label: "Parzival Activates",
+      detail:
+        "Global constraints GC-01 through GC-20 loaded. Never dropped for entire session.",
+      color: CYAN,
+    },
+    {
+      step: "02",
+      label: "Read project-status.md",
+      detail: "Determine current phase from current_phase field.",
+      color: CYAN,
+    },
+    {
+      step: "03",
+      label: "Load Phase Constraints",
+      detail:
+        "Phase-specific constraints loaded additively on top of global. Both layers active simultaneously.",
+      color: VIOLET,
+    },
+    {
+      step: "04",
+      label: "Operate Within Phase",
+      detail:
+        "Self-check runs every ~10 messages. Any violation corrected immediately.",
+      color: GREEN,
+    },
+    {
+      step: "05",
+      label: "Phase Exit",
+      detail:
+        "Phase constraints dropped. Drop is explicit and verified before next phase loads.",
+      color: AMBER,
+    },
+    {
+      step: "06",
+      label: "Next Phase Entry",
+      detail:
+        "New phase constraints loaded. Global remains. No cross-phase leakage.",
+      color: VIOLET,
+    },
+  ];
+
+  const isolationRules = [
+    {
+      rule: "Phase constraints MUST NOT leak into other phases.",
+      detail:
+        "When a phase exits, its constraints are dropped before the next phase's constraints are loaded.",
+    },
+    {
+      rule: "Loading constraints from the wrong phase is a constraint violation.",
+      detail:
+        "Example: Loading Execution constraints during Planning would activate EC-01 (verify story) before stories are ready.",
+    },
+    {
+      rule: "If any phase constraint conflicts with a global constraint — the global wins.",
+      detail:
+        "Global constraints have absolute authority. Phase constraints add specificity; they do not override globals.",
+    },
+  ];
+
+  return (
+    <div className="space-y-6">
+      {/* Constraint Lifecycle */}
+      <div
+        className="px-5 py-5"
+        style={{
+          background: "rgba(10,13,30,0.92)",
+          borderRadius: 4,
+          border: `1px solid ${GREEN}20`,
+          borderLeft: `3px solid ${GREEN}`,
+        }}
+      >
+        <h3
+          className="text-sm font-semibold mb-4"
+          style={{
+            color: GREEN,
+            fontFamily: "var(--font-orbitron)",
+          }}
+        >
+          Constraint Lifecycle
+        </h3>
+        <div className="space-y-0">
+          {lifecycleSteps.map((s, i) => (
+            <div key={s.step}>
+              <div className="flex items-start gap-3">
+                <div
+                  className="w-7 h-7 rounded flex items-center justify-center flex-shrink-0"
+                  style={{
+                    background: `${s.color}12`,
+                    border: `1px solid ${s.color}25`,
+                  }}
+                >
+                  <span
+                    className="text-xs font-mono font-bold"
+                    style={{ color: s.color }}
+                  >
+                    {s.step}
+                  </span>
+                </div>
+                <div className="pb-1 flex-1 min-w-0">
+                  <div
+                    className="text-xs font-semibold mb-0.5"
+                    style={{
+                      color: "#E8EAF0",
+                      fontFamily: "var(--font-mono)",
+                    }}
+                  >
+                    {s.label}
+                  </div>
+                  <div
+                    className="text-[11px] leading-relaxed"
+                    style={{ color: "#7A8AAA" }}
+                  >
+                    {s.detail}
+                  </div>
+                </div>
+              </div>
+              {i < lifecycleSteps.length - 1 && (
+                <div className="flex ml-[13px] my-1">
+                  <svg width="2" height="20" viewBox="0 0 2 20">
+                    <line
+                      x1="1"
+                      y1="0"
+                      x2="1"
+                      y2="20"
+                      stroke={s.color}
+                      strokeOpacity={0.25}
+                      strokeWidth={1.5}
+                      strokeDasharray="3 3"
+                    />
+                    <circle r="1.5" fill={s.color} opacity={0.8}>
+                      <animate
+                        attributeName="cy"
+                        from="0"
+                        to="20"
+                        dur="1.5s"
+                        repeatCount="indefinite"
+                      />
+                      <animate
+                        attributeName="opacity"
+                        values="0;1;1;0"
+                        keyTimes="0;0.1;0.85;1"
+                        dur="1.5s"
+                        repeatCount="indefinite"
+                      />
+                    </circle>
+                  </svg>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Cross-Phase Isolation */}
+      <div
+        className="px-5 py-5"
+        style={{
+          background: "rgba(10,13,30,0.92)",
+          borderRadius: 4,
+          border: `1px solid ${CRIT}20`,
+          borderLeft: `3px solid ${CRIT}`,
+        }}
+      >
+        <div className="flex items-center gap-2 mb-4">
+          <AlertTriangle
+            className="w-4 h-4"
+            style={{
+              color: CRIT,
+              filter: `drop-shadow(0 0 4px ${CRIT})`,
+            }}
+          />
+          <h3
+            className="text-sm font-semibold"
+            style={{
+              color: CRIT,
+              fontFamily: "var(--font-orbitron)",
+            }}
+          >
+            Cross-Phase Isolation
+          </h3>
+        </div>
+        <div className="space-y-3">
+          {isolationRules.map((r, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, x: -8 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.3, delay: i * 0.08 }}
+              className="px-4 py-3"
+              style={{
+                background: `${CRIT}04`,
+                borderRadius: 4,
+                borderLeft: `2px solid ${CRIT}`,
+              }}
+            >
+              <p
+                className="text-xs font-semibold mb-0.5"
+                style={{
+                  color: "#E8EAF0",
+                  fontFamily: "var(--font-mono)",
+                }}
+              >
+                {r.rule}
+              </p>
+              <p
+                className="text-[11px] leading-relaxed"
+                style={{ color: "#7A8AAA" }}
+              >
+                {r.detail}
+              </p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* Self-Check Schedule */}
+      <div
+        className="px-5 py-5"
+        style={{
+          background: "rgba(10,13,30,0.92)",
+          borderRadius: 4,
+          border: `1px solid ${CYAN}20`,
+          borderLeft: `3px solid ${CYAN}`,
+        }}
+      >
+        <h3
+          className="text-sm font-semibold mb-4"
+          style={{
+            color: CYAN,
+            fontFamily: "var(--font-orbitron)",
+          }}
+        >
+          Self-Check Schedule
+        </h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div
+            className="px-4 py-3"
+            style={{
+              background: `${CYAN}06`,
+              borderRadius: 4,
+              borderLeft: `2px solid ${CYAN}`,
+            }}
+          >
+            <div
+              className="text-xs font-semibold mb-2"
+              style={{
+                color: CYAN,
+                fontFamily: "var(--font-mono)",
+              }}
+            >
+              Layer 1 — Always Active
+            </div>
+            <div
+              className="text-[11px] leading-relaxed"
+              style={{ color: "#7A8AAA" }}
+            >
+              Every ~10 messages, checks GC-01 through GC-20 (minus
+              GC-09, GC-11, GC-16, GC-17, GC-18). Violations
+              corrected immediately.
+            </div>
+          </div>
+          <div
+            className="px-4 py-3"
+            style={{
+              background: `${AMBER}06`,
+              borderRadius: 4,
+              borderLeft: `2px solid ${AMBER}`,
+            }}
+          >
+            <div
+              className="text-xs font-semibold mb-2"
+              style={{
+                color: AMBER,
+                fontFamily: "var(--font-mono)",
+              }}
+            >
+              Layer 3 — During Agent Work
+            </div>
+            <div
+              className="text-[11px] leading-relaxed"
+              style={{ color: "#7A8AAA" }}
+            >
+              During agent dispatch/review: additionally checks GC-09
+              (review agent output) and GC-11 (precise instructions).
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Global Constraint Supremacy */}
+      <div
+        className="px-4 py-3 flex items-start gap-3"
+        style={{
+          background: "rgba(10,13,30,0.92)",
+          borderRadius: 4,
+          border: `1px solid ${VIOLET}20`,
+          borderLeft: `3px solid ${VIOLET}`,
+        }}
+      >
+        <Layers
+          className="w-4 h-4 mt-0.5 flex-shrink-0"
+          style={{ color: VIOLET }}
+        />
+        <div>
+          <p
+            className="text-xs font-semibold mb-1"
+            style={{
+              color: VIOLET,
+              fontFamily: "var(--font-mono)",
+            }}
+          >
+            Global Constraint Supremacy
+          </p>
+          <p
+            className="text-[11px] leading-relaxed"
+            style={{ color: "#7A8AAA" }}
+          >
+            When a phase constraint appears to conflict with a global
+            constraint — the global constraint wins. Always. Parzival
+            does not negotiate, bend for speed, or yield to pressure.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ─── Main Export ─────────────────────────────────────────────────────── */
+
 export function ParzivalConstraints() {
   const [activeTab, setActiveTab] = useState("global");
-  const [phaseFilter, setPhaseFilter] = useState<string>("all");
-
-  const color = tabs.find((t) => t.id === activeTab)?.color ?? CYAN;
 
   return (
     <section className="relative py-24 px-6 overflow-hidden">
@@ -342,12 +1026,16 @@ export function ParzivalConstraints() {
           </div>
           <h2
             className="text-3xl sm:text-4xl font-bold tracking-tight mb-3"
-            style={{ fontFamily: "var(--font-orbitron)", color: "#E8EAF0" }}
+            style={{
+              fontFamily: "var(--font-orbitron)",
+              color: "#E8EAF0",
+            }}
           >
             79 Constraints · 2{" "}
             <span
               style={{
-                background: "linear-gradient(135deg, #00F5FF 0%, #8B5CF6 100%)",
+                background:
+                  "linear-gradient(135deg, #00F5FF 0%, #8B5CF6 100%)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
                 backgroundClip: "text",
@@ -356,14 +1044,18 @@ export function ParzivalConstraints() {
               Layers
             </span>
           </h2>
-          <p className="text-sm max-w-xl leading-relaxed" style={{ color: "#7A8AAA" }}>
-            Global constraints (always active) + phase constraints (additive, loaded on phase
-            entry, dropped on phase exit). If a phase constraint conflicts with a global
-            constraint — the global wins.
+          <p
+            className="text-sm max-w-xl leading-relaxed"
+            style={{ color: "#7A8AAA" }}
+          >
+            Global constraints (always active) + phase constraints
+            (additive, loaded on phase entry, dropped on phase exit). If
+            a phase constraint conflicts with a global constraint — the
+            global wins.
           </p>
         </motion.div>
 
-        {/* Severity Summary Strip */}
+        {/* Severity Summary Stat Bar */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -371,39 +1063,9 @@ export function ParzivalConstraints() {
           transition={{ duration: 0.5, delay: 0.1 }}
           className="grid grid-cols-3 gap-3 mb-8"
         >
-          {[
-            { label: "CRITICAL", count: 28, color: CRIT },
-            { label: "HIGH", count: 36, color: HIGH_COL },
-            { label: "MEDIUM", count: 15, color: MED },
-          ].map((s) => (
-            <div
-              key={s.label}
-              className="flex items-center gap-3 p-3 rounded-xl"
-              style={{
-                background: `${s.color}06`,
-                border: `1px solid ${s.color}18`,
-              }}
-            >
-              <div
-                className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-mono font-bold"
-                style={{
-                  background: `${s.color}12`,
-                  border: `1px solid ${s.color}25`,
-                  color: s.color,
-                }}
-              >
-                {s.count}
-              </div>
-              <div>
-                <div className="text-xs font-semibold" style={{ color: s.color }}>
-                  {s.label}
-                </div>
-                <div className="text-xs" style={{ color: "#7A8AAA" }}>
-                  severity
-                </div>
-              </div>
-            </div>
-          ))}
+          <StatBox label="CRITICAL" count={28} color={CRIT} />
+          <StatBox label="HIGH" count={36} color={HIGH_COL} />
+          <StatBox label="MEDIUM" count={15} color={MED} />
         </motion.div>
 
         {/* Tab Navigation */}
@@ -423,18 +1085,25 @@ export function ParzivalConstraints() {
             >
               <ShieldCheck
                 className="w-4 h-4"
-                style={{ color: activeTab === tab.id ? tab.color : "#7A8AAA" }}
+                style={{
+                  color:
+                    activeTab === tab.id ? tab.color : "#7A8AAA",
+                }}
               />
               <span
                 className="text-sm font-semibold"
                 style={{
-                  color: activeTab === tab.id ? tab.color : "#7A8AAA",
+                  color:
+                    activeTab === tab.id ? tab.color : "#7A8AAA",
                   fontFamily: "var(--font-mono)",
                 }}
               >
                 {tab.label}
               </span>
-              <span className="text-xs hidden sm:inline" style={{ color: "#7A8AAA" }}>
+              <span
+                className="text-xs hidden sm:inline"
+                style={{ color: "#7A8AAA" }}
+              >
                 {tab.sub}
               </span>
               {activeTab === tab.id && (
@@ -442,13 +1111,18 @@ export function ParzivalConstraints() {
                   layoutId="constraintTab"
                   className="absolute bottom-0 left-0 right-0 h-0.5"
                   style={{ background: tab.color }}
-                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 400,
+                    damping: 30,
+                  }}
                 />
               )}
             </button>
           ))}
         </motion.div>
 
+        {/* Tab Content */}
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}
@@ -457,341 +1131,43 @@ export function ParzivalConstraints() {
             exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.2 }}
           >
-            {/* ── GLOBAL ── */}
-            {activeTab === "global" && (
-              <div className="space-y-6">
-                {/* Summary */}
-                <div
-                  className="p-4 rounded-xl flex items-center gap-4 flex-wrap"
-                  style={{
-                    background: "rgba(0,245,255,0.04)",
-                    border: "1px solid rgba(0,245,255,0.12)",
-                  }}
-                >
-                  <Lock className="w-4 h-4 flex-shrink-0" style={{ color: CYAN }} />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs leading-relaxed" style={{ color: "#7A8AAA" }}>
-                      Global constraints are loaded at Parzival activation —{" "}
-                      <span style={{ color: CYAN, fontFamily: "var(--font-mono)" }}>
-                        never dropped
-                      </span>{" "}
-                      throughout the session. Cannot be overridden by workflow instructions, user
-                      requests, or agent output.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Category: Identity */}
-                <div>
-                  <div className="flex items-center gap-2 mb-3">
-                    <ShieldAlert className="w-4 h-4" style={{ color: CRIT }} />
-                    <h3
-                      className="text-xs font-semibold uppercase tracking-widest"
-                      style={{ color: CRIT, fontFamily: "var(--font-mono)" }}
-                    >
-                      Identity (6 constraints)
-                    </h3>
-                  </div>
-                  <div
-                    className="rounded-xl overflow-hidden"
-                    style={{ border: `1px solid ${CRIT}18` }}
-                  >
-                    {globalIdentity.map((c) => (
-                      <ConstraintRow key={c.id} {...c} />
-                    ))}
-                  </div>
-                </div>
-
-                {/* Category: Quality */}
-                <div>
-                  <div className="flex items-center gap-2 mb-3">
-                    <ShieldCheck className="w-4 h-4" style={{ color: HIGH_COL }} />
-                    <h3
-                      className="text-xs font-semibold uppercase tracking-widest"
-                      style={{ color: HIGH_COL, fontFamily: "var(--font-mono)" }}
-                    >
-                      Quality (10 constraints)
-                    </h3>
-                  </div>
-                  <div
-                    className="rounded-xl overflow-hidden"
-                    style={{ border: `1px solid ${HIGH_COL}18` }}
-                  >
-                    {globalQuality.map((c) => (
-                      <ConstraintRow key={c.id} {...c} />
-                    ))}
-                  </div>
-                </div>
-
-                {/* Category: Communication */}
-                <div>
-                  <div className="flex items-center gap-2 mb-3">
-                    <MessageSquare className="w-4 h-4" style={{ color: MED }} />
-                    <h3
-                      className="text-xs font-semibold uppercase tracking-widest"
-                      style={{ color: MED, fontFamily: "var(--font-mono)" }}
-                    >
-                      Communication (4 constraints)
-                    </h3>
-                  </div>
-                  <div
-                    className="rounded-xl overflow-hidden"
-                    style={{ border: `1px solid ${MED}18` }}
-                  >
-                    {globalComm.map((c) => (
-                      <ConstraintRow key={c.id} {...c} />
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* ── PHASE ── */}
-            {activeTab === "phase" && (
-              <div>
-                <div className="space-y-4">
-                  {phaseData.map((p) => (
-                    <PhaseSection key={p.phase} {...p} />
-                  ))}
-                </div>
-                <div
-                  className="mt-4 p-3 rounded-xl flex items-center gap-2"
-                  style={{
-                    background: "rgba(139,92,246,0.04)",
-                    border: "1px solid rgba(139,92,246,0.1)",
-                  }}
-                >
-                  <AlertTriangle className="w-3.5 h-3.5 flex-shrink-0" style={{ color: VIOLET }} />
-                  <p className="text-xs leading-relaxed" style={{ color: "#7A8AAA" }}>
-                    Total: 59 phase constraints across 8 phases. Each phase constraint is additive to
-                    global constraints — both layers are active simultaneously during a phase.
-                  </p>
-                </div>
-              </div>
-            )}
-
-            {/* ── LIFECYCLE ── */}
-            {activeTab === "lifecycle" && (
-              <div className="space-y-6">
-                {/* Load/Drop mechanism */}
-                <div
-                  className="p-5 rounded-xl"
-                  style={{
-                    background: "rgba(0,255,136,0.03)",
-                    border: "1px solid rgba(0,255,136,0.12)",
-                  }}
-                >
-                  <h3
-                    className="text-sm font-semibold mb-4"
-                    style={{ color: GREEN, fontFamily: "var(--font-orbitron)" }}
-                  >
-                    Constraint Lifecycle
-                  </h3>
-                  <div className="space-y-3">
-                    {[
-                      {
-                        step: "01",
-                        label: "Parzival Activates",
-                        detail:
-                          "Global constraints GC-01 through GC-20 loaded. Never dropped for entire session.",
-                        color: CYAN,
-                      },
-                      {
-                        step: "02",
-                        label: "Read project-status.md",
-                        detail: "Determine current phase from current_phase field.",
-                        color: CYAN,
-                      },
-                      {
-                        step: "03",
-                        label: "Load Phase Constraints",
-                        detail:
-                          "Phase-specific constraints loaded additively on top of global. Both layers active simultaneously.",
-                        color: VIOLET,
-                      },
-                      {
-                        step: "04",
-                        label: "Operate Within Phase",
-                        detail:
-                          "Self-check runs every ~10 messages. Any violation corrected immediately.",
-                        color: GREEN,
-                      },
-                      {
-                        step: "05",
-                        label: "Phase Exit",
-                        detail:
-                          "Phase constraints dropped. Drop is explicit and verified before next phase loads.",
-                        color: AMBER,
-                      },
-                      {
-                        step: "06",
-                        label: "Next Phase Entry",
-                        detail:
-                          "New phase constraints loaded. Global remains. No cross-phase leakage.",
-                        color: VIOLET,
-                      },
-                    ].map((s, i, arr) => (
-                      <div key={s.step} className="flex items-start gap-3">
-                        <div className="flex flex-col items-center">
-                          <div
-                            className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
-                            style={{
-                              background: `${s.color}12`,
-                              border: `1px solid ${s.color}25`,
-                            }}
-                          >
-                            <span className="text-xs font-mono font-bold" style={{ color: s.color }}>
-                              {s.step}
-                            </span>
-                          </div>
-                          {i < arr.length - 1 && (
-                            <div
-                              className="w-px flex-1 my-1"
-                              style={{
-                                background: `linear-gradient(180deg, ${s.color}20, ${arr[i + 1].color}20)`,
-                                minHeight: 16,
-                              }}
-                            />
-                          )}
-                        </div>
-                        <div className="pb-3 flex-1 min-w-0">
-                          <div className="text-xs font-semibold mb-0.5" style={{ color: "#E8EAF0" }}>
-                            {s.label}
-                          </div>
-                          <div className="text-xs leading-relaxed" style={{ color: "#7A8AAA" }}>
-                            {s.detail}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Cross-Phase Isolation */}
-                <div
-                  className="p-5 rounded-xl"
-                  style={{
-                    background: "rgba(255,68,68,0.03)",
-                    border: "1px solid rgba(255,68,68,0.1)",
-                  }}
-                >
-                  <h3
-                    className="text-sm font-semibold mb-4"
-                    style={{ color: CRIT, fontFamily: "var(--font-orbitron)" }}
-                  >
-                    Cross-Phase Isolation
-                  </h3>
-                  <div className="space-y-3">
-                    {[
-                      {
-                        rule: "Phase constraints MUST NOT leak into other phases.",
-                        detail:
-                          "When a phase exits, its constraints are dropped before the next phase's constraints are loaded.",
-                      },
-                      {
-                        rule: "Loading constraints from the wrong phase is a constraint violation.",
-                        detail:
-                          "Example: Loading Execution constraints during Planning would activate EC-01 (verify story) before stories are ready.",
-                      },
-                      {
-                        rule: "If any phase constraint conflicts with a global constraint — the global wins.",
-                        detail:
-                          "Global constraints have absolute authority. Phase constraints add specificity; they do not override globals.",
-                      },
-                    ].map((r, i) => (
-                      <div key={i} className="flex items-start gap-2.5">
-                        {severityDot("CRITICAL")}
-                        <div>
-                          <p className="text-xs font-semibold mb-0.5" style={{ color: "#E8EAF0" }}>
-                            {r.rule}
-                          </p>
-                          <p className="text-xs leading-relaxed" style={{ color: "#7A8AAA" }}>
-                            {r.detail}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Self-Check Schedule */}
-                <div
-                  className="p-5 rounded-xl"
-                  style={{
-                    background: "rgba(0,245,255,0.03)",
-                    border: "1px solid rgba(0,245,255,0.1)",
-                  }}
-                >
-                  <h3
-                    className="text-sm font-semibold mb-4"
-                    style={{ color: CYAN, fontFamily: "var(--font-orbitron)" }}
-                  >
-                    Self-Check Schedule
-                  </h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div
-                      className="p-3 rounded-lg"
-                      style={{
-                        background: `${CYAN}06`,
-                        border: `1px solid ${CYAN}12`,
-                      }}
-                    >
-                      <div
-                        className="text-xs font-semibold mb-2"
-                        style={{ color: CYAN, fontFamily: "var(--font-mono)" }}
-                      >
-                        Layer 1 — Always Active
-                      </div>
-                      <div className="text-xs leading-relaxed" style={{ color: "#7A8AAA" }}>
-                        Every ~10 messages, checks GC-01 through GC-20 (minus GC-09, GC-11, GC-16,
-                        GC-17, GC-18). Violations corrected immediately.
-                      </div>
-                    </div>
-                    <div
-                      className="p-3 rounded-lg"
-                      style={{
-                        background: `${AMBER}06`,
-                        border: `1px solid ${AMBER}12`,
-                      }}
-                    >
-                      <div
-                        className="text-xs font-semibold mb-2"
-                        style={{ color: AMBER, fontFamily: "var(--font-mono)" }}
-                      >
-                        Layer 3 — During Agent Work
-                      </div>
-                      <div className="text-xs leading-relaxed" style={{ color: "#7A8AAA" }}>
-                        During agent dispatch/review: additionally checks GC-09 (review agent
-                        output) and GC-11 (precise instructions).
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Global Constraint Supremacy */}
-                <div
-                  className="p-4 rounded-xl flex items-start gap-3"
-                  style={{
-                    background: "rgba(139,92,246,0.04)",
-                    border: "1px solid rgba(139,92,246,0.12)",
-                  }}
-                >
-                  <Layers className="w-4 h-4 mt-0.5 flex-shrink-0" style={{ color: VIOLET }} />
-                  <div>
-                    <p className="text-xs font-semibold mb-1" style={{ color: VIOLET }}>
-                      Global Constraint Supremacy
-                    </p>
-                    <p className="text-xs leading-relaxed" style={{ color: "#7A8AAA" }}>
-                      When a phase constraint appears to conflict with a global constraint — the
-                      global constraint wins. Always. Parzival does not negotiate, bend for speed,
-                      or yield to pressure.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
+            {activeTab === "global" && <GlobalConstraintsView />}
+            {activeTab === "phase" && <PhaseConstraintsView />}
+            {activeTab === "lifecycle" && <LifecycleView />}
           </motion.div>
         </AnimatePresence>
+
+        {/* Enforcement Footer */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="mt-8 px-4 py-3 flex items-center gap-2"
+          style={{
+            background: "rgba(10,13,30,0.92)",
+            borderRadius: 4,
+            border: `1px solid ${CRIT}15`,
+            borderLeft: `3px solid ${CRIT}`,
+          }}
+        >
+          <AlertTriangle
+            className="w-3.5 h-3.5 flex-shrink-0"
+            style={{
+              color: CRIT,
+              filter: `drop-shadow(0 0 3px ${CRIT})`,
+            }}
+          />
+          <p
+            className="text-[11px] leading-relaxed"
+            style={{ color: "#7A8AAA", fontFamily: "var(--font-mono)" }}
+          >
+            Constraint enforcement is automatic and continuous.
+            Violations trigger immediate self-correction. No constraint
+            can be overridden by user request, workflow instruction, or
+            agent output.
+          </p>
+        </motion.div>
       </div>
     </section>
   );

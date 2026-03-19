@@ -6,14 +6,12 @@ import {
   Compass,
   FileText,
   Users,
-  ArrowRight,
-  CheckCircle,
-  Clock,
-  ShieldCheck,
   ScrollText,
   GitBranch,
   AlertTriangle,
   Zap,
+  ShieldCheck,
+  Activity,
 } from "lucide-react";
 
 const CYAN = "#00F5FF";
@@ -21,7 +19,6 @@ const VIOLET = "#8B5CF6";
 const GREEN = "#00FF88";
 const AMBER = "#F59E0B";
 const RED = "#FF4444";
-const MAGENTA = "#FF2D6A";
 
 const phases = [
   { id: "init", label: "Init", active: "1&2" },
@@ -77,7 +74,7 @@ const mode1Content = {
   keyRules: [
     {
       gc: "GC-06",
-      text: "Phase constraints are additive layers — global constraints are never dropped throughout the session.",
+      text: "Phase constraints are additive layers \u2014 global constraints are never dropped throughout the session.",
     },
     {
       gc: "GC-08",
@@ -85,14 +82,14 @@ const mode1Content = {
     },
     {
       gc: "GC-07",
-      text: "Never carry tech debt or bugs forward — issues are fixed in the current cycle.",
+      text: "Never carry tech debt or bugs forward \u2014 issues are fixed in the current cycle.",
     },
   ],
 };
 
 const mode2Content = {
   overview:
-    "Maintains the comprehensive project record in the oversight directory. Every handoff, log entry, and note is written for Future Parzival — a fresh instance with zero session context that must be able to understand everything.",
+    "Maintains the comprehensive project record in the oversight directory. Every handoff, log entry, and note is written for Future Parzival \u2014 a fresh instance with zero session context that must be able to understand everything.",
   responsibilities: [
     {
       icon: ScrollText,
@@ -127,7 +124,7 @@ const mode2Content = {
     },
     {
       gc: "GC-10",
-      text: "User receives synthesized summaries — never raw agent output passed through.",
+      text: "User receives synthesized summaries \u2014 never raw agent output passed through.",
     },
     {
       gc: "GC-11",
@@ -138,7 +135,7 @@ const mode2Content = {
 
 const mode3Content = {
   overview:
-    "The execution pipeline for delegating implementation work to BMAD agents. Full team orchestration activates only when Parzival has a verified plan ready — Phase 4 (Execution) or later. Individual agent dispatches (Analyst, PM, Architect) occur in earlier phases via the agent-dispatch cycle.",
+    "The execution pipeline for delegating implementation work to BMAD agents. Full team orchestration activates only when Parzival has a verified plan ready \u2014 Phase 4 (Execution) or later. Individual agent dispatches (Analyst, PM, Architect) occur in earlier phases via the agent-dispatch cycle.",
   pipeline: [
     {
       step: "01",
@@ -171,12 +168,12 @@ const mode3Content = {
   ],
   reviewCycle: {
     description:
-      "Every agent output passes through the review cycle before reaching the user. Loops until zero legitimate issues confirmed — max 3 iterations before escalation.",
-    loopSteps: "Send → Monitor → Review vs DONE WHEN → Accept or Loop → Shutdown → Summary",
+      "Every agent output passes through the review cycle before reaching the user. Loops until zero legitimate issues confirmed \u2014 max 3 iterations before escalation.",
+    loopSteps: "Send \u2192 Monitor \u2192 Review vs DONE WHEN \u2192 Accept or Loop \u2192 Shutdown \u2192 Summary",
   },
   activationNote: {
     title: "Phase 4 Gate",
-    text: "Mode 3 full pipeline activates only in Execution, Integration, Release, and Maintenance phases. During Init, Discovery, Architecture, and Planning — only single-agent dispatch via the agent-dispatch cycle (no team-builder or model-dispatch skills).",
+    text: "Mode 3 full pipeline activates only in Execution, Integration, Release, and Maintenance phases. During Init, Discovery, Architecture, and Planning \u2014 only single-agent dispatch via the agent-dispatch cycle (no team-builder or model-dispatch skills).",
     color: AMBER,
   },
   keyRules: [
@@ -195,41 +192,131 @@ const mode3Content = {
   ],
 };
 
+/* ── Shared sub-components ────────────────────────────────────── */
+
+function ConstraintTag({
+  gc,
+  text,
+  color,
+}: {
+  gc: string;
+  text: string;
+  color: string;
+}) {
+  return (
+    <div
+      className="flex items-start gap-3 px-4 py-3 rounded-sm"
+      style={{
+        background: "rgba(10,13,30,0.92)",
+        border: `1px solid ${color}20`,
+      }}
+    >
+      <span
+        className="text-[10px] font-semibold px-2 py-0.5 rounded-sm flex-shrink-0 mt-0.5 tracking-wider"
+        style={{
+          background: `${color}14`,
+          color,
+          fontFamily: "var(--font-mono)",
+          border: `1px solid ${color}30`,
+        }}
+      >
+        [CONSTRAINT]
+      </span>
+      <span
+        className="text-[10px] font-semibold flex-shrink-0 mt-0.5 tracking-wider"
+        style={{
+          color: `${color}CC`,
+          fontFamily: "var(--font-mono)",
+        }}
+      >
+        {gc}
+      </span>
+      <p
+        className="text-xs leading-relaxed"
+        style={{ color: "#7A8AAA", fontFamily: "var(--font-mono)" }}
+      >
+        {text}
+      </p>
+    </div>
+  );
+}
+
+/* ── LED indicator ────────────────────────────────────────────── */
+function LED({
+  color,
+  active,
+}: {
+  color: string;
+  active: boolean;
+}) {
+  return (
+    <div className="relative flex items-center justify-center">
+      {/* Outer glow ring */}
+      {active && (
+        <motion.div
+          className="absolute rounded-full"
+          style={{
+            width: 32,
+            height: 32,
+            background: `${color}18`,
+            boxShadow: `0 0 20px ${color}40, 0 0 40px ${color}15`,
+          }}
+          animate={{ opacity: [0.5, 1, 0.5] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+        />
+      )}
+      {/* LED body */}
+      <div
+        className="relative rounded-full"
+        style={{
+          width: 20,
+          height: 20,
+          background: active
+            ? `radial-gradient(circle at 35% 35%, ${color}FF, ${color}AA 60%, ${color}60 100%)`
+            : `radial-gradient(circle at 35% 35%, ${color}50, ${color}20 60%, ${color}10 100%)`,
+          boxShadow: active
+            ? `0 0 10px ${color}80, 0 0 24px ${color}30, inset 0 -2px 4px ${color}40`
+            : `inset 0 -2px 4px ${color}10`,
+          opacity: active ? 1 : 0.3,
+          border: `1px solid ${active ? color + "80" : color + "20"}`,
+        }}
+      />
+    </div>
+  );
+}
+
+/* ── Main component ───────────────────────────────────────────── */
+
 export function ParzivalModes() {
   const [activeTab, setActiveTab] = useState("mode1");
-
-  const contentMap: Record<string, typeof mode1Content> = {
-    mode1: mode1Content,
-    mode2: mode2Content as unknown as typeof mode1Content,
-    mode3: mode3Content as unknown as typeof mode1Content,
-  };
-  const currentContent = contentMap[activeTab];
 
   const currentColor = {
     mode1: CYAN,
     mode2: GREEN,
     mode3: AMBER,
-  }[activeTab];
+  }[activeTab]!;
+
+  const modeNumber = { mode1: "01", mode2: "02", mode3: "03" }[activeTab]!;
 
   return (
     <section id="modes" className="relative py-24 px-6 overflow-hidden">
-      {/* Background */}
+      {/* Violet radial background gradient */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            "radial-gradient(ellipse 80% 50% at 50% 0%, rgba(0,245,255,0.04) 0%, transparent 70%)",
+            "radial-gradient(ellipse 80% 50% at 50% 0%, rgba(139,92,246,0.06) 0%, transparent 70%)",
         }}
       />
 
       <div className="relative z-10 max-w-6xl mx-auto">
-        {/* Section Header */}
+        {/* ── Section Header ─────────────────────────────────────── */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="mb-10"
+          className="mb-12"
         >
           <div className="flex items-center gap-3 mb-4">
             <div className="section-label">
@@ -257,168 +344,295 @@ export function ParzivalModes() {
               Modes
             </span>
           </h2>
-          <p className="text-sm max-w-xl leading-relaxed" style={{ color: "#7A8AAA" }}>
-            Parzival operates in three concurrent modes. Mode 1 and Mode 2 are always
-            active. Mode 3 activates only during execution phases — never before.
+          <p
+            className="text-sm max-w-xl leading-relaxed"
+            style={{ color: "#7A8AAA" }}
+          >
+            Parzival operates in three concurrent modes. Mode 1 and Mode 2 are
+            always active. Mode 3 activates only during execution phases —
+            never before.
           </p>
         </motion.div>
 
-        {/* Phase Timeline */}
+        {/* ── Mode Switch Dashboard ──────────────────────────────── */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="mb-10 overflow-x-auto"
+          className="mb-10"
         >
-          <div className="flex items-center gap-0 min-w-max sm:min-w-0">
-            {phases.map((phase, i) => {
-              const isM3Active = phase.active === "1&2&3";
-              const isCurrent = phase.id === "execution";
+          <div
+            className="text-[10px] font-semibold uppercase tracking-[0.2em] mb-3"
+            style={{ color: "#3A4560", fontFamily: "var(--font-mono)" }}
+          >
+            Mode Selection Panel
+          </div>
+          <div className="flex flex-col sm:flex-row items-stretch gap-3">
+            {tabs.map((tab) => {
+              const isActive = activeTab === tab.id;
+              const modeNum =
+                tab.id === "mode1"
+                  ? "01"
+                  : tab.id === "mode2"
+                    ? "02"
+                    : "03";
+              const statusText =
+                tab.id === "mode3"
+                  ? isActive
+                    ? "ACTIVE"
+                    : "PHASE 4+"
+                  : isActive
+                    ? "ACTIVE"
+                    : "STANDBY";
+              const statusColor =
+                statusText === "ACTIVE" ? GREEN : AMBER;
+
               return (
-                <div key={phase.id} className="flex items-center">
-                  <div className="relative">
-                    <div
-                      className="w-28 h-20 flex flex-col items-center justify-center gap-1 border-r border-0 relative"
-                      style={{}}
-                    >
-                      {/* Phase box */}
+                <motion.button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  whileTap={{ scale: 0.98 }}
+                  transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                  className="relative flex-1 min-w-[200px] cursor-pointer select-none"
+                  style={{
+                    background: "rgba(10,13,30,0.92)",
+                    border: `1px solid ${isActive ? tab.color + "50" : "rgba(139,92,246,0.12)"}`,
+                    borderRadius: 4,
+                    padding: "20px 16px",
+                    boxShadow: isActive
+                      ? `0 0 30px ${tab.color}15, 0 0 60px ${tab.color}08, inset 0 1px 0 ${tab.color}15`
+                      : "0 8px 24px rgba(0,0,0,0.3)",
+                    transition: "border-color 0.3s, box-shadow 0.3s",
+                  }}
+                >
+                  {/* Scanline overlay */}
+                  <div
+                    className="absolute inset-0 pointer-events-none rounded-sm"
+                    style={{
+                      background:
+                        "repeating-linear-gradient(0deg, transparent 0px, transparent 3px, rgba(0,0,0,0.02) 3px, rgba(0,0,0,0.02) 6px)",
+                    }}
+                  />
+
+                  {/* Top bar accent */}
+                  <div
+                    className="absolute top-0 left-0 right-0 h-[3px] rounded-t-sm"
+                    style={{
+                      background: isActive
+                        ? `linear-gradient(90deg, ${tab.color}80, ${tab.color}30)`
+                        : `linear-gradient(90deg, ${tab.color}20, transparent)`,
+                    }}
+                  />
+
+                  <div className="relative z-10 flex flex-col items-center gap-3">
+                    {/* Mode number + name */}
+                    <div className="text-center">
                       <div
-                        className="px-3 py-1.5 rounded-lg text-center transition-all duration-300"
+                        className="text-[10px] font-semibold tracking-[0.15em] uppercase"
                         style={{
-                          background: isCurrent
-                            ? `${VIOLET}15`
-                            : `${CYAN}06`,
-                          border: `1px solid ${isCurrent ? VIOLET + "40" : CYAN + "25"}`,
+                          color: isActive ? tab.color : "#3A4560",
+                          fontFamily: "var(--font-mono)",
+                          transition: "color 0.3s",
                         }}
                       >
+                        MODE {modeNum} — {tab.sublabel}
+                      </div>
+                    </div>
+
+                    {/* LED indicator */}
+                    <LED color={tab.color} active={isActive} />
+
+                    {/* Status readout */}
+                    <div
+                      className="text-[10px] font-bold tracking-[0.2em] uppercase"
+                      style={{
+                        color: isActive ? statusColor : `${statusColor}80`,
+                        fontFamily: "var(--font-mono)",
+                        textShadow: isActive
+                          ? `0 0 10px ${statusColor}50`
+                          : "none",
+                        transition: "color 0.3s, text-shadow 0.3s",
+                      }}
+                    >
+                      {statusText}
+                    </div>
+                  </div>
+
+                  {/* Active indicator glow on bottom */}
+                  {isActive && (
+                    <motion.div
+                      layoutId="switchGlow"
+                      className="absolute bottom-0 left-0 right-0 h-[2px]"
+                      style={{
+                        background: `linear-gradient(90deg, transparent, ${tab.color}, transparent)`,
+                        boxShadow: `0 0 12px ${tab.color}60`,
+                      }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 400,
+                        damping: 30,
+                      }}
+                    />
+                  )}
+                </motion.button>
+              );
+            })}
+          </div>
+        </motion.div>
+
+        {/* ── Phase Timeline — Conveyor Belt ─────────────────────── */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.15 }}
+          className="mb-12"
+        >
+          <div
+            className="text-[10px] font-semibold uppercase tracking-[0.2em] mb-3"
+            style={{ color: "#3A4560", fontFamily: "var(--font-mono)" }}
+          >
+            Phase Assembly Line
+          </div>
+          <div
+            className="overflow-x-auto pb-3"
+            style={{
+              scrollbarWidth: "thin",
+              scrollbarColor: "rgba(139,92,246,0.25) transparent",
+            }}
+          >
+            <div className="relative min-w-[780px]">
+              {/* Track line */}
+              <div
+                className="absolute left-0 right-0 h-[2px]"
+                style={{
+                  top: "50%",
+                  transform: "translateY(-1px)",
+                  background: `linear-gradient(90deg, ${VIOLET}20, ${VIOLET}40 20%, ${VIOLET}40 80%, ${VIOLET}20)`,
+                }}
+              />
+
+              {/* Animated dot traveling along track */}
+              <div
+                className="absolute h-[6px] w-[6px] rounded-full"
+                style={{
+                  top: "50%",
+                  transform: "translateY(-3px)",
+                  background: CYAN,
+                  boxShadow: `0 0 8px ${CYAN}80, 0 0 16px ${CYAN}40`,
+                  animation: "conveyor-travel 6s linear infinite",
+                }}
+              />
+
+              {/* Phase stations */}
+              <div className="relative flex items-center justify-between">
+                {phases.map((phase) => {
+                  const isM3Active = phase.active === "1&2&3";
+                  const isCurrent = phase.id === "execution";
+                  return (
+                    <div
+                      key={phase.id}
+                      className="relative flex flex-col items-center"
+                      style={{ width: "12.5%" }}
+                    >
+                      <div
+                        className="px-2 py-3 rounded-sm text-center relative"
+                        style={{
+                          background: "rgba(10,13,30,0.92)",
+                          border: `1px solid ${isCurrent ? VIOLET + "50" : "rgba(139,92,246,0.15)"}`,
+                          boxShadow: isCurrent
+                            ? `0 0 20px ${VIOLET}15, 0 0 40px ${VIOLET}08`
+                            : "none",
+                          minWidth: 82,
+                        }}
+                      >
+                        {/* Phase name */}
                         <div
-                          className="text-xs font-semibold mb-0.5"
+                          className="text-[10px] font-semibold mb-2 tracking-wide"
                           style={{
-                            color: isCurrent ? VIOLET : CYAN,
+                            color: isCurrent ? "#E8EAF0" : "#7A8AAA",
                             fontFamily: "var(--font-mono)",
                           }}
                         >
                           {phase.label}
                         </div>
-                        <div className="flex items-center justify-center gap-1">
-                          <span
-                            className="text-[9px] px-1 py-0.5 rounded"
+
+                        {/* Mode indicator dots */}
+                        <div className="flex items-center justify-center gap-1.5">
+                          <div
+                            className="w-[6px] h-[6px] rounded-full"
                             style={{
-                              background: `${CYAN}10`,
-                              color: CYAN,
-                              fontFamily: "var(--font-mono)",
+                              background: CYAN,
+                              boxShadow: `0 0 4px ${CYAN}60`,
                             }}
-                          >
-                            M1
-                          </span>
-                          <span
-                            className="text-[9px] px-1 py-0.5 rounded"
+                            title="M1"
+                          />
+                          <div
+                            className="w-[6px] h-[6px] rounded-full"
                             style={{
-                              background: `${GREEN}10`,
-                              color: GREEN,
-                              fontFamily: "var(--font-mono)",
+                              background: GREEN,
+                              boxShadow: `0 0 4px ${GREEN}60`,
                             }}
-                          >
-                            M2
-                          </span>
+                            title="M2"
+                          />
                           {isM3Active && (
-                            <span
-                              className="text-[9px] px-1 py-0.5 rounded"
+                            <div
+                              className="w-[6px] h-[6px] rounded-full"
                               style={{
-                                background: `${AMBER}10`,
-                                color: AMBER,
-                                fontFamily: "var(--font-mono)",
+                                background: AMBER,
+                                boxShadow: `0 0 4px ${AMBER}60`,
                               }}
-                            >
-                              M3
-                            </span>
+                              title="M3"
+                            />
                           )}
                         </div>
-                      </div>
 
-                      {/* Connector line */}
-                      {i < phases.length - 1 && (
-                        <div
-                          className="absolute right-0 top-1/2 w-4 h-px z-10"
-                          style={{
-                            background: `linear-gradient(90deg, ${isM3Active ? VIOLET + "40" : CYAN + "20"}, ${phases[i + 1].active === "1&2&3" ? VIOLET + "40" : CYAN + "20"})`,
-                          }}
-                        />
-                      )}
+                        {/* Current phase highlight bar */}
+                        {isCurrent && (
+                          <div
+                            className="absolute bottom-0 left-[10%] right-[10%] h-[2px]"
+                            style={{
+                              background: `linear-gradient(90deg, transparent, ${VIOLET}, transparent)`,
+                              boxShadow: `0 0 8px ${VIOLET}60`,
+                            }}
+                          />
+                        )}
+                      </div>
                     </div>
-                  </div>
-                </div>
-              );
-            })}
+                  );
+                })}
+              </div>
+            </div>
           </div>
 
           {/* Legend */}
-          <div className="flex items-center gap-5 mt-4">
-            <div className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded" style={{ background: CYAN }} />
-              <span className="text-xs" style={{ color: "#7A8AAA" }}>Mode 1</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded" style={{ background: GREEN }} />
-              <span className="text-xs" style={{ color: "#7A8AAA" }}>Mode 2</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded" style={{ background: AMBER }} />
-              <span className="text-xs" style={{ color: "#7A8AAA" }}>Mode 3</span>
-            </div>
+          <div className="flex items-center gap-5 mt-3">
+            {[
+              { label: "M1 — Governance", color: CYAN },
+              { label: "M2 — Oversight", color: GREEN },
+              { label: "M3 — Orchestration", color: AMBER },
+            ].map((item) => (
+              <div key={item.label} className="flex items-center gap-1.5">
+                <span
+                  className="w-[6px] h-[6px] rounded-full"
+                  style={{ background: item.color }}
+                />
+                <span
+                  className="text-[10px]"
+                  style={{
+                    color: "#3A4560",
+                    fontFamily: "var(--font-mono)",
+                  }}
+                >
+                  {item.label}
+                </span>
+              </div>
+            ))}
           </div>
         </motion.div>
 
-        {/* Tab Navigation */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.15 }}
-          className="flex items-center gap-2 mb-8 border-b"
-          style={{ borderColor: "rgba(0,245,255,0.1)" }}
-        >
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className="relative flex items-center gap-2 px-4 py-3 transition-all duration-200"
-            >
-              <tab.icon
-                className="w-4 h-4"
-                style={{
-                  color: activeTab === tab.id ? tab.color : "#7A8AAA",
-                }}
-              />
-              <span
-                className="text-sm font-semibold"
-                style={{
-                  color: activeTab === tab.id ? tab.color : "#7A8AAA",
-                  fontFamily: "var(--font-mono)",
-                }}
-              >
-                {tab.label}
-              </span>
-              <span
-                className="text-xs hidden sm:inline"
-                style={{ color: "#7A8AAA" }}
-              >
-                {tab.sublabel}
-              </span>
-              {activeTab === tab.id && (
-                <motion.div
-                  layoutId="activeTab"
-                  className="absolute bottom-0 left-0 right-0 h-0.5"
-                  style={{ background: tab.color }}
-                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                />
-              )}
-            </button>
-          ))}
-        </motion.div>
-
-        {/* Tab Content */}
+        {/* ── Content Panels ─────────────────────────────────────── */}
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}
@@ -427,300 +641,391 @@ export function ParzivalModes() {
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.25 }}
           >
-            {/* Overview */}
+            {/* Overview terminal panel */}
             <div
-              className="p-5 rounded-2xl mb-6"
+              className="relative p-5 pt-8 rounded-sm mb-6"
               style={{
-                background: `${currentColor}05`,
-                border: `1px solid ${currentColor}18`,
+                background: "rgba(10,13,30,0.92)",
+                border: `1px solid ${currentColor}20`,
               }}
             >
-              <p className="text-sm leading-relaxed" style={{ color: "#B8C4D8" }}>
-                {currentContent.overview}
+              {/* Title bar */}
+              <div
+                className="absolute top-0 left-0 right-0 h-6 flex items-center px-3 rounded-t-sm"
+                style={{
+                  background: "rgba(20,25,50,0.6)",
+                  borderLeft: `3px solid ${currentColor}80`,
+                }}
+              >
+                <Activity
+                  className="w-2.5 h-2.5 mr-2"
+                  style={{ color: currentColor }}
+                />
+                <span
+                  className="text-[9px] font-semibold tracking-widest uppercase"
+                  style={{
+                    color: `${currentColor}AA`,
+                    fontFamily: "var(--font-mono)",
+                  }}
+                >
+                  MODE {modeNumber} SYSTEM OVERVIEW
+                </span>
+              </div>
+              <p
+                className="text-sm leading-relaxed"
+                style={{ color: "#B8C4D8", fontFamily: "var(--font-mono)" }}
+              >
+                {activeTab === "mode1" && mode1Content.overview}
+                {activeTab === "mode2" && mode2Content.overview}
+                {activeTab === "mode3" && mode3Content.overview}
               </p>
             </div>
 
-            {/* Mode 1: Lifecycle Table */}
+            {/* ── Mode 1 Content ─────────────────────────────────── */}
             {activeTab === "mode1" && (
-              <div className="space-y-4">
-                <h3
-                  className="text-xs font-semibold uppercase tracking-widest"
+              <div className="space-y-5">
+                {/* Section label */}
+                <div
+                  className="text-[10px] font-semibold uppercase tracking-[0.2em]"
                   style={{ color: CYAN, fontFamily: "var(--font-mono)" }}
                 >
-                  Phase Lifecycle & Artifacts
-                </h3>
-                <div className="space-y-2">
+                  Phase Lifecycle — Diagnostic Readout
+                </div>
+
+                {/* Lifecycle rows */}
+                <div className="space-y-1">
                   {mode1Content.lifecycle.map((item, i) => (
                     <div
                       key={item.phase}
-                      className="flex items-start gap-4 p-3 rounded-xl"
+                      className="flex items-start gap-3 px-4 py-3 rounded-sm"
                       style={{
-                        background: "rgba(15,20,50,0.5)",
+                        background: "rgba(10,13,30,0.92)",
                         border: "1px solid rgba(0,245,255,0.08)",
                       }}
                     >
-                      <div
-                        className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5"
+                      {/* Step number badge */}
+                      <span
+                        className="text-[10px] font-bold px-2 py-0.5 rounded-sm flex-shrink-0 mt-0.5"
                         style={{
-                          background: `${CYAN}10`,
-                          border: `1px solid ${CYAN}20`,
+                          background: `${CYAN}14`,
+                          color: CYAN,
+                          fontFamily: "var(--font-mono)",
+                          border: `1px solid ${CYAN}30`,
+                          minWidth: 28,
+                          textAlign: "center",
                         }}
                       >
-                        <span
-                          className="text-xs font-mono font-semibold"
-                          style={{ color: CYAN }}
-                        >
-                          {String(i + 1).padStart(2, "0")}
-                        </span>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div
-                          className="text-sm font-semibold mb-0.5"
-                          style={{ color: "#E8EAF0" }}
-                        >
-                          {item.phase}
-                        </div>
-                        <div
-                          className="text-xs leading-relaxed"
-                          style={{ color: "#7A8AAA" }}
-                        >
-                          {item.artifact}
-                        </div>
-                      </div>
-                      <ArrowRight
-                        className="w-4 h-4 flex-shrink-0 mt-1"
-                        style={{ color: "#3A4560" }}
-                      />
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      {/* Phase name */}
+                      <span
+                        className="text-xs font-semibold flex-shrink-0 mt-0.5"
+                        style={{
+                          color: "#E8EAF0",
+                          fontFamily: "var(--font-mono)",
+                          minWidth: 100,
+                        }}
+                      >
+                        {item.phase}
+                      </span>
+                      {/* Artifact */}
+                      <span
+                        className="text-xs leading-relaxed"
+                        style={{
+                          color: "#7A8AAA",
+                          fontFamily: "var(--font-mono)",
+                        }}
+                      >
+                        {item.artifact}
+                      </span>
                     </div>
                   ))}
                 </div>
+
                 {/* Key Rules */}
-                <div className="pt-4">
-                  <h3
-                    className="text-xs font-semibold uppercase tracking-widest mb-3"
+                <div className="pt-2">
+                  <div
+                    className="text-[10px] font-semibold uppercase tracking-[0.2em] mb-3"
                     style={{ color: CYAN, fontFamily: "var(--font-mono)" }}
                   >
-                    Key Constraint Rules
-                  </h3>
-                  <div className="space-y-2">
+                    Constraint Rules
+                  </div>
+                  <div className="space-y-1">
                     {mode1Content.keyRules.map((rule) => (
-                      <div
+                      <ConstraintTag
                         key={rule.gc}
-                        className="flex items-start gap-3 p-3 rounded-xl"
-                        style={{
-                          background: "rgba(15,20,50,0.5)",
-                          border: "1px solid rgba(0,245,255,0.08)",
-                        }}
-                      >
-                        <span
-                          className="text-xs font-mono font-semibold px-1.5 py-0.5 rounded flex-shrink-0 mt-0.5"
-                          style={{
-                            background: `${CYAN}12`,
-                            color: CYAN,
-                          }}
-                        >
-                          {rule.gc}
-                        </span>
-                        <p className="text-xs leading-relaxed" style={{ color: "#7A8AAA" }}>
-                          {rule.text}
-                        </p>
-                      </div>
+                        gc={rule.gc}
+                        text={rule.text}
+                        color={CYAN}
+                      />
                     ))}
                   </div>
                 </div>
               </div>
             )}
 
-            {/* Mode 2: Responsibilities */}
+            {/* ── Mode 2 Content ─────────────────────────────────── */}
             {activeTab === "mode2" && (
-              <div className="space-y-4">
-                <h3
-                  className="text-xs font-semibold uppercase tracking-widest"
+              <div className="space-y-5">
+                <div
+                  className="text-[10px] font-semibold uppercase tracking-[0.2em]"
                   style={{ color: GREEN, fontFamily: "var(--font-mono)" }}
                 >
                   Documentation Responsibilities
-                </h3>
+                </div>
+
+                {/* 2-column grid of terminal panels */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {mode2Content.responsibilities.map((resp) => (
                     <div
                       key={resp.title}
-                      className="p-4 rounded-xl"
+                      className="relative p-4 pt-8 rounded-sm"
                       style={{
-                        background: "rgba(0,255,136,0.03)",
-                        border: "1px solid rgba(0,255,136,0.1)",
+                        background: "rgba(10,13,30,0.92)",
+                        border: `1px solid ${GREEN}15`,
                       }}
                     >
-                      <div className="flex items-center gap-2 mb-2">
-                        <resp.icon className="w-4 h-4" style={{ color: GREEN }} />
+                      {/* Title bar */}
+                      <div
+                        className="absolute top-0 left-0 right-0 h-6 flex items-center px-3 rounded-t-sm"
+                        style={{
+                          background: "rgba(20,25,50,0.6)",
+                          borderLeft: `3px solid ${GREEN}60`,
+                        }}
+                      >
+                        <resp.icon
+                          className="w-2.5 h-2.5 mr-2"
+                          style={{ color: GREEN }}
+                        />
                         <span
-                          className="text-sm font-semibold"
-                          style={{ color: "#E8EAF0" }}
+                          className="text-[9px] font-semibold tracking-widest uppercase"
+                          style={{
+                            color: `${GREEN}AA`,
+                            fontFamily: "var(--font-mono)",
+                          }}
                         >
                           {resp.title}
                         </span>
                       </div>
-                      <p className="text-xs leading-relaxed" style={{ color: "#7A8AAA" }}>
+                      <p
+                        className="text-xs leading-relaxed"
+                        style={{
+                          color: "#7A8AAA",
+                          fontFamily: "var(--font-mono)",
+                        }}
+                      >
                         {resp.detail}
                       </p>
                     </div>
                   ))}
                 </div>
+
                 {/* Key Rules */}
-                <div className="pt-4">
-                  <h3
-                    className="text-xs font-semibold uppercase tracking-widest mb-3"
+                <div className="pt-2">
+                  <div
+                    className="text-[10px] font-semibold uppercase tracking-[0.2em] mb-3"
                     style={{ color: GREEN, fontFamily: "var(--font-mono)" }}
                   >
-                    Governing Constraints
-                  </h3>
-                  <div className="space-y-2">
+                    Constraint Rules
+                  </div>
+                  <div className="space-y-1">
                     {mode2Content.keyRules.map((rule) => (
-                      <div
+                      <ConstraintTag
                         key={rule.gc}
-                        className="flex items-start gap-3 p-3 rounded-xl"
-                        style={{
-                          background: "rgba(0,255,136,0.03)",
-                          border: "1px solid rgba(0,255,136,0.1)",
-                        }}
-                      >
-                        <span
-                          className="text-xs font-mono font-semibold px-1.5 py-0.5 rounded flex-shrink-0 mt-0.5"
-                          style={{
-                            background: `${GREEN}12`,
-                            color: GREEN,
-                          }}
-                        >
-                          {rule.gc}
-                        </span>
-                        <p className="text-xs leading-relaxed" style={{ color: "#7A8AAA" }}>
-                          {rule.text}
-                        </p>
-                      </div>
+                        gc={rule.gc}
+                        text={rule.text}
+                        color={GREEN}
+                      />
                     ))}
                   </div>
                 </div>
               </div>
             )}
 
-            {/* Mode 3: Pipeline */}
+            {/* ── Mode 3 Content ─────────────────────────────────── */}
             {activeTab === "mode3" && (
               <div className="space-y-5">
-                {/* Activation Gate */}
+                {/* Activation Gate Warning */}
                 <div
-                  className="p-4 rounded-xl flex items-start gap-3"
+                  className="relative p-4 pt-8 rounded-sm"
                   style={{
-                    background: "rgba(245,158,11,0.06)",
-                    border: "1px solid rgba(245,158,11,0.2)",
+                    background: "rgba(10,13,30,0.92)",
+                    border: `1px solid ${AMBER}25`,
+                    boxShadow: `inset 0 0 40px ${AMBER}04`,
                   }}
                 >
-                  <Zap className="w-4 h-4 mt-0.5 flex-shrink-0" style={{ color: AMBER }} />
-                  <div>
-                    <div
-                      className="text-xs font-semibold mb-1"
-                      style={{ color: AMBER, fontFamily: "var(--font-mono)" }}
+                  <div
+                    className="absolute top-0 left-0 right-0 h-6 flex items-center px-3 rounded-t-sm"
+                    style={{
+                      background: `rgba(245,158,11,0.06)`,
+                      borderLeft: `3px solid ${AMBER}80`,
+                    }}
+                  >
+                    <Zap
+                      className="w-2.5 h-2.5 mr-2"
+                      style={{ color: AMBER }}
+                    />
+                    <span
+                      className="text-[9px] font-semibold tracking-widest uppercase"
+                      style={{
+                        color: AMBER,
+                        fontFamily: "var(--font-mono)",
+                      }}
                     >
-                      {mode3Content.activationNote.title}: Phase 4 (Execution) or later
-                    </div>
-                    <p className="text-xs leading-relaxed" style={{ color: "#7A8AAA" }}>
-                      {mode3Content.activationNote.text}
-                    </p>
+                      ACTIVATION GATE — {mode3Content.activationNote.title}
+                    </span>
                   </div>
+                  <p
+                    className="text-xs leading-relaxed"
+                    style={{
+                      color: "#7A8AAA",
+                      fontFamily: "var(--font-mono)",
+                    }}
+                  >
+                    {mode3Content.activationNote.text}
+                  </p>
                 </div>
 
-                {/* Pipeline */}
-                <h3
-                  className="text-xs font-semibold uppercase tracking-widest"
+                {/* Pipeline label */}
+                <div
+                  className="text-[10px] font-semibold uppercase tracking-[0.2em]"
                   style={{ color: AMBER, fontFamily: "var(--font-mono)" }}
                 >
                   Pipeline Stages
-                </h3>
-                <div className="space-y-3">
+                </div>
+
+                {/* Pipeline steps with vertical connectors */}
+                <div className="relative">
                   {mode3Content.pipeline.map((stage, i) => (
-                    <div
-                      key={stage.step}
-                      className="relative p-4 rounded-xl"
-                      style={{
-                        background: "rgba(15,20,50,0.5)",
-                        border: "1px solid rgba(245,158,11,0.1)",
-                      }}
-                    >
-                      <div className="flex items-start gap-3">
+                    <div key={stage.step} className="relative">
+                      {/* Vertical connector */}
+                      {i > 0 && (
                         <div
-                          className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
+                          className="flex justify-start ml-[18px]"
+                          style={{ height: 20 }}
+                        >
+                          <div
+                            className="w-[2px] h-full"
+                            style={{
+                              background: `linear-gradient(180deg, ${AMBER}50, ${AMBER}20)`,
+                              boxShadow: `0 0 6px ${AMBER}20`,
+                            }}
+                          />
+                        </div>
+                      )}
+
+                      {/* Step card */}
+                      <div
+                        className="relative p-4 pt-8 rounded-sm"
+                        style={{
+                          background: "rgba(10,13,30,0.92)",
+                          border: `1px solid ${AMBER}15`,
+                        }}
+                      >
+                        {/* Title bar */}
+                        <div
+                          className="absolute top-0 left-0 right-0 h-6 flex items-center px-3 rounded-t-sm"
                           style={{
-                            background: `${AMBER}12`,
-                            border: `1px solid ${AMBER}25`,
+                            background: "rgba(20,25,50,0.6)",
+                            borderLeft: `3px solid ${AMBER}60`,
                           }}
                         >
                           <span
-                            className="text-xs font-mono font-bold"
-                            style={{ color: AMBER }}
+                            className="text-[9px] font-bold tracking-widest mr-3"
+                            style={{
+                              color: AMBER,
+                              fontFamily: "var(--font-mono)",
+                            }}
                           >
-                            {stage.step}
+                            STEP {stage.step}
+                          </span>
+                          <span
+                            className="text-[9px] font-semibold tracking-widest uppercase"
+                            style={{
+                              color: "#E8EAF0",
+                              fontFamily: "var(--font-mono)",
+                            }}
+                          >
+                            {stage.name}
                           </span>
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1 flex-wrap">
+
+                        <div className="flex items-start gap-3">
+                          <div className="flex-1 min-w-0">
+                            {/* Skill badge */}
                             <span
-                              className="text-sm font-semibold"
-                              style={{ color: "#E8EAF0" }}
-                            >
-                              {stage.name}
-                            </span>
-                            <span
-                              className="text-xs px-2 py-0.5 rounded font-mono"
+                              className="inline-block text-[10px] px-2 py-0.5 rounded-sm mb-2"
                               style={{
-                                background: `${AMBER}08`,
+                                background: `${AMBER}10`,
                                 color: AMBER,
+                                fontFamily: "var(--font-mono)",
+                                border: `1px solid ${AMBER}25`,
                               }}
                             >
                               {stage.skill}
                             </span>
+                            <p
+                              className="text-xs leading-relaxed"
+                              style={{
+                                color: "#7A8AAA",
+                                fontFamily: "var(--font-mono)",
+                              }}
+                            >
+                              {stage.detail}
+                            </p>
                           </div>
-                          <p className="text-xs leading-relaxed" style={{ color: "#7A8AAA" }}>
-                            {stage.detail}
-                          </p>
                         </div>
                       </div>
-                      {/* Connector arrow */}
-                      {i < mode3Content.pipeline.length - 1 && (
-                        <div
-                          className="absolute left-5 -bottom-3 w-px h-3"
-                          style={{
-                            background: `linear-gradient(180deg, ${AMBER}30, transparent)`,
-                          }}
-                        />
-                      )}
                     </div>
                   ))}
                 </div>
 
-                {/* Review Cycle */}
+                {/* Review Cycle — red-tinted panel */}
                 <div
-                  className="p-4 rounded-xl"
+                  className="relative p-4 pt-8 rounded-sm"
                   style={{
-                    background: "rgba(255,68,68,0.04)",
-                    border: "1px solid rgba(255,68,68,0.12)",
+                    background: "rgba(10,13,30,0.92)",
+                    border: `1px solid ${RED}18`,
+                    boxShadow: `inset 0 0 40px ${RED}04`,
                   }}
                 >
-                  <div className="flex items-center gap-2 mb-2">
-                    <ShieldCheck className="w-4 h-4" style={{ color: RED }} />
+                  <div
+                    className="absolute top-0 left-0 right-0 h-6 flex items-center px-3 rounded-t-sm"
+                    style={{
+                      background: `rgba(255,68,68,0.04)`,
+                      borderLeft: `3px solid ${RED}60`,
+                    }}
+                  >
+                    <ShieldCheck
+                      className="w-2.5 h-2.5 mr-2"
+                      style={{ color: RED }}
+                    />
                     <span
-                      className="text-xs font-semibold"
-                      style={{ color: RED, fontFamily: "var(--font-mono)" }}
+                      className="text-[9px] font-semibold tracking-widest uppercase"
+                      style={{
+                        color: RED,
+                        fontFamily: "var(--font-mono)",
+                      }}
                     >
                       Review Cycle — Loop Until Zero Issues
                     </span>
                   </div>
-                  <p className="text-xs leading-relaxed mb-3" style={{ color: "#7A8AAA" }}>
+                  <p
+                    className="text-xs leading-relaxed mb-3"
+                    style={{
+                      color: "#7A8AAA",
+                      fontFamily: "var(--font-mono)",
+                    }}
+                  >
                     {mode3Content.reviewCycle.description}
                   </p>
                   <div
-                    className="p-3 rounded-lg font-mono text-xs leading-relaxed"
+                    className="p-3 rounded-sm text-xs leading-relaxed"
                     style={{
-                      background: "rgba(0,0,0,0.2)",
-                      color: "#7A8AAA",
-                      border: "1px solid rgba(255,68,68,0.08)",
+                      background: "rgba(0,0,0,0.25)",
+                      color: `${RED}CC`,
+                      fontFamily: "var(--font-mono)",
+                      border: `1px solid ${RED}12`,
                     }}
                   >
                     {mode3Content.reviewCycle.loopSteps}
@@ -728,36 +1033,21 @@ export function ParzivalModes() {
                 </div>
 
                 {/* Key Rules */}
-                <div>
-                  <h3
-                    className="text-xs font-semibold uppercase tracking-widest mb-3"
+                <div className="pt-2">
+                  <div
+                    className="text-[10px] font-semibold uppercase tracking-[0.2em] mb-3"
                     style={{ color: AMBER, fontFamily: "var(--font-mono)" }}
                   >
-                    Governing Constraints
-                  </h3>
-                  <div className="space-y-2">
+                    Constraint Rules
+                  </div>
+                  <div className="space-y-1">
                     {mode3Content.keyRules.map((rule) => (
-                      <div
+                      <ConstraintTag
                         key={rule.gc}
-                        className="flex items-start gap-3 p-3 rounded-xl"
-                        style={{
-                          background: "rgba(15,20,50,0.5)",
-                          border: "1px solid rgba(245,158,11,0.1)",
-                        }}
-                      >
-                        <span
-                          className="text-xs font-mono font-semibold px-1.5 py-0.5 rounded flex-shrink-0 mt-0.5"
-                          style={{
-                            background: `${AMBER}12`,
-                            color: AMBER,
-                          }}
-                        >
-                          {rule.gc}
-                        </span>
-                        <p className="text-xs leading-relaxed" style={{ color: "#7A8AAA" }}>
-                          {rule.text}
-                        </p>
-                      </div>
+                        gc={rule.gc}
+                        text={rule.text}
+                        color={AMBER}
+                      />
                     ))}
                   </div>
                 </div>
@@ -766,6 +1056,7 @@ export function ParzivalModes() {
           </motion.div>
         </AnimatePresence>
       </div>
+
     </section>
   );
 }
