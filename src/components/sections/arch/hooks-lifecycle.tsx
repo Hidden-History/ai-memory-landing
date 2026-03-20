@@ -43,6 +43,7 @@ const ELLIPSE_PATH = `M ${CX + RX},${CY} A ${RX},${RY} 0 1,1 ${CX - RX},${CY} A 
 const STYLES = `
 @keyframes orbit{0%{offset-distance:0%}100%{offset-distance:100%}}
 @keyframes pulse-dot{0%,100%{opacity:.6;transform:scale(1)}50%{opacity:1;transform:scale(1.6)}}
+@keyframes node-pulse{0%{transform:scale(1);opacity:.7}50%{transform:scale(1.5);opacity:0}100%{transform:scale(1.5);opacity:0}}
 .orbit-particle{offset-path:path("${ELLIPSE_PATH}");offset-rotate:0deg;animation:orbit 7s linear infinite}
 .orbit-particle-2{offset-path:path("${ELLIPSE_PATH}");offset-rotate:0deg;animation:orbit 7s linear infinite;animation-delay:-3.5s}`;
 
@@ -104,10 +105,15 @@ function OvalDiagram() {
           const { x, y } = pt(capAngle(i));
           return (
             <g key={`cap-${i}`}>
+              <circle cx={x} cy={y} r="14" fill="none" stroke={AMBER} strokeWidth="1.5" opacity="0"
+                style={{ transformOrigin: `${x}px ${y}px`, animation: `node-pulse 6s ease-out infinite`, animationDelay: `${i * 0.6}s` }} />
               <circle cx={x} cy={y} r="12" fill={BG_CARD} stroke={AMBER} strokeWidth="1.5" />
               <text x={x} y={y + 4} textAnchor="middle" fill={AMBER} fontSize="10" fontWeight="700" fontFamily="var(--font-mono)">{i + 1}</text>
               <text x={x} y={y - 20} textAnchor="middle" fill={TEXT_MUTED} fontSize="8.5" fontFamily="var(--font-mono)">
                 {hook.name.replace(".py", "")}
+              </text>
+              <text x={x} y={y - 32} textAnchor="middle" fill={TEXT_MUTED} fontSize="7" fontFamily="var(--font-mono)">
+                {hook.trigger}
               </text>
             </g>
           );
@@ -117,10 +123,15 @@ function OvalDiagram() {
           const { x, y } = pt(retAngle(i));
           return (
             <g key={`ret-${i}`}>
+              <circle cx={x} cy={y} r="14" fill="none" stroke={CYAN} strokeWidth="1.5" opacity="0"
+                style={{ transformOrigin: `${x}px ${y}px`, animation: `node-pulse 6s ease-out infinite`, animationDelay: `${(i + 5) * 0.6}s` }} />
               <circle cx={x} cy={y} r="12" fill={BG_CARD} stroke={CYAN} strokeWidth="1.5" />
               <text x={x} y={y + 4} textAnchor="middle" fill={CYAN} fontSize="10" fontWeight="700" fontFamily="var(--font-mono)">{i + 1}</text>
               <text x={x} y={y + 30} textAnchor="middle" fill={TEXT_MUTED} fontSize="8.5" fontFamily="var(--font-mono)">
                 {hook.name.replace(".py", "")}
+              </text>
+              <text x={x} y={y + 40} textAnchor="middle" fill={TEXT_MUTED} fontSize="7" fontFamily="var(--font-mono)">
+                {hook.trigger}
               </text>
             </g>
           );
@@ -170,7 +181,7 @@ function MobileTimeline() {
 /* ─── Exported Section ───────────────────────────────────────── */
 export function HooksSection() {
   return (
-    <section id="hooks" className="relative py-32 px-6 overflow-hidden" style={{ background: BG_SURFACE }}>
+    <section id="hooks" className="relative py-40 px-8 overflow-hidden" style={{ background: BG_SURFACE }}>
       <style dangerouslySetInnerHTML={{ __html: STYLES }} />
       {/* Background */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden="true">

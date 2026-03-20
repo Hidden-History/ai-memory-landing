@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Infinity, Activity } from "lucide-react";
+import { useState } from "react";
 
 const CYAN = "#00F5FF";
 const VIOLET = "#8B5CF6";
@@ -115,6 +116,48 @@ function RRFNode({ size, ringR, vb }: { size: string; ringR: number; vb: string 
   );
 }
 
+// ─── Path Card with cursor spotlight ────────────────────────────────────────────
+
+function PathCard({ p, i }: { p: (typeof PATHS)[number]; i: number }) {
+  const [spotlight, setSpotlight] = useState({ x: 0, y: 0, active: false });
+
+  return (
+    <motion.div
+      key={p.path}
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay: 0.15 * i, duration: 0.45 }}
+      className={`p-5 rounded-2xl relative overflow-hidden${i === 0 ? " col-span-2 lg:col-span-2" : ""}`}
+      style={{ background: BG_CARD, border: `1px solid ${p.color}15` }}
+      onMouseMove={(e) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        setSpotlight({ x: e.clientX - rect.left, y: e.clientY - rect.top, active: true });
+      }}
+      onMouseLeave={() => setSpotlight(prev => ({ ...prev, active: false }))}
+    >
+      {/* Cursor spotlight glow */}
+      <div
+        className="absolute inset-0 pointer-events-none rounded-2xl transition-opacity duration-300"
+        style={{
+          opacity: spotlight.active ? 1 : 0,
+          background: `radial-gradient(300px circle at ${spotlight.x}px ${spotlight.y}px, ${p.color}08, transparent)`,
+        }}
+      />
+
+      <div className="relative z-10">
+        <div className="flex items-center gap-2 mb-3">
+          <span className="text-lg font-bold" style={{ fontFamily: "var(--font-heading)", color: p.color }}>{p.path}</span>
+          <span className="px-2 py-0.5 rounded text-[9px] font-mono" style={{ background: `${p.color}12`, color: p.color }}>{p.badge}</span>
+        </div>
+        <div className="text-sm font-semibold mb-1" style={{ color: TEXT }}>{p.label}</div>
+        <code className="text-xs font-mono block mb-3" style={{ color: TEXT_MUTED }}>{p.desc}</code>
+        <QualityDots filled={p.quality} color={p.color} />
+      </div>
+    </motion.div>
+  );
+}
+
 // ─── Main Export ────────────────────────────────────────────────────────────────
 
 export function TripleFusionSection() {
@@ -124,6 +167,12 @@ export function TripleFusionSection() {
 
       <div className="absolute inset-0 pointer-events-none" style={{
         background: `radial-gradient(ellipse 50% 50% at 50% 50%, ${VIOLET}06, transparent 70%)`,
+      }} />
+
+      {/* Dot-grid pattern */}
+      <div className="absolute inset-0 pointer-events-none opacity-[0.02]" style={{
+        backgroundImage: `radial-gradient(#00F5FF 1px, transparent 1px)`,
+        backgroundSize: "32px 32px",
       }} />
 
       <div className="max-w-5xl mx-auto relative">
@@ -258,23 +307,7 @@ export function TripleFusionSection() {
         {/* 4-Path Composition Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {PATHS.map((p, i) => (
-            <motion.div
-              key={p.path}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.15 * i, duration: 0.45 }}
-              className={`p-5 rounded-2xl${i === 0 ? " col-span-2 lg:col-span-2" : ""}`}
-              style={{ background: BG_CARD, border: `1px solid ${p.color}15` }}
-            >
-              <div className="flex items-center gap-2 mb-3">
-                <span className="text-lg font-bold" style={{ fontFamily: "var(--font-heading)", color: p.color }}>{p.path}</span>
-                <span className="px-2 py-0.5 rounded text-[9px] font-mono" style={{ background: `${p.color}12`, color: p.color }}>{p.badge}</span>
-              </div>
-              <div className="text-sm font-semibold mb-1" style={{ color: TEXT }}>{p.label}</div>
-              <code className="text-xs font-mono block mb-3" style={{ color: TEXT_MUTED }}>{p.desc}</code>
-              <QualityDots filled={p.quality} color={p.color} />
-            </motion.div>
+            <PathCard key={p.path} p={p} i={i} />
           ))}
         </div>
 

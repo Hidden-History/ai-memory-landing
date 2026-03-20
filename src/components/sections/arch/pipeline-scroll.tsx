@@ -144,12 +144,23 @@ export function PipelineSection() {
   return (
     <section
       id="pipeline"
-      className="relative py-32 px-6 overflow-hidden"
+      className="relative py-40 px-8 overflow-hidden"
       style={{
-        background: `radial-gradient(ellipse at 50% 20%, ${VIOLET}06, transparent 70%)`,
+        background: `${BG_SURFACE}`,
       }}
     >
       <style dangerouslySetInnerHTML={{ __html: keyframes }} />
+
+      {/* Radial ambient gradient */}
+      <div className="absolute inset-0 pointer-events-none" style={{
+        background: `radial-gradient(ellipse at 50% 20%, ${VIOLET}06, transparent 70%)`,
+      }} />
+
+      {/* Dot-grid pattern */}
+      <div className="absolute inset-0 pointer-events-none opacity-[0.02]" style={{
+        backgroundImage: `radial-gradient(#00F5FF 1px, transparent 1px)`,
+        backgroundSize: "32px 32px",
+      }} />
 
       <div className="max-w-7xl mx-auto relative">
         {/* ── Section Header ── */}
@@ -258,7 +269,7 @@ export function PipelineSection() {
                       className="relative z-10 flex items-center gap-4 w-full px-6"
                       style={{ marginBottom: i < PIPELINE_STEPS.length - 1 ? 28 : 0 }}
                       animate={{
-                        scale: isActive ? 1.05 : 1,
+                        scale: isActive ? 1.15 : 1,
                         opacity: isFuture ? 0.4 : 1,
                       }}
                       transition={{ duration: 0.35, ease: "easeOut" }}
