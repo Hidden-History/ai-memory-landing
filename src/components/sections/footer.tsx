@@ -1,6 +1,5 @@
-"use client";
-
-import { ExternalLink, Github, Zap } from "lucide-react";
+import Image from "next/image";
+import { ExternalLink, Github } from "lucide-react";
 
 const footerLinks: Record<string, Array<{ label: string; href: string; external?: boolean }>> = {
   Product: [
@@ -8,24 +7,15 @@ const footerLinks: Record<string, Array<{ label: string; href: string; external?
     { label: "Architecture", href: "#architecture" },
     { label: "Integrations", href: "#integrations" },
     { label: "Pricing", href: "#pricing" },
-    { label: "Changelog", href: "#" },
   ],
   Resources: [
     { label: "Documentation", href: "/docs" },
-    { label: "API Reference", href: "#" },
-    { label: "Examples", href: "#" },
-    { label: "Blog", href: "#" },
   ],
   Community: [
     { label: "GitHub", href: "https://github.com/Hidden-History/ai-memory", external: true },
-    { label: "Discord", href: "#", external: true },
-    { label: "Twitter / X", href: "#", external: true },
   ],
   Parzival: [
     { label: "About", href: "/parzival" },
-    { label: "Session Guide", href: "#" },
-    { label: "Skills Reference", href: "#" },
-    { label: "Quality Gates", href: "#" },
   ],
 };
 
@@ -75,23 +65,23 @@ export function Footer() {
                   boxShadow: "0 0 25px rgba(0,245,255,0.08) inset",
                 }}
               >
-                <img
+                <Image
                   src="/ai-memory-mark.png"
                   alt="AI Memory"
+                  width={28}
+                  height={28}
                   className="w-7 h-7 object-contain"
                   style={{ filter: "brightness(0) invert(1)" }}
                 />
               </div>
               <div>
                 <div
-                  className="font-bold text-xl tracking-tight"
-                  style={{ fontFamily: "var(--font-heading)", color: "#E8EAF0" }}
+                  className="font-bold text-xl tracking-tight font-heading text-text"
                 >
                   AI Memory
                 </div>
                 <div
-                  className="text-[9px] tracking-[0.2em] uppercase"
-                  style={{ color: "#00F5FF", fontFamily: "var(--font-mono)" }}
+                  className="text-[9px] tracking-[0.2em] uppercase text-primary font-mono"
                 >
                   Neural Memory System
                 </div>
@@ -99,8 +89,8 @@ export function Footer() {
             </div>
 
             <p
-              className="text-sm leading-relaxed mb-6"
-              style={{ color: "#5A6480", fontFamily: "var(--font-body)" }}
+              className="text-sm leading-relaxed mb-6 font-body"
+              style={{ color: "#6B7D99" }}
             >
               Persistent context layer for AI agents. Built on Qdrant vector
               search with semantic decay, 3-layer security, and cross-session memory.
@@ -116,21 +106,10 @@ export function Footer() {
                   href={href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200"
+                  className="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 text-text-subtle hover:text-primary focus-visible:text-primary hover:bg-primary/8 focus-visible:bg-primary/8 hover:border-primary/30 focus-visible:border-primary/30"
                   style={{
                     background: "rgba(0,245,255,0.04)",
                     border: "1px solid rgba(0,245,255,0.1)",
-                    color: "#5A6480",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = "rgba(0,245,255,0.3)";
-                    e.currentTarget.style.color = "#00F5FF";
-                    e.currentTarget.style.background = "rgba(0,245,255,0.08)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = "rgba(0,245,255,0.1)";
-                    e.currentTarget.style.color = "#5A6480";
-                    e.currentTarget.style.background = "rgba(0,245,255,0.04)";
                   }}
                   aria-label={label}
                 >
@@ -145,8 +124,7 @@ export function Footer() {
             {Object.entries(footerLinks).map(([group, links]) => (
               <div key={group}>
                 <h4
-                  className="text-[10px] font-bold uppercase tracking-[0.15em] mb-5"
-                  style={{ color: "#E8EAF0", fontFamily: "var(--font-mono)" }}
+                  className="text-[10px] font-bold uppercase tracking-[0.15em] mb-5 text-text font-mono"
                 >
                   {group}
                 </h4>
@@ -157,10 +135,7 @@ export function Footer() {
                         href={link.href}
                         target={link.external ? "_blank" : undefined}
                         rel={link.external ? "noopener noreferrer" : undefined}
-                        className="text-sm transition-colors duration-200 inline-flex items-center gap-1"
-                        style={{ color: "#5A6480", fontFamily: "var(--font-body)" }}
-                        onMouseEnter={(e) => (e.currentTarget.style.color = "#00F5FF")}
-                        onMouseLeave={(e) => (e.currentTarget.style.color = "#5A6480")}
+                        className="text-sm transition-colors duration-200 inline-flex items-center gap-1 font-body text-text-subtle hover:text-primary focus-visible:text-primary"
                       >
                         {link.label}
                         {link.external && <ExternalLink className="w-3 h-3" />}
@@ -179,14 +154,13 @@ export function Footer() {
           style={{ borderTop: "1px solid rgba(0,245,255,0.05)" }}
         >
           <p
-            className="text-xs"
-            style={{ color: "#3A4560", fontFamily: "var(--font-body)" }}
+            className="text-xs font-body text-text-dim"
           >
             &copy; 2024-{new Date().getFullYear()} Hidden History. MIT Licensed.
           </p>
 
           <div className="flex items-center gap-3">
-            <span className="text-xs" style={{ color: "#3A4560", fontFamily: "var(--font-mono)" }}>
+            <span className="text-xs font-mono text-text-dim">
               Built with
             </span>
             <div className="flex items-center gap-2">
@@ -197,12 +171,11 @@ export function Footer() {
               ].map(({ name, color }) => (
                 <span
                   key={name}
-                  className="text-[10px] px-2.5 py-1 rounded-full uppercase tracking-wider"
+                  className="text-[10px] px-2.5 py-1 rounded-full uppercase tracking-wider font-mono"
                   style={{
                     background: `${color}0A`,
                     border: `1px solid ${color}20`,
                     color: color,
-                    fontFamily: "var(--font-mono)",
                   }}
                 >
                   {name}

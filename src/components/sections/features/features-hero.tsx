@@ -184,6 +184,16 @@ export function FeaturesHero() {
                 e.currentTarget.style.transform = "translateY(0)";
                 e.currentTarget.style.boxShadow = "none";
               }}
+              onFocus={(e) => {
+                e.currentTarget.style.borderColor = `${stat.color}40`;
+                e.currentTarget.style.transform = "translateY(-3px)";
+                e.currentTarget.style.boxShadow = `0 0 30px ${stat.color}10`;
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.borderColor = `${stat.color}15`;
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.boxShadow = "none";
+              }}
             >
               {/* Top accent line */}
               <div

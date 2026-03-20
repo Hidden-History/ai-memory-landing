@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { AnimatedSection } from "@/components/shared/animated-section";
 
 /* ── Integration definitions ────────────────────────── */
@@ -161,9 +162,11 @@ export function Integrations() {
                     boxShadow: `0 0 25px ${item.color}10 inset, 0 0 20px ${item.color}15`,
                   }}
                 >
-                  <img
+                  <Image
                     src={item.src}
                     alt={item.name}
+                    width={48}
+                    height={48}
                     className="w-full h-full object-contain"
                     style={{ filter: item.filter }}
                   />

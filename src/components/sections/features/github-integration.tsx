@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import {
   Github,
   MessageSquare,
@@ -253,6 +254,14 @@ export function GitHubIntegration() {
                   e.currentTarget.style.borderColor = "rgba(0,245,255,0.1)";
                   e.currentTarget.style.transform = "translateY(0)";
                 }}
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(0,245,255,0.3)";
+                  e.currentTarget.style.transform = "translateY(-2px)";
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(0,245,255,0.1)";
+                  e.currentTarget.style.transform = "translateY(0)";
+                }}
               >
                 <span
                   className="text-xs font-medium"
@@ -275,10 +284,12 @@ export function GitHubIntegration() {
               Powered by
             </span>
             {logos.map((l) => (
-              <img
+              <Image
                 key={l.alt}
                 src={l.src}
                 alt={l.alt}
+                width={80}
+                height={24}
                 className="h-6 w-auto grayscale"
               />
             ))}

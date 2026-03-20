@@ -376,6 +376,14 @@ export function TemporalAwareness() {
                   e.currentTarget.style.borderColor = `${tier.color}20`;
                   e.currentTarget.style.transform = "translateY(0)";
                 }}
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = `${tier.color}50`;
+                  e.currentTarget.style.transform = "translateY(-2px)";
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = `${tier.color}20`;
+                  e.currentTarget.style.transform = "translateY(0)";
+                }}
               >
                 <div
                   className="w-2.5 h-2.5 rounded-full flex-shrink-0"

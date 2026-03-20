@@ -495,6 +495,16 @@ export function SystemOverview() {
                 e.currentTarget.style.transform = "translateY(0)";
                 e.currentTarget.style.boxShadow = "none";
               }}
+              onFocus={(e) => {
+                e.currentTarget.style.borderColor = `${stat.color}40`;
+                e.currentTarget.style.transform = "translateY(-3px)";
+                e.currentTarget.style.boxShadow = `0 0 30px ${stat.color}10`;
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.borderColor = `${stat.color}15`;
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.boxShadow = "none";
+              }}
             >
               {/* Top glow */}
               <div
@@ -529,25 +539,12 @@ export function SystemOverview() {
           <div className="text-center mt-14">
             <a
               href="/docs/architecture"
-              className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full text-sm font-semibold transition-all duration-300 group"
+              className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full text-sm font-semibold transition-all duration-300 group text-primary hover:bg-primary/12 focus-visible:bg-primary/12 hover:border-primary/40 focus-visible:border-primary/40 hover:shadow-[0_0_30px_rgba(0,245,255,0.12)] focus-visible:shadow-[0_0_30px_rgba(0,245,255,0.12)] hover:-translate-y-0.5 focus-visible:-translate-y-0.5"
               style={{
                 fontFamily: "var(--font-body)",
-                color: "#00F5FF",
                 background: "rgba(0,245,255,0.06)",
                 border: "1px solid rgba(0,245,255,0.2)",
                 boxShadow: "0 0 20px rgba(0,245,255,0.06)",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = "rgba(0,245,255,0.12)";
-                e.currentTarget.style.borderColor = "rgba(0,245,255,0.4)";
-                e.currentTarget.style.boxShadow = "0 0 30px rgba(0,245,255,0.12)";
-                e.currentTarget.style.transform = "translateY(-2px)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = "rgba(0,245,255,0.06)";
-                e.currentTarget.style.borderColor = "rgba(0,245,255,0.2)";
-                e.currentTarget.style.boxShadow = "0 0 20px rgba(0,245,255,0.06)";
-                e.currentTarget.style.transform = "translateY(0)";
               }}
             >
               Explore Full Architecture

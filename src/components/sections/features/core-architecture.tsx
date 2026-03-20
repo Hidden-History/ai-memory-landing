@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { Layers } from "lucide-react";
 import {
   AnimatedSection,
@@ -297,6 +298,18 @@ export function CoreArchitecture() {
                 e.currentTarget.style.transform = "translateY(0)";
                 e.currentTarget.style.boxShadow = "none";
               }}
+              onFocus={(e) => {
+                e.currentTarget.style.borderColor = `${col.tagColor}40`;
+                e.currentTarget.style.borderLeftColor = col.tagColor;
+                e.currentTarget.style.transform = "translateY(-3px)";
+                e.currentTarget.style.boxShadow = `0 0 40px ${col.tagColor}10`;
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.borderColor = `${col.tagColor}15`;
+                e.currentTarget.style.borderLeftColor = `${col.tagColor}60`;
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.boxShadow = "none";
+              }}
             >
               {/* Tag badge */}
               <div
@@ -380,6 +393,16 @@ export function CoreArchitecture() {
                   e.currentTarget.style.color = "#7A8AAA";
                   e.currentTarget.style.background = `${trigger.color}08`;
                 }}
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = `${trigger.color}50`;
+                  e.currentTarget.style.color = trigger.color;
+                  e.currentTarget.style.background = `${trigger.color}12`;
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = `${trigger.color}20`;
+                  e.currentTarget.style.color = "#7A8AAA";
+                  e.currentTarget.style.background = `${trigger.color}08`;
+                }}
               >
                 <span
                   className="w-1.5 h-1.5 rounded-full"
@@ -401,10 +424,12 @@ export function CoreArchitecture() {
               Powered by
             </span>
             {logos.map((l) => (
-              <img
+              <Image
                 key={l.alt}
                 src={l.src}
                 alt={l.alt}
+                width={80}
+                height={24}
                 className="h-6 w-auto grayscale"
               />
             ))}

@@ -1,8 +1,49 @@
 "use client";
 
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
+import Image from "next/image";
 import { ArrowRight, Github, Zap } from "lucide-react";
+
+function SplineBackground() {
+  const [splineReady, setSplineReady] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && "requestIdleCallback" in window) {
+      const id = (window as unknown as { requestIdleCallback: (cb: () => void) => number }).requestIdleCallback(() => setSplineReady(true));
+      return () => (window as unknown as { cancelIdleCallback: (id: number) => void }).cancelIdleCallback(id);
+    } else {
+      const timer = setTimeout(() => setSplineReady(true), 200);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
+  return (
+    <div className="absolute inset-0 z-[1] pointer-events-none overflow-hidden">
+      {splineReady ? (
+        <iframe
+          src="https://my.spline.design/claritystream-SPAAezZX4iV8xCQZMFLk2Flg/"
+          frameBorder="0"
+          width="100%"
+          height="100%"
+          className="absolute inset-0 w-full h-full scale-125 opacity-55"
+          title="AI Memory 3D Scene"
+          loading="lazy"
+        />
+      ) : (
+        <div className="absolute inset-0 w-full h-full" />
+      )}
+      {/* Overlay gradient to blend with background */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(135deg, rgba(10,13,26,0.6) 0%, rgba(10,13,26,0.15) 50%, rgba(10,13,26,0.5) 100%)",
+        }}
+      />
+    </div>
+  );
+}
 
 export function Hero() {
   const ref = useRef(null);
@@ -21,7 +62,6 @@ export function Hero() {
       {/* ── Animated Mesh Background ────────────────────────── */}
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-mesh" />
-        <div className="absolute inset-0 dot-grid opacity-30" />
 
         {/* Deep ambient orbs — more vibrant */}
         <div
@@ -37,14 +77,6 @@ export function Hero() {
             background: "radial-gradient(circle, rgba(139,92,246,0.14) 0%, transparent 65%)",
             filter: "blur(100px)",
             animationDelay: "2s",
-          }}
-        />
-        <div
-          className="absolute top-[30%] right-[25%] w-[400px] h-[400px] rounded-full animate-pulse-glow"
-          style={{
-            background: "radial-gradient(circle, rgba(255,45,106,0.08) 0%, transparent 65%)",
-            filter: "blur(80px)",
-            animationDelay: "4s",
           }}
         />
 
@@ -69,26 +101,8 @@ export function Hero() {
         />
       </div>
 
-      {/* ── Spline 3D Background ───────────────────────────── */}
-      <div className="absolute inset-0 z-[1] pointer-events-none overflow-hidden">
-        <iframe
-          src="https://my.spline.design/claritystream-SPAAezZX4iV8xCQZMFLk2Flg/"
-          frameBorder="0"
-          width="100%"
-          height="100%"
-          className="absolute inset-0 w-full h-full scale-125 opacity-55"
-          title="AI Memory 3D Scene"
-          loading="lazy"
-        />
-        {/* Overlay gradient to blend with background */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(135deg, rgba(10,13,26,0.6) 0%, rgba(10,13,26,0.15) 50%, rgba(10,13,26,0.5) 100%)",
-          }}
-        />
-      </div>
+      {/* ── Spline 3D Background (deferred until idle) ──── */}
+      <SplineBackground />
 
       {/* ── Hero Content — Two Column ──────────────────────── */}
       <motion.div
@@ -167,9 +181,7 @@ export function Hero() {
               className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mb-16"
             >
               <a
-                href="https://github.com/Hidden-History/ai-memory"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="#developer-experience"
                 className="magnetic-hover group relative flex items-center gap-3 px-10 py-5 rounded-2xl font-semibold text-lg overflow-hidden transition-all duration-300 cursor-pointer"
                 style={{
                   fontFamily: "var(--font-heading)",
@@ -199,21 +211,13 @@ export function Hero() {
                 href="https://github.com/Hidden-History/ai-memory"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="magnetic-hover group flex items-center gap-3 px-10 py-5 rounded-2xl font-medium text-lg transition-all duration-300 cursor-pointer"
+                className="magnetic-hover group flex items-center gap-3 px-10 py-5 rounded-2xl font-medium text-lg transition-all duration-300 cursor-pointer hover:border-primary/50 focus-visible:border-primary/50 hover:shadow-[0_0_30px_rgba(0,245,255,0.15)] focus-visible:shadow-[0_0_30px_rgba(0,245,255,0.15)]"
                 style={{
                   fontFamily: "var(--font-heading)",
                   background: "rgba(15,20,50,0.7)",
                   border: "1px solid rgba(0,245,255,0.2)",
                   color: "#E8EAF0",
                   backdropFilter: "blur(12px)",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = "rgba(0,245,255,0.5)";
-                  e.currentTarget.style.boxShadow = "0 0 30px rgba(0,245,255,0.15)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = "rgba(0,245,255,0.2)";
-                  e.currentTarget.style.boxShadow = "none";
                 }}
               >
                 <Github className="w-5 h-5" />
@@ -297,11 +301,13 @@ export function Hero() {
                   "0 0 0 1px rgba(0,245,255,0.06) inset, 0 40px 80px rgba(0,0,0,0.6), 0 0 60px rgba(0,245,255,0.08)",
               }}
             >
-              <img
+              <Image
                 src="/ai-memory-3.png"
                 alt="AI Memory System"
+                width={560}
+                height={400}
                 className="w-full h-auto object-cover"
-                style={{ display: "block" }}
+                priority
               />
 
               {/* Scanline overlay */}

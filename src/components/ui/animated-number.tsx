@@ -226,9 +226,6 @@ function AnimatedNumber_004() {
         duration: 1,
         ease: "easeInOut",
         onUpdate: (latest) => setDisplayValue(Math.round(latest)),
-        onComplete: () => {
-          console.log("complete");
-        },
       });
     } else {
       setDisplayValue(3);

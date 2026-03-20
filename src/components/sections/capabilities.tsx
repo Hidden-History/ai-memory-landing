@@ -387,10 +387,9 @@ function CapabilityCard({
     }
   }, []);
 
-  const handleMouseEnter = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
+  const applyEnterStyles = useCallback(
+    (el: HTMLElement) => {
       setHovered(true);
-      const el = e.currentTarget;
       el.style.borderColor = `${capability.color}40`;
       el.style.background =
         "linear-gradient(135deg, rgba(20,25,65,0.95) 0%, rgba(12,16,42,0.98) 100%)";
@@ -404,10 +403,9 @@ function CapabilityCard({
     [capability.color, capability.hoverEffect, handleDecayEnter]
   );
 
-  const handleMouseLeave = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
+  const applyLeaveStyles = useCallback(
+    (el: HTMLElement) => {
       setHovered(false);
-      const el = e.currentTarget;
       el.style.borderColor = `${capability.color}15`;
       el.style.background =
         "linear-gradient(135deg, rgba(15,20,50,0.9) 0%, rgba(10,13,35,0.95) 100%)";
@@ -415,6 +413,26 @@ function CapabilityCard({
       el.style.boxShadow = "none";
     },
     [capability.color]
+  );
+
+  const handleMouseEnter = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => applyEnterStyles(e.currentTarget),
+    [applyEnterStyles]
+  );
+
+  const handleMouseLeave = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => applyLeaveStyles(e.currentTarget),
+    [applyLeaveStyles]
+  );
+
+  const handleFocus = useCallback(
+    (e: React.FocusEvent<HTMLDivElement>) => applyEnterStyles(e.currentTarget),
+    [applyEnterStyles]
+  );
+
+  const handleBlur = useCallback(
+    (e: React.FocusEvent<HTMLDivElement>) => applyLeaveStyles(e.currentTarget),
+    [applyLeaveStyles]
   );
 
   const CardTag = capability.href ? "a" : "div";
@@ -445,6 +463,8 @@ function CapabilityCard({
       }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      onFocus={handleFocus}
+      onBlur={handleBlur}
     >
       {/* Top accent line */}
       <div
@@ -693,7 +713,7 @@ export function Capabilities() {
           whileInView="visible"
           viewport={{ once: true, margin: "-80px" }}
           variants={stagger}
-          className="grid grid-cols-2 md:grid-cols-3 gap-4 auto-rows-[minmax(180px,auto)]"
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 auto-rows-[minmax(180px,auto)]"
         >
           {capabilities.map((capability, i) => (
             <CapabilityCard

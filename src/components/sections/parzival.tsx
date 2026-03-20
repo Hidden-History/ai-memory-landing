@@ -126,6 +126,16 @@ export function Parzival() {
                 e.currentTarget.style.transform = "translateY(0)";
                 e.currentTarget.style.boxShadow = "none";
               }}
+              onFocus={(e) => {
+                e.currentTarget.style.borderColor = `${cap.color}40`;
+                e.currentTarget.style.transform = "translateY(-3px)";
+                e.currentTarget.style.boxShadow = `0 0 40px ${cap.color}10`;
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.borderColor = cap.border;
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.boxShadow = "none";
+              }}
             >
               {/* Icon */}
               <div
@@ -161,24 +171,12 @@ export function Parzival() {
         <AnimatedSection delay={0.4} className="text-center">
           <a
             href="/parzival"
-            className="group inline-flex items-center gap-3 px-8 py-4 rounded-2xl text-base font-semibold transition-all duration-300"
+            className="group inline-flex items-center gap-3 px-8 py-4 rounded-2xl text-base font-semibold transition-all duration-300 hover:bg-secondary/10 focus-visible:bg-secondary/10 hover:border-secondary/40 focus-visible:border-secondary/40 hover:-translate-y-0.5 focus-visible:-translate-y-0.5 hover:shadow-[0_0_40px_rgba(139,92,246,0.15)] focus-visible:shadow-[0_0_40px_rgba(139,92,246,0.15)]"
             style={{
               background: "rgba(139, 92, 246, 0.06)",
               border: "1px solid rgba(139, 92, 246, 0.2)",
               color: "#8B5CF6",
               fontFamily: "var(--font-heading)"
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = "rgba(139, 92, 246, 0.1)";
-              e.currentTarget.style.borderColor = "rgba(139, 92, 246, 0.4)";
-              e.currentTarget.style.transform = "translateY(-2px)";
-              e.currentTarget.style.boxShadow = "0 0 40px rgba(139,92,246,0.15)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = "rgba(139, 92, 246, 0.06)";
-              e.currentTarget.style.borderColor = "rgba(139, 92, 246, 0.2)";
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow = "none";
             }}
           >
             Learn More About Parzival

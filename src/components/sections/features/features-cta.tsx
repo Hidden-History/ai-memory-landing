@@ -157,6 +157,14 @@ export function FeaturesCTA() {
                 e.currentTarget.style.boxShadow = `0 0 20px rgba(0,245,255,0.25)`;
                 e.currentTarget.style.transform = "translateY(0)";
               }}
+              onFocus={(e) => {
+                e.currentTarget.style.boxShadow = `0 0 40px rgba(0,245,255,0.45)`;
+                e.currentTarget.style.transform = "translateY(-2px)";
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.boxShadow = `0 0 20px rgba(0,245,255,0.25)`;
+                e.currentTarget.style.transform = "translateY(0)";
+              }}
             >
               Get Started
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -190,6 +198,16 @@ export function FeaturesCTA() {
                 e.currentTarget.style.borderColor = `${VIOLET}55`;
                 e.currentTarget.style.transform = "translateY(0)";
               }}
+              onFocus={(e) => {
+                e.currentTarget.style.background = `${VIOLET}12`;
+                e.currentTarget.style.borderColor = `${VIOLET}88`;
+                e.currentTarget.style.transform = "translateY(-2px)";
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.background = "transparent";
+                e.currentTarget.style.borderColor = `${VIOLET}55`;
+                e.currentTarget.style.transform = "translateY(0)";
+              }}
             >
               Read the Docs
             </a>
@@ -198,17 +216,10 @@ export function FeaturesCTA() {
           {/* Tertiary link */}
           <a
             href="/docs/architecture"
-            className="inline-flex items-center gap-1 text-sm transition-colors duration-200 group"
+            className="inline-flex items-center gap-1 text-sm transition-colors duration-200 group text-text-dim hover:text-text-muted focus-visible:text-text-muted"
             style={{
               fontFamily: "var(--font-body)",
-              color: "#5A6480",
               textDecoration: "none",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.color = "#7A8AAA";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.color = "#5A6480";
             }}
           >
             View Architecture

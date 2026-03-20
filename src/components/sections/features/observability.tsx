@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 import { BarChart3 } from "lucide-react";
 import {
   AnimatedSection,
@@ -316,9 +317,11 @@ export function Observability() {
                     border: "1px solid rgba(255,255,255,0.08)",
                   }}
                 >
-                  <img
+                  <Image
                     src={logo.src}
                     alt={logo.name}
+                    width={28}
+                    height={28}
                     className="w-full h-full object-contain"
                     style={{
                       filter:

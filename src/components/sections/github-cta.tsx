@@ -118,20 +118,12 @@ export function GitHubCTA() {
                   href="https://github.com/Hidden-History/ai-memory"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group flex items-center gap-3 px-10 py-5 rounded-2xl text-lg font-semibold transition-all duration-300"
+                  className="group flex items-center gap-3 px-10 py-5 rounded-2xl text-lg font-semibold transition-all duration-300 hover:-translate-y-0.5 focus-visible:-translate-y-0.5 hover:shadow-[0_0_60px_rgba(0,245,255,0.4),0_12px_32px_rgba(0,0,0,0.5)] focus-visible:shadow-[0_0_60px_rgba(0,245,255,0.4),0_12px_32px_rgba(0,0,0,0.5)]"
                   style={{
                     background: "linear-gradient(135deg, #00F5FF 0%, #00C4CC 100%)",
                     color: "#0A0D1A",
                     fontFamily: "var(--font-heading)",
                     boxShadow: "0 0 40px rgba(0,245,255,0.3), 0 8px 24px rgba(0,0,0,0.4)",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = "translateY(-2px)";
-                    e.currentTarget.style.boxShadow = "0 0 60px rgba(0,245,255,0.4), 0 12px 32px rgba(0,0,0,0.5)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = "translateY(0)";
-                    e.currentTarget.style.boxShadow = "0 0 40px rgba(0,245,255,0.3), 0 8px 24px rgba(0,0,0,0.4)";
                   }}
                 >
                   <Star className="w-5 h-5" />

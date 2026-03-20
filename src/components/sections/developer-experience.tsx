@@ -242,13 +242,7 @@ function CodeExamplePanel() {
             {codeLines.map((line, i) => (
               <div
                 key={i}
-                className="flex rounded transition-colors duration-150"
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.background = "rgba(0,245,255,0.02)")
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.background = "transparent")
-                }
+                className="flex rounded transition-colors duration-150 hover:bg-primary/[0.02]"
               >
                 <span
                   className="select-none w-8 flex-shrink-0 text-right mr-6 text-xs leading-7"
@@ -422,6 +416,18 @@ function MemoryTypesPanel() {
                     e.currentTarget.style.transform = "translateY(-1px)";
                   }}
                   onMouseLeave={(e) => {
+                    e.currentTarget.style.background = `${col.color}08`;
+                    e.currentTarget.style.borderColor = `${col.color}15`;
+                    e.currentTarget.style.color = `${col.color}CC`;
+                    e.currentTarget.style.transform = "translateY(0)";
+                  }}
+                  onFocus={(e) => {
+                    e.currentTarget.style.background = `${col.color}14`;
+                    e.currentTarget.style.borderColor = `${col.color}30`;
+                    e.currentTarget.style.color = col.color;
+                    e.currentTarget.style.transform = "translateY(-1px)";
+                  }}
+                  onBlur={(e) => {
                     e.currentTarget.style.background = `${col.color}08`;
                     e.currentTarget.style.borderColor = `${col.color}15`;
                     e.currentTarget.style.color = `${col.color}CC`;

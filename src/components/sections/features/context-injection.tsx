@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
+import Image from "next/image";
 import { Zap } from "lucide-react";
 import { AnimatedSection } from "@/components/shared/animated-section";
 
@@ -311,6 +312,16 @@ export function ContextInjection() {
                   e.currentTarget.style.transform = "translateY(0)";
                   e.currentTarget.style.boxShadow = "none";
                 }}
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = `${signal.color}40`;
+                  e.currentTarget.style.transform = "translateY(-3px)";
+                  e.currentTarget.style.boxShadow = `0 0 30px ${signal.color}10`;
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = `${signal.color}18`;
+                  e.currentTarget.style.transform = "translateY(0)";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
               >
                 {/* Top glow line */}
                 <div
@@ -368,10 +379,12 @@ export function ContextInjection() {
               Powered by
             </span>
             {logos.map((l) => (
-              <img
+              <Image
                 key={l.alt}
                 src={l.src}
                 alt={l.alt}
+                width={80}
+                height={24}
                 className="h-6 w-auto grayscale"
               />
             ))}

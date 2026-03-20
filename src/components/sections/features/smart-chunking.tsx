@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { SplitSquareHorizontal } from "lucide-react";
 import {
   AnimatedSection,
@@ -309,6 +310,18 @@ export function SmartChunking() {
                   e.currentTarget.style.transform = "translateY(0)";
                   e.currentTarget.style.boxShadow = "none";
                 }}
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = `${card.color}40`;
+                  e.currentTarget.style.borderLeftColor = card.color;
+                  e.currentTarget.style.transform = "translateY(-2px)";
+                  e.currentTarget.style.boxShadow = `0 0 30px ${card.color}08`;
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = `${card.color}15`;
+                  e.currentTarget.style.borderLeftColor = `${card.color}50`;
+                  e.currentTarget.style.transform = "translateY(0)";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
               >
                 <div className="flex items-start gap-4">
                   <div className="flex-1">
@@ -375,9 +388,11 @@ export function SmartChunking() {
             >
               Powered by
             </span>
-            <img
+            <Image
               src="/logos/sentence-transformers.png"
               alt="Sentence Transformers"
+              width={120}
+              height={24}
               className="h-6 w-auto grayscale"
             />
           </div>

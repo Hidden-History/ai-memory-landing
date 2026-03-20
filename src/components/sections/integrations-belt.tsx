@@ -144,7 +144,7 @@ export function IntegrationsBelt() {
   const doubled = [...integrations, ...integrations];
 
   return (
-    <section id="integrations" className="relative py-32 px-6 overflow-hidden">
+    <section id="integrations" role="region" aria-label="Integration partners" className="relative py-32 px-6 overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0 neural-grid opacity-20" />
       <div
@@ -211,6 +211,7 @@ export function IntegrationsBelt() {
         {/* Scrolling track */}
         <div
           className="flex gap-5 belt-scroll"
+          aria-roledescription="carousel"
           style={{
             width: "max-content",
           }}
@@ -234,31 +235,6 @@ export function IntegrationsBelt() {
         </AnimatedSection>
       </div>
 
-      {/* Scoped styles */}
-      <style>{`
-        @keyframes belt-scroll {
-          0% {
-            transform: translateX(0);
-          }
-          100% {
-            transform: translateX(-50%);
-          }
-        }
-
-        .belt-scroll {
-          animation: belt-scroll 30s linear infinite;
-        }
-
-        .belt-scroll:hover {
-          animation-play-state: paused;
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          .belt-scroll {
-            animation: none;
-          }
-        }
-      `}</style>
     </section>
   );
 }

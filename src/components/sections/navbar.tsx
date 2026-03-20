@@ -1,18 +1,35 @@
 "use client";
 
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
+import Image from "next/image";
 import { Github, Menu, X, Zap } from "lucide-react";
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const handleEscapeKey = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === "Escape" && mobileOpen) {
+        setMobileOpen(false);
+        menuButtonRef.current?.focus();
+      }
+    },
+    [mobileOpen]
+  );
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleEscapeKey);
+    return () => document.removeEventListener("keydown", handleEscapeKey);
+  }, [handleEscapeKey]);
 
   const navLinks = [
     { label: "Features", href: "/features" },
@@ -27,6 +44,7 @@ export function Navbar() {
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, delay: 0.3 }}
+      aria-label="Main navigation"
       className={`fixed top-4 left-4 right-4 z-50 mx-auto max-w-6xl transition-all duration-500 ${
         scrolled ? "nav-blur rounded-2xl" : "bg-transparent"
       }`}
@@ -43,9 +61,11 @@ export function Navbar() {
               boxShadow: "0 0 20px rgba(0,245,255,0.08) inset",
             }}
           >
-            <img
+            <Image
               src="/ai-memory-mark.png"
               alt="AI Memory"
+              width={24}
+              height={24}
               className="w-6 h-6 object-contain"
               style={{ filter: "brightness(0) invert(1)" }}
             />
@@ -54,8 +74,7 @@ export function Navbar() {
           {/* Logo text */}
           <div className="flex items-center gap-2">
             <span
-              className="font-bold text-lg tracking-tight"
-              style={{ fontFamily: "var(--font-heading)", color: "#E8EAF0" }}
+              className="font-bold text-lg tracking-tight font-heading text-text"
             >
               AI Memory
             </span>
@@ -76,19 +95,7 @@ export function Navbar() {
             <a
               key={link.label}
               href={link.href}
-              className="px-4 py-2 text-sm rounded-xl transition-all duration-200 cursor-pointer"
-              style={{
-                color: "#7A8AAA",
-                fontFamily: "var(--font-body)",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.color = "#00F5FF";
-                e.currentTarget.style.background = "rgba(0,245,255,0.05)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.color = "#7A8AAA";
-                e.currentTarget.style.background = "transparent";
-              }}
+              className="px-4 py-2 text-sm rounded-xl transition-all duration-200 cursor-pointer font-body text-text-muted hover:text-primary focus-visible:text-primary hover:bg-primary/5 focus-visible:bg-primary/5"
             >
               {link.label}
             </a>
@@ -97,23 +104,11 @@ export function Navbar() {
             href="https://github.com/Hidden-History/ai-memory"
             target="_blank"
             rel="noopener noreferrer"
-            className="magnetic-hover flex items-center gap-2 ml-3 px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 cursor-pointer"
+            className="magnetic-hover flex items-center gap-2 ml-3 px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 cursor-pointer font-body text-primary hover:bg-primary/12 focus-visible:bg-primary/12 hover:border-primary/35 focus-visible:border-primary/35 hover:shadow-[0_0_30px_rgba(0,245,255,0.15)_inset,0_0_20px_rgba(0,245,255,0.1)] focus-visible:shadow-[0_0_30px_rgba(0,245,255,0.15)_inset,0_0_20px_rgba(0,245,255,0.1)]"
             style={{
-              fontFamily: "var(--font-body)",
               background: "rgba(0,245,255,0.08)",
               border: "1px solid rgba(0,245,255,0.2)",
-              color: "#00F5FF",
               boxShadow: "0 0 20px rgba(0,245,255,0.06) inset",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = "rgba(0,245,255,0.12)";
-              e.currentTarget.style.borderColor = "rgba(0,245,255,0.35)";
-              e.currentTarget.style.boxShadow = "0 0 30px rgba(0,245,255,0.15) inset, 0 0 20px rgba(0,245,255,0.1)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = "rgba(0,245,255,0.08)";
-              e.currentTarget.style.borderColor = "rgba(0,245,255,0.2)";
-              e.currentTarget.style.boxShadow = "0 0 20px rgba(0,245,255,0.06) inset";
             }}
           >
             <Github className="w-4 h-4" />
@@ -123,9 +118,12 @@ export function Navbar() {
 
         {/* Mobile menu button */}
         <button
-          className="md:hidden p-2 rounded-xl transition-colors duration-200"
-          style={{ color: "#7A8AAA", background: "rgba(0,245,255,0.04)" }}
+          ref={menuButtonRef}
+          className="md:hidden p-2 rounded-xl transition-colors duration-200 text-text-muted"
+          style={{ background: "rgba(0,245,255,0.04)" }}
           onClick={() => setMobileOpen(!mobileOpen)}
+          aria-expanded={mobileOpen}
+          aria-label="Toggle navigation menu"
         >
           {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
@@ -137,6 +135,8 @@ export function Navbar() {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           className="md:hidden mx-4 mb-4 p-5 rounded-2xl"
+          role="dialog"
+          aria-label="Navigation menu"
           style={{
             background: "rgba(10,13,26,0.98)",
             border: "1px solid rgba(0,245,255,0.12)",
@@ -148,17 +148,8 @@ export function Navbar() {
               <a
                 key={link.label}
                 href={link.href}
-                className="px-4 py-3 text-sm rounded-xl transition-colors duration-200 cursor-pointer"
-                style={{ color: "#7A8AAA", fontFamily: "var(--font-body)" }}
+                className="px-4 py-3 text-sm rounded-xl transition-colors duration-200 cursor-pointer font-body text-text-muted hover:text-primary focus-visible:text-primary hover:bg-primary/5 focus-visible:bg-primary/5"
                 onClick={() => setMobileOpen(false)}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.color = "#00F5FF";
-                  e.currentTarget.style.background = "rgba(0,245,255,0.05)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.color = "#7A8AAA";
-                  e.currentTarget.style.background = "transparent";
-                }}
               >
                 {link.label}
               </a>
@@ -167,12 +158,10 @@ export function Navbar() {
               href="https://github.com/Hidden-History/ai-memory"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 px-4 py-3 mt-2 rounded-xl text-sm"
+              className="flex items-center gap-2 px-4 py-3 mt-2 rounded-xl text-sm font-body text-primary"
               style={{
                 background: "rgba(0,245,255,0.06)",
                 border: "1px solid rgba(0,245,255,0.15)",
-                color: "#00F5FF",
-                fontFamily: "var(--font-body)",
               }}
             >
               <Github className="w-4 h-4" />

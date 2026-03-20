@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { Shield, Search, Lock, Brain } from "lucide-react";
 import { AnimatedSection } from "@/components/shared/animated-section";
 
@@ -201,6 +202,18 @@ export function SecurityPipeline() {
                     e.currentTarget.style.transform = "translateX(0)";
                     e.currentTarget.style.boxShadow = "none";
                   }}
+                  onFocus={(e) => {
+                    e.currentTarget.style.borderColor = `${layer.accentColor}40`;
+                    e.currentTarget.style.borderLeftColor = layer.accentColor;
+                    e.currentTarget.style.transform = "translateX(4px)";
+                    e.currentTarget.style.boxShadow = `0 0 30px ${layer.accentColor}10`;
+                  }}
+                  onBlur={(e) => {
+                    e.currentTarget.style.borderColor = `${layer.accentColor}18`;
+                    e.currentTarget.style.borderLeftColor = layer.accentColor;
+                    e.currentTarget.style.transform = "translateX(0)";
+                    e.currentTarget.style.boxShadow = "none";
+                  }}
                 >
                   {/* Top glow line on hover */}
                   <div
@@ -351,9 +364,11 @@ export function SecurityPipeline() {
                   border: "1px solid rgba(255,255,255,0.08)",
                 }}
               >
-                <img
+                <Image
                   src="/logos/owasp.png"
                   alt="OWASP"
+                  width={28}
+                  height={28}
                   className="w-full h-full object-contain"
                   style={{
                     filter: "brightness(0) invert(1) opacity(0.7)",
