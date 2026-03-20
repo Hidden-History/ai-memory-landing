@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
 import {
@@ -96,7 +97,7 @@ export function FeaturesHero() {
   return (
     <section
       id="hero"
-      className="relative py-32 px-6 min-h-[70vh] flex items-center justify-center overflow-hidden"
+      className="relative py-32 px-6 flex items-center justify-center overflow-hidden"
     >
       {/* Background layers */}
       <div className="absolute inset-0 neural-grid opacity-20" />
@@ -147,13 +148,140 @@ export function FeaturesHero() {
         {/* Subheadline */}
         <AnimatedSection delay={0.15}>
           <p
-            className="text-lg max-w-2xl mx-auto leading-relaxed mb-16"
+            className="text-lg max-w-2xl mx-auto leading-relaxed mb-12"
             style={{ color: "#7A8AAA", fontFamily: "var(--font-body)" }}
           >
             Every component explained. From capture to retrieval, chunking to
             decay — the technical architecture that makes AI Memory work.
           </p>
         </AnimatedSection>
+
+        {/* Hero image panel */}
+        <motion.div
+          initial={{ opacity: 0, y: 40, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ delay: 0.5, duration: 0.9, ease: [0.25, 0.46, 0.45, 0.94] }}
+          className="max-w-4xl mx-auto mb-16"
+        >
+          {/* HUD label */}
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <div className="h-px flex-1 max-w-16" style={{ background: "linear-gradient(90deg, transparent, rgba(0,245,255,0.3))" }} />
+            <span
+              className="text-[10px] uppercase tracking-[0.25em]"
+              style={{ fontFamily: "var(--font-mono)", color: "#5A6480" }}
+            >
+              Architecture Overview
+            </span>
+            <div className="h-px flex-1 max-w-16" style={{ background: "linear-gradient(270deg, transparent, rgba(0,245,255,0.3))" }} />
+          </div>
+
+          {/* Image positioning context — chips anchor here */}
+          <div className="relative">
+            {/* Outer glow ring — stays stable behind float */}
+            <div
+              className="absolute inset-0 rounded-3xl animate-pulse-glow pointer-events-none"
+              style={{
+                boxShadow: "0 0 80px rgba(0,245,255,0.12), 0 0 120px rgba(139,92,246,0.08)",
+                transform: "scale(1.03)",
+              }}
+            />
+
+            {/* Float group — image + chips move together */}
+            <div className="relative animate-float-slow">
+              {/* Image container */}
+              <div
+                className="relative rounded-3xl overflow-hidden"
+                style={{
+                  border: "1px solid rgba(0,245,255,0.2)",
+                  boxShadow:
+                    "0 0 0 1px rgba(0,245,255,0.06) inset, 0 40px 80px rgba(0,0,0,0.6), 0 0 60px rgba(0,245,255,0.08)",
+                }}
+              >
+                <Image
+                  src="/ai-memory-5.png"
+                  alt="AI Memory architecture — exploded view showing pipeline layers from input through security, embedding, storage, and retrieval"
+                  width={1456}
+                  height={720}
+                  className="w-full h-auto"
+                  priority
+                />
+
+                {/* Scanline overlay */}
+                <div
+                  className="absolute inset-0 pointer-events-none"
+                  style={{
+                    background:
+                      "linear-gradient(180deg, rgba(0,245,255,0.03) 0%, transparent 10%, transparent 90%, rgba(0,245,255,0.03) 100%)",
+                  }}
+                />
+
+                {/* Corner brackets */}
+                <div className="absolute top-3 left-3 w-8 h-8 border-l-2 border-t-2 rounded-tl-lg" style={{ borderColor: "rgba(0,245,255,0.5)" }} />
+                <div className="absolute top-3 right-3 w-8 h-8 border-r-2 border-t-2 rounded-tr-lg" style={{ borderColor: "rgba(0,245,255,0.5)" }} />
+                <div className="absolute bottom-3 left-3 w-8 h-8 border-l-2 border-b-2 rounded-bl-lg" style={{ borderColor: "rgba(0,245,255,0.5)" }} />
+                <div className="absolute bottom-3 right-3 w-8 h-8 border-r-2 border-b-2 rounded-br-lg" style={{ borderColor: "rgba(0,245,255,0.5)" }} />
+              </div>
+
+              {/* Floating accent chips — positioned relative to float group */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 1.0, duration: 0.5 }}
+                className="absolute -top-4 right-6 sm:right-10 px-4 py-2 rounded-full text-xs font-medium z-10"
+                style={{
+                  fontFamily: "var(--font-mono)",
+                  background: "rgba(15,20,50,0.9)",
+                  border: "1px solid rgba(0,245,255,0.3)",
+                  color: "#00F5FF",
+                  boxShadow: "0 0 20px rgba(0,245,255,0.15)",
+                  backdropFilter: "blur(12px)",
+                }}
+              >
+                <span className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                  9-Step Pipeline
+                </span>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 1.2, duration: 0.5 }}
+                className="absolute -bottom-4 left-6 sm:left-10 px-4 py-2 rounded-full text-xs font-medium z-10"
+                style={{
+                  fontFamily: "var(--font-mono)",
+                  background: "rgba(15,20,50,0.9)",
+                  border: "1px solid rgba(139,92,246,0.3)",
+                  color: "#8B5CF6",
+                  boxShadow: "0 0 20px rgba(139,92,246,0.12)",
+                  backdropFilter: "blur(12px)",
+                }}
+              >
+                768d Vector Embeddings
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 1.4, duration: 0.5 }}
+                className="absolute top-1/2 -translate-y-1/2 -right-2 sm:-right-4 px-3 py-1.5 rounded-full text-[10px] font-medium z-10"
+                style={{
+                  fontFamily: "var(--font-mono)",
+                  background: "rgba(15,20,50,0.9)",
+                  border: "1px solid rgba(0,255,136,0.3)",
+                  color: "#00FF88",
+                  boxShadow: "0 0 15px rgba(0,255,136,0.1)",
+                  backdropFilter: "blur(12px)",
+                }}
+              >
+                <span className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
+                  3-Layer Security
+                </span>
+              </motion.div>
+            </div>
+          </div>
+        </motion.div>
 
         {/* Stat row */}
         <motion.div
