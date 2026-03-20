@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Compass, Settings, GitBranch, ShieldAlert, Users, FileCode2 } from "lucide-react";
 import { SectionNav } from "@/components/shared/section-nav";
+import { Particles, SectionDivider } from "@/components/shared/page-decorations";
 import { ParzivalIdentity } from "@/components/sections/parzival-identity";
 import { ParzivalModes } from "@/components/sections/parzival-modes";
 import { ParzivalWorkflows } from "@/components/sections/parzival-workflows";
@@ -159,6 +160,7 @@ export function ParzivalPageContent() {
     <main id="main" className="min-h-screen relative">
       {/* Circuit board background */}
       <div className="fixed inset-0 circuit-trace z-0" aria-hidden="true" />
+      <Particles />
 
       {/* Scan line */}
       <div className="scan-line" aria-hidden="true" />
@@ -174,27 +176,27 @@ export function ParzivalPageContent() {
         <div id="identity">
           <ParzivalIdentity />
         </div>
-        <CircuitConnector />
+        <SectionDivider />
         <div id="modes">
           <ParzivalModes />
         </div>
-        <CircuitConnector />
+        <SectionDivider />
         <div id="workflows">
           <ParzivalWorkflows />
         </div>
-        <CircuitConnector />
+        <SectionDivider />
         <div id="constraints">
           <ParzivalConstraints />
         </div>
-        <CircuitConnector />
+        <SectionDivider />
         <div id="interface">
           <ParzivalAgents />
         </div>
-        <CircuitConnector />
+        <SectionDivider />
         <div id="specs">
           <ParzivalSpecs />
         </div>
-        <CircuitConnector />
+        <SectionDivider />
         <ParzivalCTA />
       </div>
     </main>

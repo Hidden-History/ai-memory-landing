@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Cpu, Database, Brain, Shield, Zap, GitBranch, ExternalLink, Layers, Target, Infinity, Eye } from "lucide-react";
 import { SectionNav } from "@/components/shared/section-nav";
+import { Particles, SectionDivider } from "@/components/shared/page-decorations";
 import { SignalComparison } from "@/components/sections/arch/signal-comparison";
 import { HooksSection } from "@/components/sections/arch/hooks-lifecycle";
 import { PipelineSection } from "@/components/sections/arch/pipeline-scroll";
@@ -778,7 +779,7 @@ function CollectionCard({ collection, index }: { collection: typeof COLLECTIONS_
 
 function CollectionsSection() {
   return (
-    <section id="collections" className="relative py-40 px-8" style={{ background: BG_SURFACE }}>
+    <section id="collections" className="relative py-40 px-8">
       <div className="absolute inset-0 opacity-[0.03]" style={{
         backgroundImage: `radial-gradient(${CYAN} 1px, transparent 1px)`,
         backgroundSize: "32px 32px",
@@ -1090,7 +1091,7 @@ const REFERENCE_GROUPS = [
 
 function ReferenceSection() {
   return (
-    <section id="reference" className="relative py-40 px-8" style={{ background: BG_SURFACE }}>
+    <section id="reference" className="relative py-40 px-8">
       <div className="absolute inset-0 pointer-events-none opacity-[0.02]" style={{
         backgroundImage: `radial-gradient(${CYAN} 1px, transparent 1px)`,
         backgroundSize: "32px 32px",
@@ -1363,29 +1364,35 @@ function DataStreamDivider({ fromColor = CYAN, toColor = VIOLET }: { fromColor?:
 
 export function ArchitecturePage() {
   return (
-    <main id="main" className="min-h-screen relative" style={{ background: BG_DEEP }}>
+    <>
+      {/* Global background layers */}
+      <div className="fixed inset-0 bg-mesh z-0" />
+      <Particles />
+
+    <main id="main" className="min-h-screen relative z-10">
       {/* Fixed elements */}
       <SectionNav sections={SECTIONS} />
 
       {/* Sections */}
       <HeroSection />
-      <DataStreamDivider fromColor={CYAN} toColor={VIOLET} />
+      <SectionDivider />
       <OverviewSection />
-      <DataStreamDivider fromColor={VIOLET} toColor={CYAN} />
+      <SectionDivider />
       <CollectionsSection />
-      <DataStreamDivider fromColor={CYAN} toColor={GREEN} />
+      <SectionDivider />
       <PipelineSection />
-      <DataStreamDivider fromColor={GREEN} toColor={AMBER} />
+      <SectionDivider />
       <HooksSection />
-      <DataStreamDivider fromColor={AMBER} toColor={GREEN} />
+      <SectionDivider />
       <TriggersSection />
-      <DataStreamDivider fromColor={GREEN} toColor={VIOLET} />
+      <SectionDivider />
       <TripleFusionSection />
-      <DataStreamDivider fromColor={VIOLET} toColor={CYAN} />
+      <SectionDivider />
       <ReferenceSection />
-      <DataStreamDivider fromColor={CYAN} toColor={CYAN} />
+      <SectionDivider />
       <CTASection />
     </main>
+    </>
   );
 }
 

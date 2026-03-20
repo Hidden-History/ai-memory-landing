@@ -11,6 +11,7 @@ import { Observability } from "@/components/sections/features/observability";
 import { SecurityPipeline } from "@/components/sections/features/security-pipeline";
 import { FeaturesCTA } from "@/components/sections/features/features-cta";
 import { SectionNav } from "@/components/shared/section-nav";
+import { Particles, SectionDivider } from "@/components/shared/page-decorations";
 
 const FEATURES_SECTIONS = [
   { id: "hero", label: "Overview", icon: Sparkles },
@@ -29,19 +30,28 @@ export default function FeaturesPage() {
     <>
       {/* Background */}
       <div className="fixed inset-0 bg-mesh z-0" />
+      <Particles />
 
       {/* Section nav */}
       <SectionNav sections={FEATURES_SECTIONS} />
 
       <main id="main" className="relative z-10">
         <FeaturesHero />
+        <SectionDivider />
         <CoreArchitecture />
+        <SectionDivider />
         <SmartChunking />
+        <SectionDivider />
         <ContextInjection />
+        <SectionDivider />
         <TemporalAwareness />
+        <SectionDivider />
         <GitHubIntegration />
+        <SectionDivider />
         <Observability />
+        <SectionDivider />
         <SecurityPipeline />
+        <SectionDivider />
         <FeaturesCTA />
       </main>
     </>

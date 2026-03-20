@@ -10,7 +10,7 @@ import { DeveloperExperience } from "@/components/sections/developer-experience"
 import { Pricing } from "@/components/sections/pricing";
 import { GitHubCTA } from "@/components/sections/github-cta";
 import { SectionNav } from "@/components/shared/section-nav";
-import { Particles } from "@/components/shared/page-decorations";
+import { Particles, SectionDivider } from "@/components/shared/page-decorations";
 
 /* ── Section nav items ───────────────────────────────────────────── */
 const HOME_SECTIONS = [
@@ -38,24 +38,31 @@ export default function Home() {
         <div id="hero">
           <Hero />
         </div>
+        <SectionDivider />
         <div id="capabilities">
           <Capabilities />
         </div>
+        <SectionDivider />
         <div id="architecture">
           <SystemOverview />
         </div>
+        <SectionDivider />
         <div id="integrations">
           <IntegrationsBelt />
         </div>
+        <SectionDivider />
         <div id="parzival-teaser">
           <Parzival />
         </div>
+        <SectionDivider />
         <div id="developer-experience">
           <DeveloperExperience />
         </div>
+        <SectionDivider />
         <div id="pricing">
           <Pricing />
         </div>
+        <SectionDivider />
         <div id="cta">
           <GitHubCTA />
         </div>

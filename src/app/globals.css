@@ -359,14 +359,15 @@ body::before {
     inset 0 1px 0 rgba(255,255,255,0.05);
 }
 
-/* ─── Section Divider ─────────────────────────────────────────── */
+/* ─── Section Divider with LED Strobe ────────────────────────── */
 .section-divider {
   height: 1px;
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(0,245,255,0.2) 30%,
-    rgba(139,92,246,0.2) 70%,
+    rgba(0,245,255,0.15) 25%,
+    rgba(139,92,246,0.2) 50%,
+    rgba(255,45,106,0.15) 75%,
     transparent 100%
   );
   margin: 0 auto;
@@ -382,7 +383,46 @@ body::before {
   transform: translateX(-50%);
   width: 60%;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(0,245,255,0.4), transparent);
+  background: linear-gradient(90deg, transparent, rgba(0,245,255,0.3), transparent);
+}
+
+/* Center LED dot */
+.section-divider::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #00F5FF;
+  box-shadow:
+    0 0 6px #00F5FF,
+    0 0 14px #00F5FF,
+    0 0 28px rgba(0,245,255,0.4);
+  animation: led-strobe 6s ease-in-out infinite;
+}
+
+@keyframes led-strobe {
+  0%, 100% {
+    background: #00F5FF;
+    box-shadow: 0 0 6px #00F5FF, 0 0 14px #00F5FF, 0 0 28px rgba(0,245,255,0.4);
+  }
+  33% {
+    background: #8B5CF6;
+    box-shadow: 0 0 6px #8B5CF6, 0 0 14px #8B5CF6, 0 0 28px rgba(139,92,246,0.4);
+  }
+  66% {
+    background: #FF2D6A;
+    box-shadow: 0 0 6px #FF2D6A, 0 0 14px #FF2D6A, 0 0 28px rgba(255,45,106,0.4);
+  }
+}
+
+@keyframes divider-color-shift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 /* ─── Orb Glows ───────────────────────────────────────────────── */

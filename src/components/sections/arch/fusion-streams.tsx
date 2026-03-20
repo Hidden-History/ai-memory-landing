@@ -162,7 +162,7 @@ function PathCard({ p, i }: { p: (typeof PATHS)[number]; i: number }) {
 
 export function TripleFusionSection() {
   return (
-    <section id="fusion" className="relative py-40 px-8" style={{ background: BG_SURFACE }}>
+    <section id="fusion" className="relative py-40 px-8">
       <style>{CSS}</style>
 
       <div className="absolute inset-0 pointer-events-none" style={{
