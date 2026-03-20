@@ -56,7 +56,7 @@ function HudOverlay() {
       {/* Top-left diagnostic readout */}
       <div
         className="absolute top-4 left-4 flex items-center gap-1.5"
-        style={{ fontFamily: "var(--font-mono), monospace", fontSize: "10px" }}
+        style={{ fontFamily: "var(--font-mono), monospace", fontSize: "11px" }}
       >
         <span style={{ color: "rgba(139,92,246,0.8)" }}>[</span>
         <span style={{ color: "#8B5CF6" }}>PARZIVAL v2.0</span>
@@ -77,7 +77,7 @@ function HudOverlay() {
       {/* Top-right session indicator */}
       <div
         className="absolute top-4 right-4"
-        style={{ fontFamily: "var(--font-mono), monospace", fontSize: "10px" }}
+        style={{ fontFamily: "var(--font-mono), monospace", fontSize: "11px" }}
       >
         <span style={{ color: "rgba(34,211,238,0.4)" }}>[</span>
         <span style={{ color: "rgba(34,211,238,0.5)" }}>SESSION: NOMINAL</span>
@@ -87,7 +87,7 @@ function HudOverlay() {
       {/* Bottom-left telemetry line */}
       <div
         className="absolute bottom-4 left-4 flex items-center gap-2"
-        style={{ fontFamily: "var(--font-mono), monospace", fontSize: "9px" }}
+        style={{ fontFamily: "var(--font-mono), monospace", fontSize: "11px" }}
       >
         <span style={{ color: "rgba(139,92,246,0.3)" }}>
           MEM: 0x7F4A &bull; PID: 2049 &bull; UPTIME: 99.97%
@@ -97,7 +97,7 @@ function HudOverlay() {
       {/* Bottom-right frame counter */}
       <div
         className="absolute bottom-4 right-4"
-        style={{ fontFamily: "var(--font-mono), monospace", fontSize: "9px" }}
+        style={{ fontFamily: "var(--font-mono), monospace", fontSize: "11px" }}
       >
         <span style={{ color: "rgba(34,211,238,0.25)" }}>
           FRM: 60.0 &bull; LAT: 0.8ms
@@ -156,7 +156,7 @@ export function ParzivalPageContent() {
   }, []);
 
   return (
-    <main className="min-h-screen relative">
+    <main id="main" className="min-h-screen relative">
       {/* Circuit board background */}
       <div className="fixed inset-0 circuit-trace z-0" aria-hidden="true" />
 

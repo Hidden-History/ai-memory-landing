@@ -3,10 +3,10 @@ import { ExternalLink, Github } from "lucide-react";
 
 const footerLinks: Record<string, Array<{ label: string; href: string; external?: boolean }>> = {
   Product: [
-    { label: "Features", href: "#features" },
-    { label: "Architecture", href: "#architecture" },
-    { label: "Integrations", href: "#integrations" },
-    { label: "Pricing", href: "#pricing" },
+    { label: "Features", href: "/#features" },
+    { label: "Architecture", href: "/#architecture" },
+    { label: "Integrations", href: "/#integrations" },
+    { label: "Pricing", href: "/#pricing" },
   ],
   Resources: [
     { label: "Documentation", href: "/docs" },
@@ -81,7 +81,7 @@ export function Footer() {
                   AI Memory
                 </div>
                 <div
-                  className="text-[9px] tracking-[0.2em] uppercase text-primary font-mono"
+                  className="text-[11px] tracking-[0.2em] uppercase text-primary font-mono"
                 >
                   Neural Memory System
                 </div>

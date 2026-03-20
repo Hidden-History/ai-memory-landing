@@ -165,7 +165,9 @@ function ConfidenceGate() {
             background:
               "linear-gradient(90deg, rgba(255,45,106,0.25), rgba(255,45,106,0.35))",
           }}
-        />
+        >
+          <span className="absolute inset-0 flex items-center justify-center text-[9px] uppercase tracking-wider opacity-50 font-mono">Skip</span>
+        </div>
         {/* Green zone (0.6 – 1.0) */}
         <div
           className="absolute inset-y-0 right-0 rounded-r-full"
@@ -174,7 +176,9 @@ function ConfidenceGate() {
             background:
               "linear-gradient(90deg, rgba(0,255,136,0.3), rgba(0,255,136,0.45))",
           }}
-        />
+        >
+          <span className="absolute inset-0 flex items-center justify-center text-[9px] uppercase tracking-wider opacity-50 font-mono">Inject</span>
+        </div>
         {/* Threshold marker */}
         <div
           className="absolute top-0 bottom-0 w-0.5"

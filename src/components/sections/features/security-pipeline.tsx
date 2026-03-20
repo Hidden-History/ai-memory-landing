@@ -4,12 +4,8 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { Shield, Search, Lock, Brain } from "lucide-react";
 import { AnimatedSection } from "@/components/shared/animated-section";
+import { GREEN, AMBER, MAGENTA } from "@/lib/colors";
 
-/* ── Colors ─────────────────────────────────────────── */
-
-const GREEN = "#00FF88";
-const AMBER = "#FFB800";
-const MAGENTA = "#FF2D6A";
 const RED = "#EF4444";
 
 /* ── Layer definitions ──────────────────────────────── */

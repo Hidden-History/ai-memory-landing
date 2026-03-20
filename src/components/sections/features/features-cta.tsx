@@ -3,13 +3,7 @@
 import { motion } from "framer-motion";
 import { Brain, ArrowRight } from "lucide-react";
 import { AnimatedSection } from "@/components/shared/animated-section";
-
-/* ── Colors ─────────────────────────────────────────── */
-
-const CYAN = "#00F5FF";
-const VIOLET = "#8B5CF6";
-const MAGENTA = "#FF2D6A";
-const GREEN = "#00FF88";
+import { CYAN, VIOLET, MAGENTA, GREEN } from "@/lib/colors";
 
 /* ── Concentric circles decoration ──────────────────── */
 
@@ -254,7 +248,7 @@ export function FeaturesCTA() {
                 className="text-[11px]"
                 style={{ fontFamily: "var(--font-mono)", color: "#7A8AAA" }}
               >
-                v3.5 &bull; 2026-03-08 &bull; Active Development
+                v3.5 &bull; Active Development
               </span>
             </div>
           </div>

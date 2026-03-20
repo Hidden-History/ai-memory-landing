@@ -59,6 +59,7 @@ export function SectionNav({ sections, accentColor = "#00F5FF" }: SectionNavProp
             key={id}
             onClick={() => scrollTo(id)}
             className="group relative flex items-center justify-end"
+            aria-label={`Navigate to ${label}`}
           >
             <AnimatePresence>
               {isActive && (

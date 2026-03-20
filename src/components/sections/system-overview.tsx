@@ -238,6 +238,7 @@ function FlowNode({
     >
       <div
         className="relative p-5 rounded-2xl cursor-default transition-all duration-300"
+        aria-describedby={`tooltip-step-${index + 1}`}
         style={{
           background:
             "linear-gradient(135deg, rgba(15,20,50,0.9) 0%, rgba(10,13,35,0.95) 100%)",
@@ -324,6 +325,8 @@ function FlowNode({
 
       {/* Tooltip */}
       <div
+        id={`tooltip-step-${index + 1}`}
+        role="tooltip"
         className="absolute left-1/2 -translate-x-1/2 top-full mt-3 z-20 px-4 py-2.5 rounded-xl text-xs leading-relaxed text-center max-w-[220px] pointer-events-none transition-all duration-300"
         style={{
           fontFamily: "var(--font-body)",

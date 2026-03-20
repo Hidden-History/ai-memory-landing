@@ -175,11 +175,15 @@ const memoryCollections: MemoryCollection[] = [
 function CodeExamplePanel() {
   const [copied, setCopied] = useState(false);
 
-  const handleCopy = () => {
-    const text = codeLines.map((l) => l.text).join("\n");
-    navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const handleCopy = async () => {
+    try {
+      const text = codeLines.map((l) => l.text).join("\n");
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Clipboard API not available
+    }
   };
 
   return (
@@ -400,7 +404,8 @@ function MemoryTypesPanel() {
             {/* Tag grid */}
             <div className="flex flex-wrap gap-2">
               {col.types.map((type) => (
-                <span
+                <button
+                  type="button"
                   key={type}
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs transition-all duration-200 cursor-default"
                   style={{
@@ -439,8 +444,9 @@ function MemoryTypesPanel() {
                     style={{ backgroundColor: col.color }}
                   />
                   {type}
-                </span>
+                </button>
               ))}
+
             </div>
           </div>
         );

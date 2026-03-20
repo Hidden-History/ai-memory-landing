@@ -91,7 +91,7 @@ export function GitHubCTA() {
               </p>
 
               {/* Stars counter */}
-              {stars !== null && (
+              {stars !== null && stars > 0 && (
                 <motion.div
                   initial={{ scale: 0.9, opacity: 0 }}
                   whileInView={{ scale: 1, opacity: 1 }}

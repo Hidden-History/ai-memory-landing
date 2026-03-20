@@ -28,7 +28,7 @@ export default function Home() {
   return (
     <>
       {/* Global background layers */}
-      <div className="fixed inset-0 bg-mesh" style={{ zIndex: 0 }} />
+      <div className="fixed inset-0 bg-mesh z-0" />
       <Particles />
 
       {/* Right-side section nav */}

@@ -28,12 +28,12 @@ export default function FeaturesPage() {
   return (
     <>
       {/* Background */}
-      <div className="fixed inset-0 bg-mesh" style={{ zIndex: 0 }} />
+      <div className="fixed inset-0 bg-mesh z-0" />
 
       {/* Section nav */}
       <SectionNav sections={FEATURES_SECTIONS} />
 
-      <main className="relative z-10">
+      <main id="main" className="relative z-10">
         <FeaturesHero />
         <CoreArchitecture />
         <SmartChunking />

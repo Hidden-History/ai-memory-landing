@@ -1,7 +1,8 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import { useEffect, useState, useRef, useCallback } from "react";
+import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { Github, Menu, X, Zap } from "lucide-react";
 
@@ -9,6 +10,7 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -36,7 +38,7 @@ export function Navbar() {
     { label: "Architecture", href: "/docs/architecture" },
     { label: "Docs", href: "/docs" },
     { label: "Parzival", href: "/parzival" },
-    { label: "Pricing", href: "#pricing" },
+    { label: "Pricing", href: "/#pricing" },
   ];
 
   return (
@@ -95,6 +97,7 @@ export function Navbar() {
             <a
               key={link.label}
               href={link.href}
+              aria-current={pathname === link.href ? "page" : undefined}
               className="px-4 py-2 text-sm rounded-xl transition-all duration-200 cursor-pointer font-body text-text-muted hover:text-primary focus-visible:text-primary hover:bg-primary/5 focus-visible:bg-primary/5"
             >
               {link.label}
@@ -135,7 +138,7 @@ export function Navbar() {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           className="md:hidden mx-4 mb-4 p-5 rounded-2xl"
-          role="dialog"
+          role="navigation"
           aria-label="Navigation menu"
           style={{
             background: "rgba(10,13,26,0.98)",
@@ -148,6 +151,7 @@ export function Navbar() {
               <a
                 key={link.label}
                 href={link.href}
+                aria-current={pathname === link.href ? "page" : undefined}
                 className="px-4 py-3 text-sm rounded-xl transition-colors duration-200 cursor-pointer font-body text-text-muted hover:text-primary focus-visible:text-primary hover:bg-primary/5 focus-visible:bg-primary/5"
                 onClick={() => setMobileOpen(false)}
               >

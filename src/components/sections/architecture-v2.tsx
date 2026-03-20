@@ -2106,7 +2106,7 @@ function DataStreamDivider({ fromColor = CYAN, toColor = VIOLET }: { fromColor?:
 
 export function ArchitecturePage() {
   return (
-    <main className="min-h-screen relative" style={{ background: BG_DEEP }}>
+    <main id="main" className="min-h-screen relative" style={{ background: BG_DEEP }}>
       {/* Fixed elements */}
       <SectionNav sections={SECTIONS} />
 

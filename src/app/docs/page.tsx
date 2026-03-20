@@ -87,7 +87,7 @@ const docCategories = [
 
 export default function DocsPage() {
   return (
-    <main className="min-h-screen">
+    <main id="main" className="min-h-screen">
       {/* Hero */}
       <section className="pt-32 pb-16 px-6">
         <div className="max-w-4xl mx-auto text-center">
@@ -127,7 +127,7 @@ export default function DocsPage() {
                 delay: 0.3 + i * 0.08,
                 ease: [0.25, 0.46, 0.45, 0.94],
               }}
-              className="gradient-border p-7 group cursor-pointer transition-all duration-350 hover:translate-y-[-2px]"
+              className="gradient-border p-7 group transition-all duration-350"
             >
               <div className="flex items-start gap-4">
                 <div
