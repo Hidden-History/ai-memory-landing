@@ -111,7 +111,7 @@ function ConnectorLine({
 
 export function SecurityPipeline() {
   return (
-    <section id="security" className="relative py-32 px-6">
+    <section id="security" className="relative py-20 px-6">
       {/* Background */}
       <div className="absolute inset-0 neural-grid opacity-20" />
       <div

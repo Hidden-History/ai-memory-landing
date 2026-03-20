@@ -53,7 +53,7 @@ const capabilities = [
 
 export function Parzival() {
   return (
-    <section className="relative py-40 px-6 overflow-hidden">
+    <section className="relative py-20 px-6 overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0 neural-grid opacity-20" />
       <div className="absolute top-[20%] right-[10%] w-[600px] h-[600px] rounded-full pointer-events-none"

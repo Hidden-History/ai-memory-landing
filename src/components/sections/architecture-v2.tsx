@@ -95,7 +95,6 @@ const SECTIONS = [
   { id: "hooks", label: "Hooks", icon: Zap },
   { id: "triggers", label: "Triggers", icon: Target },
   { id: "fusion", label: "Triple Fusion", icon: Infinity },
-  { id: "reference", label: "Reference", icon: ExternalLink },
 ];
 
 // ─── Particle Mesh Canvas ───────────────────────────────────────────────────
@@ -516,7 +515,7 @@ function HeroSection() {
 
 function OverviewSection() {
   return (
-    <section id="overview" className="relative py-40 px-8">
+    <section id="overview" className="relative py-20 px-8">
       <div className="max-w-5xl mx-auto">
 
         {/* Section header */}
@@ -779,7 +778,7 @@ function CollectionCard({ collection, index }: { collection: typeof COLLECTIONS_
 
 function CollectionsSection() {
   return (
-    <section id="collections" className="relative py-40 px-8">
+    <section id="collections" className="relative py-20 px-8">
       <div className="absolute inset-0 opacity-[0.03]" style={{
         backgroundImage: `radial-gradient(${CYAN} 1px, transparent 1px)`,
         backgroundSize: "32px 32px",
@@ -1020,7 +1019,7 @@ function TriggerCard({ trigger, index }: { trigger: typeof TRIGGERS[0]; index: n
 
 function TriggersSection() {
   return (
-    <section id="triggers" className="relative py-40 px-8">
+    <section id="triggers" className="relative py-20 px-8">
       <div className="absolute inset-0 pointer-events-none" style={{
         background: `radial-gradient(ellipse 50% 40% at 50% 50%, ${GREEN}04, transparent 70%)`,
       }} />
@@ -1091,7 +1090,7 @@ const REFERENCE_GROUPS = [
 
 function ReferenceSection() {
   return (
-    <section id="reference" className="relative py-40 px-8">
+    <section id="reference" className="relative py-20 px-8">
       <div className="absolute inset-0 pointer-events-none opacity-[0.02]" style={{
         backgroundImage: `radial-gradient(${CYAN} 1px, transparent 1px)`,
         backgroundSize: "32px 32px",
@@ -1177,7 +1176,7 @@ function ReferenceSection() {
 
 function CTASection() {
   return (
-    <section className="relative py-40 px-8 overflow-hidden">
+    <section className="relative py-20 px-8 overflow-hidden">
       {/* Background */}
       <div
         className="absolute inset-0 pointer-events-none"
@@ -1387,8 +1386,6 @@ export function ArchitecturePage() {
       <TriggersSection />
       <SectionDivider />
       <TripleFusionSection />
-      <SectionDivider />
-      <ReferenceSection />
       <SectionDivider />
       <CTASection />
     </main>

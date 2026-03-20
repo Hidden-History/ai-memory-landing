@@ -650,7 +650,7 @@ function CapabilityCard({
 
 export function Capabilities() {
   return (
-    <section id="capabilities" className="relative py-32 px-6 overflow-hidden">
+    <section id="capabilities" className="relative py-20 px-6 overflow-hidden">
       {/* Background layers */}
       <div className="absolute inset-0 neural-grid opacity-30" />
       <div

@@ -5,7 +5,7 @@ import { AnimatedSection } from "@/components/shared/animated-section";
 
 export function Pricing() {
   return (
-    <section id="pricing" className="relative py-40 px-6 overflow-hidden">
+    <section id="pricing" className="relative py-20 px-6 overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0 neural-grid opacity-20" />
       <div className="absolute top-[30%] left-[50%] -translate-x-1/2 w-[700px] h-[700px] rounded-full pointer-events-none"

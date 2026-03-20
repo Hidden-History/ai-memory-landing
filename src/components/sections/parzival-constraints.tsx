@@ -999,7 +999,7 @@ export function ParzivalConstraints() {
   const [activeTab, setActiveTab] = useState("global");
 
   return (
-    <section className="relative py-24 px-6 overflow-hidden">
+    <section className="relative py-20 px-6 overflow-hidden">
       {/* Background */}
       <div
         className="absolute inset-0 pointer-events-none"

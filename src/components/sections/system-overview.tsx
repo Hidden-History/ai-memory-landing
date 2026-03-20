@@ -358,7 +358,7 @@ export function SystemOverview() {
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
 
   return (
-    <section id="architecture" className="relative py-32 px-6 overflow-hidden">
+    <section id="architecture" className="relative py-20 px-6 overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0 neural-grid opacity-25" />
       <div

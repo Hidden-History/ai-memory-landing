@@ -167,7 +167,7 @@ export function GitHubIntegration() {
   const doubled = [...contentTypes, ...contentTypes];
 
   return (
-    <section id="github" className="relative py-32 px-6 overflow-hidden">
+    <section id="github" className="relative py-20 px-6 overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0 neural-grid opacity-20" />
       <div

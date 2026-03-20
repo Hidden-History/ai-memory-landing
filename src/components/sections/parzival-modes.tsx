@@ -299,7 +299,7 @@ export function ParzivalModes() {
   const modeNumber = { mode1: "01", mode2: "02", mode3: "03" }[activeTab]!;
 
   return (
-    <section id="modes" className="relative py-24 px-6 overflow-hidden">
+    <section id="modes" className="relative py-20 px-6 overflow-hidden">
       {/* Violet radial background gradient */}
       <div
         className="absolute inset-0 pointer-events-none"

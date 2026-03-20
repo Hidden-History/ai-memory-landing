@@ -482,7 +482,7 @@ export function DeveloperExperience() {
   const [activeTab, setActiveTab] = useState<TabKey>("code-example");
 
   return (
-    <section id="developer-experience" className="relative py-32 px-6">
+    <section id="developer-experience" className="relative py-20 px-6">
       {/* Background */}
       <div className="absolute inset-0 neural-grid opacity-20" />
       <div

@@ -760,7 +760,7 @@ function DiagnosticPanels() {
 /* ── Main Export ─────────────────────────────────────────────── */
 export function ParzivalIdentity() {
   return (
-    <section className="relative py-24 px-6 overflow-hidden">
+    <section className="relative py-20 px-6 overflow-hidden">
       {/* Radial glow behind hero */}
       <div
         className="absolute inset-0 pointer-events-none"

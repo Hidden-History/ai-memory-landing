@@ -75,7 +75,7 @@ function ConcentricCircles() {
 
 export function FeaturesCTA() {
   return (
-    <section id="cta" className="relative py-32 px-6 overflow-hidden">
+    <section id="cta" className="relative py-20 px-6 overflow-hidden">
       {/* Background radial glow */}
       <div
         className="absolute inset-0 pointer-events-none"

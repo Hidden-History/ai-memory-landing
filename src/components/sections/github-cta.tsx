@@ -19,7 +19,7 @@ export function GitHubCTA() {
   }, []);
 
   return (
-    <section className="relative py-40 px-6 overflow-hidden">
+    <section className="relative py-20 px-6 overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0 neural-grid opacity-20" />
       <div

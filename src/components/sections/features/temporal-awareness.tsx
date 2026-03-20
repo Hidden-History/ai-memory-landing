@@ -270,7 +270,7 @@ function DecayChart() {
 
 export function TemporalAwareness() {
   return (
-    <section id="temporal" className="relative py-32 px-6">
+    <section id="temporal" className="relative py-20 px-6">
       {/* Background */}
       <div className="absolute inset-0 neural-grid opacity-20" />
       <div

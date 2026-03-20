@@ -229,7 +229,7 @@ function MobileTimeline() {
 /* ─── Exported Section ───────────────────────────────────────── */
 export function HooksSection() {
   return (
-    <section id="hooks" className="relative py-40 px-8 overflow-hidden">
+    <section id="hooks" className="relative py-20 px-8 overflow-hidden">
       <style dangerouslySetInnerHTML={{ __html: STYLES }} />
       {/* Background */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
