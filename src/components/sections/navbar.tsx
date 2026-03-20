@@ -15,7 +15,7 @@ export function Navbar() {
   }, []);
 
   const navLinks = [
-    { label: "Features", href: "#features" },
+    { label: "Features", href: "/features" },
     { label: "Architecture", href: "/docs/architecture" },
     { label: "Docs", href: "/docs" },
     { label: "Parzival", href: "/parzival" },
