@@ -1,153 +1,104 @@
 "use client";
 
 import { motion } from "framer-motion";
-import {
-  Download,
-  Database,
-  Webhook,
-  Shield,
-  Github,
-  BarChart3,
-  Code2,
-} from "lucide-react";
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 30, filter: "blur(4px)" },
-  visible: { opacity: 1, y: 0, filter: "blur(0px)" },
-};
-
-const stagger = {
-  visible: { transition: { staggerChildren: 0.08 } },
-};
-
-const docCategories = [
-  {
-    icon: Download,
-    title: "Install",
-    description: "Docker stack setup, environment configuration, and first-run guide.",
-    color: "text-blue",
-    bg: "bg-blue/10",
-    borderColor: "border-blue/15",
-  },
-  {
-    icon: Database,
-    title: "Collections",
-    description:
-      "5 Qdrant collections explained — code-patterns, conventions, discussions, github, jira-data.",
-    color: "text-primary-light",
-    bg: "bg-primary/10",
-    borderColor: "border-primary/15",
-  },
-  {
-    icon: Webhook,
-    title: "Hooks",
-    description:
-      "Claude Code hook pipeline — how memories flow from conversation to vector storage.",
-    color: "text-accent",
-    bg: "bg-accent/10",
-    borderColor: "border-accent/15",
-  },
-  {
-    icon: Shield,
-    title: "Security",
-    description:
-      "3-layer security pipeline — PII detection, secrets scanning, and content filtering.",
-    color: "text-green-400",
-    bg: "bg-green-500/10",
-    borderColor: "border-green-500/15",
-  },
-  {
-    icon: Github,
-    title: "Integrations",
-    description:
-      "GitHub sync, Jira sync, and Langfuse observability configuration.",
-    color: "text-cyan",
-    bg: "bg-cyan/10",
-    borderColor: "border-cyan/15",
-  },
-  {
-    icon: BarChart3,
-    title: "Monitoring",
-    description:
-      "Prometheus metrics, Grafana dashboards, and health check endpoints.",
-    color: "text-yellow-400",
-    bg: "bg-yellow-500/10",
-    borderColor: "border-yellow-500/15",
-  },
-  {
-    icon: Code2,
-    title: "API",
-    description:
-      "REST API reference for direct collection access, search, and memory management.",
-    color: "text-blue",
-    bg: "bg-blue/10",
-    borderColor: "border-blue/15",
-  },
-];
+import { Particles, SectionDivider } from "@/components/shared/page-decorations";
+import { CommandSearch } from "@/components/docs/command-search";
+import { BentoGrid } from "@/components/docs/bento-grid";
+import { DocsSidebar } from "@/components/docs/docs-sidebar";
+import { TerminalQuickstart } from "@/components/docs/terminal-quickstart";
 
 export default function DocsPage() {
   return (
-    <main id="main" className="min-h-screen">
-      {/* Hero */}
-      <section className="pt-32 pb-16 px-6">
-        <div className="max-w-4xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.2 }}
-          >
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/8 border border-primary/15 text-primary-light text-xs font-[family-name:var(--font-mono)] uppercase tracking-widest mb-6">
-              Documentation
-            </div>
-            <h1 className="font-[family-name:var(--font-heading)] text-5xl sm:text-6xl font-bold mb-5 tracking-tight">
-              AI Memory <span className="gradient-text">Docs</span>
-            </h1>
-            <p className="text-muted text-lg max-w-2xl mx-auto leading-relaxed">
-              Everything you need to set up, configure, and operate AI Memory in
-              production.
-            </p>
-          </motion.div>
-        </div>
-      </section>
+    <>
+      {/* Background layers */}
+      <div className="fixed inset-0 bg-mesh z-0" />
+      <Particles />
 
-      {/* Doc cards */}
-      <section className="pb-32 px-6">
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={stagger}
-          className="max-w-4xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-4"
-        >
-          {docCategories.map((cat, i) => (
+      {/* Reading progress bar */}
+      <div className="reading-progress" />
+
+      {/* Sidebar nav (xl only) */}
+      <DocsSidebar />
+
+      <main id="main" className="relative z-10">
+        {/* ── Hero: Search-first ── */}
+        <section id="docs-hero" className="pt-32 pb-16 px-6">
+          <div className="max-w-4xl mx-auto text-center">
             <motion.div
-              key={cat.title}
-              variants={fadeUp}
-              transition={{
-                duration: 0.5,
-                delay: 0.3 + i * 0.08,
-                ease: [0.25, 0.46, 0.45, 0.94],
-              }}
-              className="gradient-border p-7 group transition-all duration-350"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.2 }}
             >
-              <div className="flex items-start gap-4">
-                <div
-                  className={`w-11 h-11 rounded-xl ${cat.bg} border ${cat.borderColor} flex items-center justify-center flex-shrink-0`}
-                >
-                  <cat.icon className={`w-5 h-5 ${cat.color}`} />
-                </div>
-                <div>
-                  <h3 className="font-[family-name:var(--font-heading)] font-semibold text-lg mb-2">
-                    {cat.title}
-                  </h3>
-                  <p className="text-muted text-sm leading-relaxed">
-                    {cat.description}
-                  </p>
-                </div>
+              {/* Badge */}
+              <div
+                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs uppercase tracking-widest mb-6"
+                style={{
+                  fontFamily: "var(--font-mono)",
+                  background: "rgba(0, 245, 255, 0.06)",
+                  border: "1px solid rgba(0, 245, 255, 0.15)",
+                  color: "#00F5FF",
+                }}
+              >
+                Documentation
               </div>
+
+              {/* Headline */}
+              <h1
+                className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-5 tracking-tight"
+                style={{ fontFamily: "var(--font-heading)", color: "#E8EAF0" }}
+              >
+                AI Memory{" "}
+                <span className="gradient-text-animated">Docs</span>
+              </h1>
+
+              {/* Subheadline */}
+              <p
+                className="text-lg max-w-2xl mx-auto leading-relaxed mb-12"
+                style={{ color: "#7A8AAA", fontFamily: "var(--font-body)" }}
+              >
+                Everything you need to set up, configure, and operate AI Memory
+                in production.
+              </p>
+
+              {/* Command palette search input */}
+              <CommandSearch />
             </motion.div>
-          ))}
-        </motion.div>
-      </section>
-    </main>
+          </div>
+        </section>
+
+        <SectionDivider />
+
+        {/* ── Bento Grid: Doc Categories ── */}
+        <section id="docs-grid" className="py-20 px-6">
+          <div className="max-w-5xl mx-auto">
+            <BentoGrid />
+          </div>
+        </section>
+
+        <SectionDivider />
+
+        {/* ── Terminal Quick Start ── */}
+        <section id="quickstart" className="py-20 px-6">
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-12">
+              <h2
+                className="text-3xl sm:text-4xl font-bold mb-4"
+                style={{ fontFamily: "var(--font-heading)", color: "#E8EAF0" }}
+              >
+                Up and Running in{" "}
+                <span style={{ color: "#00FF88" }}>60 Seconds</span>
+              </h2>
+              <p
+                className="text-base max-w-xl mx-auto"
+                style={{ color: "#7A8AAA", fontFamily: "var(--font-body)" }}
+              >
+                Three commands. That&apos;s it.
+              </p>
+            </div>
+            <TerminalQuickstart />
+          </div>
+        </section>
+      </main>
+    </>
   );
 }
