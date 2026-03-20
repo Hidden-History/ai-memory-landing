@@ -1,42 +1,9 @@
 "use client";
 
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef, useState, useEffect } from "react";
+import { useRef } from "react";
 import Image from "next/image";
 import { ArrowRight, Github, Zap } from "lucide-react";
-
-function SplineBackground() {
-  const [splineReady, setSplineReady] = useState(false);
-
-  useEffect(() => {
-    if (typeof window !== "undefined" && "requestIdleCallback" in window) {
-      const id = (window as unknown as { requestIdleCallback: (cb: () => void) => number }).requestIdleCallback(() => setSplineReady(true));
-      return () => (window as unknown as { cancelIdleCallback: (id: number) => void }).cancelIdleCallback(id);
-    } else {
-      const timer = setTimeout(() => setSplineReady(true), 200);
-      return () => clearTimeout(timer);
-    }
-  }, []);
-
-  return (
-    <div className="absolute inset-0 z-[1] pointer-events-none overflow-hidden">
-      {splineReady ? (
-        <iframe
-          src="https://my.spline.design/claritystream-SPAAezZX4iV8xCQZMFLk2Flg/"
-          frameBorder="0"
-          width="100%"
-          height="100%"
-          className="absolute inset-0 w-full h-full"
-          style={{ transform: "scale(1)", opacity: 1 }}
-          title="AI Memory 3D Scene"
-          loading="lazy"
-        />
-      ) : (
-        <div className="absolute inset-0 w-full h-full" />
-      )}
-    </div>
-  );
-}
 
 export function Hero() {
   const ref = useRef(null);
@@ -93,9 +60,6 @@ export function Hero() {
           style={{ top: "40%", left: "5%", animationDelay: "1.5s" }}
         />
       </div>
-
-      {/* ── Spline 3D Background (deferred until idle) ──── */}
-      <SplineBackground />
 
       {/* ── Hero Content — Two Column ──────────────────────── */}
       <motion.div
