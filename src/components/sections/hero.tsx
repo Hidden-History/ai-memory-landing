@@ -135,7 +135,8 @@ export function Hero() {
                 CURE AI
               </span>
               <span
-                className="block text-7xl sm:text-8xl lg:text-[5.5rem] xl:text-[7rem] gradient-text-animated"
+                className="block text-8xl sm:text-9xl lg:text-[6.5rem] xl:text-[8rem] gradient-text-animated"
+                style={{ fontFamily: "var(--font-impact)", letterSpacing: "0.04em" }}
               >
                 AMNESIA
               </span>
@@ -169,7 +170,7 @@ export function Hero() {
                 href="https://github.com/Hidden-History/ai-memory"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group relative flex items-center gap-3 px-10 py-5 rounded-2xl font-semibold text-lg overflow-hidden transition-all duration-300 cursor-pointer"
+                className="magnetic-hover group relative flex items-center gap-3 px-10 py-5 rounded-2xl font-semibold text-lg overflow-hidden transition-all duration-300 cursor-pointer"
                 style={{
                   fontFamily: "var(--font-heading)",
                   background: "linear-gradient(135deg, #00F5FF 0%, #00C4CC 100%)",
@@ -198,7 +199,7 @@ export function Hero() {
                 href="https://github.com/Hidden-History/ai-memory"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex items-center gap-3 px-10 py-5 rounded-2xl font-medium text-lg transition-all duration-300 cursor-pointer"
+                className="magnetic-hover group flex items-center gap-3 px-10 py-5 rounded-2xl font-medium text-lg transition-all duration-300 cursor-pointer"
                 style={{
                   fontFamily: "var(--font-heading)",
                   background: "rgba(15,20,50,0.7)",
@@ -243,11 +244,12 @@ export function Hero() {
                   )}
                   <div>
                     <div
-                      className="font-bold text-3xl"
+                      className="font-bold text-4xl"
                       style={{
-                        fontFamily: "var(--font-heading)",
+                        fontFamily: "var(--font-impact)",
                         color: "#00F5FF",
                         textShadow: "0 0 20px rgba(0,245,255,0.4)",
+                        letterSpacing: "0.04em",
                       }}
                     >
                       {stat.value}

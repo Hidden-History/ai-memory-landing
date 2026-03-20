@@ -97,7 +97,7 @@ export function Navbar() {
             href="https://github.com/Hidden-History/ai-memory"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 ml-3 px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 cursor-pointer"
+            className="magnetic-hover flex items-center gap-2 ml-3 px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 cursor-pointer"
             style={{
               fontFamily: "var(--font-body)",
               background: "rgba(0,245,255,0.08)",

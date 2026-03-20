@@ -17,6 +17,26 @@ export const stagger = {
   visible: { transition: { staggerChildren: 0.08 } },
 };
 
+export const slideFromLeft = {
+  hidden: { opacity: 0, x: -40 },
+  visible: { opacity: 1, x: 0 },
+};
+
+export const slideFromRight = {
+  hidden: { opacity: 0, x: 40 },
+  visible: { opacity: 1, x: 0 },
+};
+
+export const scaleIn = {
+  hidden: { opacity: 0, scale: 0.85 },
+  visible: { opacity: 1, scale: 1 },
+};
+
+export const blurIn = {
+  hidden: { opacity: 0, filter: "blur(12px)" },
+  visible: { opacity: 1, filter: "blur(0px)" },
+};
+
 export function AnimatedSection({
   children,
   className = "",

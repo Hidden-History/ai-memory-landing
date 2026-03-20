@@ -14,7 +14,7 @@ const orbitron = Orbitron({
 });
 
 const bebasNeue = Bebas_Neue({
-  variable: "--font-heading",
+  variable: "--font-bebas",
   subsets: ["latin"],
   weight: ["400"],
   display: "swap",

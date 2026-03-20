@@ -451,11 +451,12 @@ function HeroSection() {
                 }}
               />
               <div
-                className="text-4xl font-bold mb-1"
+                className="text-5xl font-bold mb-1"
                 style={{
-                  fontFamily: "var(--font-heading)",
+                  fontFamily: "var(--font-impact)",
                   color: stat.color,
                   textShadow: `0 0 30px ${stat.color}40`,
+                  letterSpacing: "0.04em",
                 }}
               >
                 {stat.value}
@@ -2010,7 +2011,7 @@ function CTASection() {
         >
           <a
             href="/docs"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-300"
+            className="magnetic-hover inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-300"
             style={{
               fontFamily: "var(--font-heading)",
               background: `linear-gradient(135deg, ${CYAN}15, ${VIOLET}15)`,
@@ -2025,7 +2026,7 @@ function CTASection() {
             href="https://github.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-300"
+            className="magnetic-hover inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-300"
             style={{
               fontFamily: "var(--font-heading)",
               background: "rgba(255,255,255,0.03)",

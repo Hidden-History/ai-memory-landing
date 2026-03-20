@@ -125,7 +125,7 @@ export function ParzivalCTA() {
                 href="https://github.com/Hidden-History/ai-memory#installation"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex items-center justify-center gap-2 w-full sm:w-auto"
+                className="magnetic-hover group flex items-center justify-center gap-2 w-full sm:w-auto"
                 style={{
                   background: CYAN,
                   color: "#0A0D1A",
@@ -158,7 +158,7 @@ export function ParzivalCTA() {
               {/* Secondary — View Documentation */}
               <a
                 href="/parzival"
-                className="group flex items-center justify-center gap-2 w-full sm:w-auto"
+                className="magnetic-hover group flex items-center justify-center gap-2 w-full sm:w-auto"
                 style={{
                   background: "transparent",
                   color: "#E8EAF0",

@@ -27,7 +27,8 @@
   --color-text-dim:   #3A4560;
 
   /* Fonts */
-  --font-heading: var(--font-orbitron), var(--font-heading), sans-serif;
+  --font-heading: var(--font-orbitron), sans-serif;
+  --font-impact:  var(--font-bebas), sans-serif;
   --font-body:    var(--font-outfit), sans-serif;
   --font-mono:    var(--font-mono), monospace;
 
@@ -146,6 +147,7 @@ body::before {
 
 /* ─── Section Label Badge ─────────────────────────────────────── */
 .section-label {
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -160,6 +162,31 @@ body::before {
   background: rgba(0,245,255,0.06);
   border: 1px solid rgba(0,245,255,0.18);
   box-shadow: 0 0 20px rgba(0,245,255,0.06), inset 0 1px 0 rgba(0,245,255,0.05);
+  overflow: hidden;
+}
+
+.section-label::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(0,245,255,0.06) 40%,
+    rgba(0,245,255,0.12) 50%,
+    rgba(0,245,255,0.06) 60%,
+    transparent 100%
+  );
+  background-size: 250% 100%;
+  animation: section-label-shimmer 5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes section-label-shimmer {
+  0%   { background-position: -100% 0; }
+  50%  { background-position: 200% 0; }
+  100% { background-position: 200% 0; }
 }
 
 /* ─── Glass Card Deep ─────────────────────────────────────────── */
