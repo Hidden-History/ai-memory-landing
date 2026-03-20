@@ -14,7 +14,6 @@ const TEXT = "#E8EAF0";
 const TEXT_MUTED = "#7A8AAA";
 const TEXT_DIM = "#4A5568";
 const BG_CARD = "#0F1428";
-const BG_SURFACE = "#0A0D1A";
 
 /* ─── Hook Data ──────────────────────────────────────────────── */
 const CAPTURE_HOOKS = [
@@ -37,36 +36,61 @@ const CX = 400, CY = 180, RX = 320, RY = 120;
 const pt = (a: number) => ({ x: CX + RX * Math.cos(a), y: CY + RY * Math.sin(a) });
 const capAngle = (i: number) => Math.PI + ((i + 1) / 6) * Math.PI;
 const retAngle = (i: number) => ((i + 1) / 6) * Math.PI;
-const ELLIPSE_PATH = `M ${CX + RX},${CY} A ${RX},${RY} 0 1,1 ${CX - RX},${CY} A ${RX},${RY} 0 1,1 ${CX + RX},${CY}`;
 
 /* ─── Inline keyframes ───────────────────────────────────────── */
 const STYLES = `
-@keyframes orbit{0%{offset-distance:0%}100%{offset-distance:100%}}
 @keyframes pulse-dot{0%,100%{opacity:.6;transform:scale(1)}50%{opacity:1;transform:scale(1.6)}}
 @keyframes node-pulse{0%{transform:scale(1);opacity:.7}50%{transform:scale(1.5);opacity:0}100%{transform:scale(1.5);opacity:0}}
-.orbit-particle{offset-path:path("${ELLIPSE_PATH}");offset-rotate:0deg;animation:orbit 7s linear infinite}
-.orbit-particle-2{offset-path:path("${ELLIPSE_PATH}");offset-rotate:0deg;animation:orbit 7s linear infinite;animation-delay:-3.5s}`;
+`;
 
-/* ─── Hook Card Row ──────────────────────────────────────────── */
+/* ─── Hook Card ──────────────────────────────────────────────── */
 function HookCard({ hook, color, index }: { hook: (typeof CAPTURE_HOOKS)[number]; color: string; index: number }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }} transition={{ delay: index * 0.06, duration: 0.45 }}
-      className="flex flex-wrap items-center gap-2 px-3 py-2 rounded-lg"
-      style={{ background: `${color}06`, border: `1px solid ${color}15` }}
+      className="flex items-start gap-4 rounded-xl p-5 relative overflow-hidden"
+      style={{
+        background: "rgba(15, 20, 40, 0.5)",
+        backdropFilter: "blur(16px)",
+        border: `1px solid ${color}18`,
+        borderLeft: `3px solid ${color}50`,
+      }}
     >
-      <span className="text-xs font-semibold shrink-0" style={{ fontFamily: "var(--font-mono)", color }}>
-        {hook.name}
-      </span>
-      <span className="text-[10px] px-2 py-0.5 rounded-full shrink-0"
-        style={{ fontFamily: "var(--font-mono)", color: TEXT_MUTED, background: `${color}10`, border: `1px solid ${color}20` }}>
-        {hook.trigger}
-      </span>
-      <span className="text-[10px] px-2 py-0.5 rounded-full shrink-0"
-        style={{ fontFamily: "var(--font-mono)", color: TEXT_DIM, background: `${VIOLET}08`, border: `1px solid ${VIOLET}15` }}>
-        {hook.collection}
-      </span>
+      {/* Number badge */}
+      <div
+        className="flex-shrink-0 flex items-center justify-center rounded-lg text-xs font-bold"
+        style={{
+          width: 32, height: 32,
+          background: `${color}15`,
+          color,
+          border: `1.5px solid ${color}40`,
+          boxShadow: `0 0 10px ${color}10`,
+        }}
+      >
+        {index + 1}
+      </div>
+
+      {/* Content */}
+      <div className="flex-1 min-w-0">
+        <div className="text-sm font-semibold mb-1.5 truncate" style={{ fontFamily: "var(--font-mono)", color }}>
+          {hook.name}
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <span className="text-[10px] px-2.5 py-1 rounded-md"
+            style={{ fontFamily: "var(--font-mono)", color: TEXT_MUTED, background: `${color}10`, border: `1px solid ${color}20` }}>
+            {hook.trigger}
+          </span>
+          <span className="text-[10px] px-2.5 py-1 rounded-md"
+            style={{ fontFamily: "var(--font-mono)", color: TEXT_DIM, background: `${VIOLET}08`, border: `1px solid ${VIOLET}15` }}>
+            {hook.collection}
+          </span>
+          <span className="text-[10px] px-2.5 py-1 rounded-md"
+            style={{ fontFamily: "var(--font-mono)", color: TEXT_DIM, background: `${GREEN}06`, border: `1px solid ${GREEN}12` }}>
+            {hook.type}
+          </span>
+        </div>
+      </div>
     </motion.div>
   );
 }
@@ -77,7 +101,7 @@ function OvalDiagram() {
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }}
       viewport={{ once: true }} transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
-      className="relative hidden md:block mb-12"
+      className="relative hidden md:block mb-16"
     >
       <svg viewBox="0 0 800 360" className="w-full h-auto" preserveAspectRatio="xMidYMid meet" fill="none" aria-hidden="true">
         <defs>
@@ -90,16 +114,19 @@ function OvalDiagram() {
           </pattern>
         </defs>
         <rect width="800" height="360" fill="url(#hook-grid)" />
+
         {/* Elliptical path */}
         <motion.ellipse cx={CX} cy={CY} rx={RX} ry={RY}
           stroke={`${TEXT_DIM}40`} strokeWidth="1.5" strokeDasharray="8 6" fill="none"
           initial={{ pathLength: 0 }} whileInView={{ pathLength: 1 }}
           viewport={{ once: true }} transition={{ duration: 1.5, ease: "easeOut" }} />
+
         {/* Side labels */}
         <text x={CX - RX - 50} y={CY} fill={AMBER} fontSize="13" fontWeight="700" fontFamily="var(--font-mono)" textAnchor="middle">STORE</text>
         <text x={CX - RX - 50} y={CY + 16} fill={AMBER} fontSize="11" fontFamily="var(--font-mono)" textAnchor="middle" opacity="0.6">{"\u2192"}</text>
         <text x={CX + RX + 50} y={CY} fill={CYAN} fontSize="13" fontWeight="700" fontFamily="var(--font-mono)" textAnchor="middle">QUERY</text>
         <text x={CX + RX + 50} y={CY - 14} fill={CYAN} fontSize="11" fontFamily="var(--font-mono)" textAnchor="middle" opacity="0.6">{"\u2190"}</text>
+
         {/* CAPTURE nodes (top arc) */}
         {CAPTURE_HOOKS.map((hook, i) => {
           const { x, y } = pt(capAngle(i));
@@ -118,6 +145,7 @@ function OvalDiagram() {
             </g>
           );
         })}
+
         {/* RETRIEVAL nodes (bottom arc) */}
         {RETRIEVAL_HOOKS.map((hook, i) => {
           const { x, y } = pt(retAngle(i));
@@ -136,14 +164,34 @@ function OvalDiagram() {
             </g>
           );
         })}
+
+        {/* Orbiting particle 1 (AMBER) — follows the ellipse inside SVG */}
+        <circle r="5" fill={AMBER} opacity="0.9" filter="url(#node-glow)">
+          <animateMotion
+            dur="7s"
+            repeatCount="indefinite"
+            path={`M ${CX + RX},${CY} A ${RX},${RY} 0 1,1 ${CX - RX},${CY} A ${RX},${RY} 0 1,1 ${CX + RX},${CY}`}
+          />
+        </circle>
+        {/* Orbiting particle 2 (CYAN) — offset start */}
+        <circle r="4" fill={CYAN} opacity="0.9" filter="url(#node-glow)">
+          <animateMotion
+            dur="7s"
+            repeatCount="indefinite"
+            begin="-3.5s"
+            path={`M ${CX + RX},${CY} A ${RX},${RY} 0 1,1 ${CX - RX},${CY} A ${RX},${RY} 0 1,1 ${CX + RX},${CY}`}
+          />
+        </circle>
+        {/* Orbiting particle 3 (small, fast) */}
+        <circle r="3" fill={VIOLET} opacity="0.7" filter="url(#node-glow)">
+          <animateMotion
+            dur="5s"
+            repeatCount="indefinite"
+            begin="-1.5s"
+            path={`M ${CX + RX},${CY} A ${RX},${RY} 0 1,1 ${CX - RX},${CY} A ${RX},${RY} 0 1,1 ${CX + RX},${CY}`}
+          />
+        </circle>
       </svg>
-      {/* Animated orbiting particles */}
-      <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
-        <div className="orbit-particle absolute w-3 h-3 rounded-full"
-          style={{ background: AMBER, boxShadow: `0 0 12px ${AMBER}80`, top: 0, left: 0 }} />
-        <div className="orbit-particle-2 absolute w-2.5 h-2.5 rounded-full"
-          style={{ background: CYAN, boxShadow: `0 0 12px ${CYAN}80`, top: 0, left: 0 }} />
-      </div>
     </motion.div>
   );
 }
@@ -218,19 +266,20 @@ export function HooksSection() {
         <MobileTimeline />
 
         {/* Hook Detail Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {([
-            { hooks: CAPTURE_HOOKS, color: AMBER, label: "Capture \u2014 Store to Database" },
-            { hooks: RETRIEVAL_HOOKS, color: CYAN, label: "Retrieval \u2014 Query Database" },
+            { hooks: CAPTURE_HOOKS, color: AMBER, label: "Capture — Store to Database" },
+            { hooks: RETRIEVAL_HOOKS, color: CYAN, label: "Retrieval — Query Database" },
           ] as const).map(({ hooks, color, label }) => (
             <div key={label}>
-              <div className="text-[10px] font-bold uppercase tracking-widest mb-4 flex items-center gap-2"
+              <div className="text-xs font-bold uppercase tracking-widest mb-5 flex items-center gap-3"
                 style={{ fontFamily: "var(--font-mono)", color }}>
-                <span className="w-2 h-2 rounded-full"
+                <span className="w-2.5 h-2.5 rounded-full"
                   style={{ background: color, boxShadow: `0 0 8px ${color}60`, animation: "pulse-dot 2s ease infinite" }} />
                 {label}
+                <div className="h-px flex-1" style={{ background: `${color}20` }} />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {hooks.map((hook, i) => <HookCard key={hook.name} hook={hook} color={color} index={i} />)}
               </div>
             </div>

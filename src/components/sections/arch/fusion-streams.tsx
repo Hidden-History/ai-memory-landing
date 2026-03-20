@@ -201,17 +201,16 @@ export function TripleFusionSection() {
               <SourceNode label="Late" sub="ColBERT v2" color={GREEN} size={112} delay={0.7} />
             </div>
 
-            {/* SVG paths + particles */}
+            {/* SVG paths + particles (all inside SVG so scaling is consistent) */}
             <div className="relative h-40">
               <svg className="absolute inset-0 w-full h-full" viewBox="0 0 648 160" preserveAspectRatio="none" style={{ overflow: "visible" }}>
                 <defs>
-                  {["cyan", "violet", "green"].map((n) => (
-                    <filter key={n} id={`glow-${n}`} x="-50%" y="-50%" width="200%" height="200%">
-                      <feGaussianBlur stdDeviation="3" result="blur" />
-                      <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-                    </filter>
-                  ))}
+                  <filter id="stream-glow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur stdDeviation="3" result="blur" />
+                    <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+                  </filter>
                 </defs>
+                {/* Dashed path lines */}
                 {SVG_PATHS.map((p) => (
                   <motion.path
                     key={p.d}
@@ -227,24 +226,20 @@ export function TripleFusionSection() {
                     transition={{ duration: 1.5, delay: p.delay }}
                   />
                 ))}
+                {/* Animated particles following the exact SVG paths */}
+                {SVG_PATHS.map((p) =>
+                  [0, 1, 2, 3].map((i) => (
+                    <circle key={`${p.d}-p${i}`} r="3.5" fill={p.color} opacity="0.9" filter="url(#stream-glow)">
+                      <animateMotion
+                        dur={`${3.5 + p.delay}s`}
+                        repeatCount="indefinite"
+                        begin={`${(3.5 + p.delay) / 4 * i}s`}
+                        path={p.d}
+                      />
+                    </circle>
+                  ))
+                )}
               </svg>
-
-              {STREAMS.map((s) => (
-                <div key={s.key} className="absolute inset-0 pointer-events-none">
-                  {pDelays(s.dur).map((d, i) => (
-                    <div
-                      key={`${s.key}-${i}`}
-                      className="absolute rounded-full"
-                      style={{
-                        width: 6, height: 6, background: s.color,
-                        boxShadow: `0 0 8px ${s.color}, 0 0 16px ${s.color}80`,
-                        left: s.left, top: 0,
-                        animation: `${s.anim} ${s.dur}s ease-in-out ${d}s infinite`,
-                      }}
-                    />
-                  ))}
-                </div>
-              ))}
             </div>
 
             {/* RRF merge node */}
