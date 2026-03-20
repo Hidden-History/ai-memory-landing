@@ -26,21 +26,14 @@ function SplineBackground() {
           frameBorder="0"
           width="100%"
           height="100%"
-          className="absolute inset-0 w-full h-full scale-125 opacity-55"
+          className="absolute inset-0 w-full h-full"
+          style={{ transform: "scale(1)", opacity: 1 }}
           title="AI Memory 3D Scene"
           loading="lazy"
         />
       ) : (
         <div className="absolute inset-0 w-full h-full" />
       )}
-      {/* Overlay gradient to blend with background */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "linear-gradient(135deg, rgba(10,13,26,0.6) 0%, rgba(10,13,26,0.15) 50%, rgba(10,13,26,0.5) 100%)",
-        }}
-      />
     </div>
   );
 }
@@ -59,9 +52,9 @@ export function Hero() {
       ref={ref}
       className="relative min-h-dvh flex items-center overflow-hidden"
     >
-      {/* ── Animated Mesh Background ────────────────────────── */}
-      <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-mesh" />
+      {/* ── Ambient orbs & shapes — above Spline, below content ── */}
+      <div className="absolute inset-0 z-[2] pointer-events-none">
+        {/* <div className="absolute inset-0 bg-mesh" /> */}
 
         {/* Deep ambient orbs — more vibrant */}
         <div
@@ -279,7 +272,7 @@ export function Hero() {
             initial={{ opacity: 0, x: 60, scale: 0.9 }}
             animate={{ opacity: 1, x: 0, scale: 1 }}
             transition={{ delay: 0.5, duration: 0.9, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="relative flex-shrink-0 w-full max-w-md lg:max-w-none lg:w-[480px] xl:w-[560px]"
+            className="relative flex-shrink-0 w-full max-w-md lg:max-w-none lg:w-[700px] xl:w-[820px] animate-float-slow"
           >
             {/* Outer glow ring */}
             <div
@@ -294,7 +287,7 @@ export function Hero() {
 
             {/* Main image container */}
             <div
-              className="relative rounded-3xl overflow-hidden animate-float-slow"
+              className="relative rounded-3xl overflow-hidden"
               style={{
                 border: "1px solid rgba(0,245,255,0.2)",
                 boxShadow:
@@ -304,8 +297,8 @@ export function Hero() {
               <Image
                 src="/ai-memory-3.png"
                 alt="AI Memory System"
-                width={560}
-                height={400}
+                width={820}
+                height={586}
                 className="w-full h-auto object-cover"
                 priority
               />
@@ -343,7 +336,7 @@ export function Hero() {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 1.0, duration: 0.5 }}
-              className="absolute -top-4 -right-4 px-4 py-2 rounded-full text-xs font-medium"
+              className="absolute -top-5 -right-5 px-4 py-2 rounded-full text-xs font-medium"
               style={{
                 fontFamily: "var(--font-mono)",
                 background: "rgba(15,20,50,0.9)",
@@ -362,7 +355,7 @@ export function Hero() {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 1.2, duration: 0.5 }}
-              className="absolute -bottom-3 -left-4 px-4 py-2 rounded-full text-xs font-medium"
+              className="absolute -bottom-4 -left-5 px-4 py-2 rounded-full text-xs font-medium"
               style={{
                 fontFamily: "var(--font-mono)",
                 background: "rgba(15,20,50,0.9)",
