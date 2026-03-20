@@ -785,73 +785,172 @@ export function ParzivalIdentity() {
           <div className="flex-1 h-px bg-gradient-to-r from-cyan-500/20 to-transparent" />
         </motion.div>
 
-        {/* ── Parzival SVG Avatar ── */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.85 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.7, delay: 0.05 }}
-        >
-          <ParzivalAvatar />
-        </motion.div>
+        {/* ── Hero: Two-column — Text Left, Spline Robot Right ── */}
+        <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12 mb-10">
 
-        {/* ── Identity Statement + Terminal Subtitle ── */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className="mb-10"
-        >
-          <div
-            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-6 text-xs font-mono font-medium"
-            style={{
-              background: "rgba(139,92,246,0.1)",
-              border: "1px solid rgba(139,92,246,0.25)",
-              color: VIOLET,
-            }}
+          {/* LEFT: Identity Statement + Terminal Subtitle */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="flex-1 text-center lg:text-left"
           >
-            <Compass className="w-3 h-3" />
-            Technical Project Manager &amp; Quality Gatekeeper
-          </div>
-
-          <h1
-            className="font-orbitron font-bold text-4xl sm:text-5xl lg:text-6xl tracking-tight mb-4 leading-[1.1]"
-            style={{ fontFamily: "var(--font-orbitron)" }}
-          >
-            <span style={{ color: "#E8EAF0" }}>Meet </span>
-            <span
+            <div
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-6 text-xs font-mono font-medium"
               style={{
-                background:
-                  "linear-gradient(135deg, #00F5FF 0%, #8B5CF6 50%, #FF2D6A 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
+                background: "rgba(139,92,246,0.1)",
+                border: "1px solid rgba(139,92,246,0.25)",
+                color: VIOLET,
               }}
             >
-              Parzival
-            </span>
-          </h1>
+              <Compass className="w-3 h-3" />
+              Technical Project Manager &amp; Quality Gatekeeper
+            </div>
 
-          {/* Terminal-style subtitle */}
-          <div
-            className="mb-5 text-xs sm:text-sm tracking-wider"
-            style={{ fontFamily: "var(--font-mono)", color: "#7A8AAA" }}
-          >
-            <span style={{ color: VIOLET }}>[UNIT: PARZIVAL]</span>{" "}
-            <span style={{ color: CYAN }}>[CLASS: NAVIGATOR]</span>{" "}
-            <span style={{ color: GREEN }}>[STATUS: ONLINE]</span>
-            <BlinkingCursor />
-          </div>
+            <h1
+              className="font-orbitron font-bold text-4xl sm:text-5xl lg:text-6xl tracking-tight mb-4 leading-[1.1]"
+              style={{ fontFamily: "var(--font-orbitron)" }}
+            >
+              <span style={{ color: "#E8EAF0" }}>Meet </span>
+              <span
+                style={{
+                  background:
+                    "linear-gradient(135deg, #00F5FF 0%, #8B5CF6 50%, #FF2D6A 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                }}
+              >
+                Parzival
+              </span>
+            </h1>
 
-          <p
-            className="text-base sm:text-lg max-w-2xl leading-relaxed"
-            style={{ color: "#7A8AAA" }}
+            {/* Terminal-style subtitle */}
+            <div
+              className="mb-5 text-xs sm:text-sm tracking-wider"
+              style={{ fontFamily: "var(--font-mono)", color: "#7A8AAA" }}
+            >
+              <span style={{ color: VIOLET }}>[UNIT: PARZIVAL]</span>{" "}
+              <span style={{ color: CYAN }}>[CLASS: NAVIGATOR]</span>{" "}
+              <span style={{ color: GREEN }}>[STATUS: ONLINE]</span>
+              <BlinkingCursor />
+            </div>
+
+            <p
+              className="text-base sm:text-lg max-w-xl leading-relaxed"
+              style={{ color: "#7A8AAA" }}
+            >
+              The radar, map reader, and navigator of your AI agent team. The user
+              is the captain who steers the ship — Parzival plans, delegates,
+              tracks, and verifies. All agent output passes through its quality gate
+              before reaching you.
+            </p>
+          </motion.div>
+
+          {/* RIGHT: Spline 3D Robot */}
+          <motion.div
+            initial={{ opacity: 0, x: 60, scale: 0.9 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            transition={{ delay: 0.3, duration: 0.9, ease: [0.25, 0.46, 0.45, 0.94] }}
+            className="relative flex-shrink-0 w-full max-w-sm lg:max-w-none lg:w-[420px] xl:w-[500px]"
           >
-            The radar, map reader, and navigator of your AI agent team. The user
-            is the captain who steers the ship — Parzival plans, delegates,
-            tracks, and verifies. All agent output passes through its quality gate
-            before reaching you.
-          </p>
-        </motion.div>
+            {/* Outer glow ring */}
+            <div
+              className="absolute inset-0 rounded-3xl animate-pulse-glow"
+              style={{
+                boxShadow:
+                  "0 0 80px rgba(139,92,246,0.15), 0 0 120px rgba(0,245,255,0.08)",
+                transform: "scale(1.05)",
+              }}
+            />
+
+            {/* Spline iframe container */}
+            <div
+              className="relative rounded-3xl overflow-hidden"
+              style={{
+                aspectRatio: "4 / 5",
+                border: "1px solid rgba(139,92,246,0.2)",
+                boxShadow:
+                  "0 0 0 1px rgba(139,92,246,0.06) inset, 0 40px 80px rgba(0,0,0,0.6), 0 0 60px rgba(139,92,246,0.08)",
+              }}
+            >
+              <iframe
+                src="https://my.spline.design/nexbotrobotcharacterconcept-8RexQHFPdtts9NYg1ChDsiPw/"
+                frameBorder="0"
+                width="100%"
+                height="100%"
+                className="absolute inset-0 w-full h-full"
+                title="Parzival 3D Robot"
+                loading="lazy"
+                style={{ background: "transparent" }}
+              />
+
+              {/* Gradient overlay to blend edges */}
+              <div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  background:
+                    "linear-gradient(180deg, rgba(10,13,26,0.1) 0%, transparent 15%, transparent 85%, rgba(10,13,26,0.3) 100%)",
+                }}
+              />
+
+              {/* Corner brackets */}
+              <div
+                className="absolute top-3 left-3 w-8 h-8 border-l-2 border-t-2 rounded-tl-lg pointer-events-none"
+                style={{ borderColor: "rgba(139,92,246,0.5)" }}
+              />
+              <div
+                className="absolute top-3 right-3 w-8 h-8 border-r-2 border-t-2 rounded-tr-lg pointer-events-none"
+                style={{ borderColor: "rgba(139,92,246,0.5)" }}
+              />
+              <div
+                className="absolute bottom-3 left-3 w-8 h-8 border-l-2 border-b-2 rounded-bl-lg pointer-events-none"
+                style={{ borderColor: "rgba(139,92,246,0.5)" }}
+              />
+              <div
+                className="absolute bottom-3 right-3 w-8 h-8 border-r-2 border-b-2 rounded-br-lg pointer-events-none"
+                style={{ borderColor: "rgba(139,92,246,0.5)" }}
+              />
+            </div>
+
+            {/* Floating status chip */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 1.0, duration: 0.5 }}
+              className="absolute -top-3 -right-3 px-3 py-1.5 rounded-full text-xs font-medium"
+              style={{
+                fontFamily: "var(--font-mono)",
+                background: "rgba(10,13,30,0.92)",
+                border: "1px solid rgba(0,255,136,0.3)",
+                color: GREEN,
+                boxShadow: "0 0 20px rgba(0,255,136,0.12)",
+              }}
+            >
+              <span className="flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+                SYSTEM ONLINE
+              </span>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 1.2, duration: 0.5 }}
+              className="absolute -bottom-2 -left-3 px-3 py-1.5 rounded-full text-xs font-medium"
+              style={{
+                fontFamily: "var(--font-mono)",
+                background: "rgba(10,13,30,0.92)",
+                border: "1px solid rgba(139,92,246,0.3)",
+                color: VIOLET,
+                boxShadow: "0 0 20px rgba(139,92,246,0.12)",
+              }}
+            >
+              Navigator Agent v2.0
+            </motion.div>
+          </motion.div>
+
+        </div>
 
         {/* ── Relationship Flow Diagram ── */}
         <motion.div
