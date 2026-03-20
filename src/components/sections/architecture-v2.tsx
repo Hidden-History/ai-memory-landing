@@ -232,15 +232,15 @@ function HeroSection() {
         }}
       />
 
-      {/* Layer 2: Gradient overlay - semi-transparent to show image */}
-      <div
+      {/* Layer 2: Gradient overlay - temporarily disabled */}
+      {/*<div
         className="absolute inset-0"
         style={{
           background: `
             linear-gradient(135deg, rgba(3,3,8,0.75) 0%, rgba(3,3,8,0.35) 30%, rgba(3,3,8,0.15) 50%, rgba(3,3,8,0.4) 75%, rgba(3,3,8,0.85) 100%)
           `,
         }}
-      />
+      />*/}
 
       {/* Layer 3: Blueprint grid */}
       <BlueprintGrid />
